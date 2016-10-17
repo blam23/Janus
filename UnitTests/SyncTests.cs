@@ -73,7 +73,6 @@ namespace UnitTests
 
             Assert.IsTrue(File.Exists(Path.Combine(testOutput, "delete_test_1.txt")));
 
-
             watcher.Sync.Delete(testFile1);
 
             Assert.IsFalse(File.Exists(Path.Combine(testOutput, "delete_test_1.txt")));
