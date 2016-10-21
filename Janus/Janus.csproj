@@ -62,6 +62,7 @@
     <Compile Include="CreateWindow.xaml.cs">
       <DependentUpon>CreateWindow.xaml</DependentUpon>
     </Compile>
+    <Compile Include="DataStore.cs" />
     <Compile Include="Sync.cs" />
     <Compile Include="Watcher.cs" />
     <Page Include="CreateWindow.xaml">

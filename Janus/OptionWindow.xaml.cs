@@ -28,6 +28,8 @@ namespace Janus
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
             listBox.ItemsSource = Watchers;
+
+            var watch = DataStore.Load(@"D:\Arch");
         }
 
         private void btnRemove_Click(object sender, RoutedEventArgs e)
