@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 
 #if MD5_CHECK
 using System.Security.Cryptography;
@@ -12,9 +14,40 @@ namespace Janus
 {
     public class Sync
     {
+
+        public Sync(string endPath, Watcher parent, bool addFiles, bool deleteFiles)
+        {
+            EndPath = endPath;
+            _addFiles = addFiles;
+            _deleteFiles = deleteFiles;
+            Watcher = parent;
+        }
+
         public string  EndPath { get; set; }
-        public bool    AddFiles { get; set; }
-        public bool    DeleteFiles { get; set; }
+
+        private bool _addFiles;
+        private bool _deleteFiles;
+
+        public bool AddFiles
+        {
+            get { return _addFiles; }
+            set
+            {
+                _addFiles = value;
+                Watcher.Save();
+            }
+        }
+
+        public bool DeleteFiles
+        {
+            get { return _deleteFiles; }
+            set
+            {
+                _deleteFiles = value;
+                Watcher.Save();
+            }
+        }
+
         public Watcher Watcher { get; set; }
 
 #if MD5_CHECK
@@ -50,8 +83,6 @@ namespace Janus
 
             if (AddFiles)
             {
-
-
                 foreach (var file in toAdd)
                 {
                     Add(file, false);
@@ -96,8 +127,9 @@ namespace Janus
             // TODO: Add path sync
         }
 
-        public void Add(string path, bool isPathFull = true)
+        public async void Add(string path, bool isPathFull = true, int count = 5)
         {
+            if (count <= 0) return;
             var partPath = isPathFull ? path.Substring(Watcher.WatchPath.Length+1) : path;
             try
             {
@@ -111,12 +143,15 @@ namespace Janus
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error copying file: {e.Message}");
+                Console.WriteLine("An exception occured while copying file {1}:\n\t", partPath, e.Message);
+                await Task.Delay(300);
+                Add(path, isPathFull, count-1);
             }
         }
 
-        public void Delete(string path, bool isPathFull = true)
+        public async void Delete(string path, bool isPathFull = true, int count = 5)
         {
+            if (count <= 0) return;
             var partPath = isPathFull ? path.Substring(Watcher.WatchPath.Length+1) : path;
             try
             {
@@ -124,7 +159,9 @@ namespace Janus
             }
             catch (Exception e)
             {
-                Console.WriteLine($"Error deleting file: {e.Message}");
+                Console.WriteLine("An exception occured while deleting file {1}:\n\t", partPath, e.Message);
+                await Task.Delay(300);
+                Delete(path, isPathFull, count - 1);
             }
         }
     }

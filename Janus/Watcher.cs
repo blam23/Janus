@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -15,31 +16,39 @@ namespace Janus
         public List<string> Delete = new List<string>();
         public List<string> Copy = new List<string>();
 
-        private FileSystemWatcher _watcher;
+        private FileSystemWatcher _writeWatcher;
+        private FileSystemWatcher _deleteWatcher;
 
         public Watcher(string watchPath, string endPath, bool addFiles, bool deleteFiles, string filter, bool recursive)
         {
             WatchPath = watchPath;
 
-            Sync = new Sync
-            {
-                EndPath = endPath,
-                Watcher = this,
-                AddFiles = addFiles,
-                DeleteFiles = deleteFiles
-            };
+            Sync = new Sync(endPath, this, addFiles, deleteFiles);
 
             Filter = filter;
             Recursive = recursive;
 
-            _watcher = new FileSystemWatcher
+            _writeWatcher = new FileSystemWatcher
+            {
+                Path = watchPath,
+                NotifyFilter = NotifyFilters.LastWrite
+            };
+
+            _deleteWatcher = new FileSystemWatcher
             {
                 Path = watchPath,
             };
 
-            _watcher.Changed += Watcher_Changed;
-            _watcher.Deleted += Watcher_Deleted;
-            _watcher.EnableRaisingEvents = true;
+
+            _writeWatcher.Changed += WriteWatcherChanged;
+            _deleteWatcher.Deleted += WriteWatcherDeleted;
+            EnableEvents();
+        }
+
+        public void EnableEvents()
+        {
+            _writeWatcher.EnableRaisingEvents = true;
+            _deleteWatcher.EnableRaisingEvents = true;
         }
 
         public Task DoInitialSynchronise()
@@ -51,51 +60,85 @@ namespace Janus
         {
             foreach (var file in Copy) 
             {
+                Console.WriteLine("[Manual] Copying: {0}", file);
                 Sync.Add(file);
             }
 
             foreach (var file in Delete)
             {
+                Console.WriteLine("[Manual] Deleting: {0}", file);
                 Sync.Delete(file);
             }
+
+            Copy.Clear();
+            Delete.Clear();
         }
 
-        private void Watcher_Deleted(object sender, FileSystemEventArgs e)
+
+        private void WriteWatcherDeleted(object sender, FileSystemEventArgs e)
         {
             if(Copy.Contains(e.FullPath))
             {
-                Copy.Remove(e.FullPath);
+                Console.WriteLine("Removing from copy list: {0}", e.FullPath);
+                var succ = Copy.Remove(e.FullPath);
+                Console.WriteLine("Removed from copy list? {0}", succ);
             }
             if (Sync.DeleteFiles)
             {
+                Console.WriteLine("Deleting: {0}", e.FullPath);
                 Sync.Delete(e.FullPath);
             }
             else
             {
+                Console.WriteLine("Marking for delete: {0}", e.FullPath);
                 Delete.Add(e.FullPath);
             }
         }
 
-        private void Watcher_Changed(object sender, FileSystemEventArgs e)
+        private string _lastPath = "";
+        private void WriteWatcherChanged(object sender, FileSystemEventArgs e)
         {
+            if (_lastPath == e.FullPath)
+            {
+                return;
+            }
+            _lastPath = e.FullPath;
+            Console.WriteLine(e.ChangeType);
             if (Delete.Contains(e.FullPath))
             {
-                Delete.Remove(e.FullPath);
+                Console.WriteLine("Removing from delete list: {0}", e.FullPath);
+                var succ = Delete.Remove(e.FullPath);
+                Console.WriteLine("Removed from delete list? {0}", succ);
             }
             if (Sync.AddFiles)
             {
+                Console.WriteLine("Copying: {0}", e.FullPath);
                 Sync.Add(e.FullPath);
             }
             else
             {
+                Console.WriteLine("Marking for copy: {0}", e.FullPath);
                 Copy.Add(e.FullPath);
             }
         }
 
+        public void Save()
+        {
+            DataStore.Store(this);
+        }
+
         public void Stop()
         {
-            _watcher.EnableRaisingEvents = false;
-            _watcher.Dispose();
+            Console.WriteLine("Stopping watcher for '{0}'", WatchPath);
+            DisableEvents();
+            _writeWatcher.Dispose();
+            _writeWatcher.Dispose();
+        }
+
+        public void DisableEvents()
+        {
+            _deleteWatcher.EnableRaisingEvents = false;
+            _writeWatcher.EnableRaisingEvents = false;
         }
     }
 }
