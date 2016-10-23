@@ -43,7 +43,7 @@ namespace Janus
         {
             Console.WriteLine(AssemblyDirectory);
             Console.WriteLine(LoaderLocation);
-            var a = Assembly.LoadFile(LoaderLocation);
+            var a = Assembly.UnsafeLoadFrom(LoaderLocation);
             foreach (var t in a.GetTypes())
             {
                 foreach (var attr in t.GetCustomAttributes(true))
