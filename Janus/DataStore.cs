@@ -18,8 +18,20 @@ namespace Janus
         /// </summary>
         private static readonly Dictionary<long, IDataStorageFormat> DataLoaders = new Dictionary<long, IDataStorageFormat>();
         private static readonly string LoaderName = "StorageFormats.dll";
-        private static readonly string ExeLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-        private static readonly string LoaderLocation = Path.Combine(ExeLocation, LoaderName);
+
+        public static string AssemblyDirectory
+        {
+            get
+            {
+                var codeBase = Assembly.GetExecutingAssembly().CodeBase;
+                var uri = new UriBuilder(codeBase);
+                var path = Uri.UnescapeDataString(uri.Path);
+                Console.WriteLine(path);
+                return Path.GetDirectoryName(path);
+            }
+        }
+
+        private static readonly string LoaderLocation = Path.Combine(AssemblyDirectory, LoaderName);
         private const long Version = 0x1;
 
         private static readonly byte[] HeaderBytes = { 0x04, (byte)'j', (byte)'w', 0x23};
@@ -29,6 +41,8 @@ namespace Janus
 
         public static void Initialise()
         {
+            Console.WriteLine(AssemblyDirectory);
+            Console.WriteLine(LoaderLocation);
             var a = Assembly.LoadFile(LoaderLocation);
             foreach (var t in a.GetTypes())
             {
