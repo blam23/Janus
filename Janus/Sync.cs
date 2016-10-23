@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 #if MD5_CHECK
@@ -33,8 +32,8 @@ namespace Janus
             get { return _addFiles; }
             set
             {
+                MainWindow.UpdateStore();
                 _addFiles = value;
-                Watcher.Save();
             }
         }
 
@@ -43,8 +42,8 @@ namespace Janus
             get { return _deleteFiles; }
             set
             {
+                MainWindow.UpdateStore();
                 _deleteFiles = value;
-                Watcher.Save();
             }
         }
 

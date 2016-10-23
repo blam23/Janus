@@ -41,7 +41,7 @@ namespace Janus
                     await watcher.DoInitialSynchronise();
                 }
 
-                _parent.Watchers.Add(watcher);
+                MainWindow.Watchers.Add(watcher);
                 Console.WriteLine("Added new watcher.");
                 Close();
             }

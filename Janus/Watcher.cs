@@ -122,11 +122,6 @@ namespace Janus
             }
         }
 
-        public void Save()
-        {
-            DataStore.Store(this);
-        }
-
         public void Stop()
         {
             Console.WriteLine("Stopping watcher for '{0}'", WatchPath);

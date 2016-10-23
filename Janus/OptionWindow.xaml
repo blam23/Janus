@@ -3,21 +3,21 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Janus"
+        xmlns:tb="http://www.hardcodet.net/taskbar"
         mc:Ignorable="d"
-        Title="Janus" Height="440" Width="735" Loaded="MainWindow_OnLoaded">
+        Title="Janus" Height="440" Width="735" Loaded="MainWindow_OnLoaded" Icon="Media/Janus.ico" Closing="MainWindow_OnClosing" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Window.Resources>
         <DataTemplate x:Key="watcherTemplate">
             <Grid Width="Auto">
                 <StackPanel Margin="5" >
                     <TextBlock Text="{Binding Path=WatchPath}" FontWeight="Bold" FontSize="16"/>
                     <TextBlock Text="{Binding Path=Sync.EndPath}" FontSize="14"/>
-                    <CheckBox Content="Automatically copy files" IsChecked="{Binding Path=Sync.AddFiles, Mode=TwoWay}"></CheckBox>
-                    <CheckBox Content="Automatically delete files" IsChecked="{Binding Path=Sync.DeleteFiles, Mode=TwoWay}"></CheckBox>
+                    <CheckBox Content="Automatically copy files" IsChecked="{Binding Path=Sync.AddFiles, Mode=TwoWay}" />
+                    <CheckBox Content="Automatically delete files" IsChecked="{Binding Path=Sync.DeleteFiles, Mode=TwoWay}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="5" >
-                    <Button Margin="5" Click="btnSync_Click" Padding="10" Content="Sync" FontSize="14"></Button>
-                    <Button Margin="5" Click="btnRemove_Click" Padding="10" Content="Remove" FontSize="14"></Button>
+                    <Button Margin="5" Click="btnSync_Click" Padding="10" Content="Sync" FontSize="14" />
+                    <Button Margin="5" Click="btnRemove_Click" Padding="10" Content="Remove" FontSize="14" />
                 </StackPanel>
             </Grid>
         </DataTemplate>
@@ -29,5 +29,36 @@
             </StackPanel>
         </Button>
         <ListBox HorizontalContentAlignment="Stretch" x:Name="listBox" Margin="10,10,10,53" ItemTemplate="{StaticResource watcherTemplate}"/>
+        <CheckBox x:Name="cbStartup" Content="Run on Startup" HorizontalAlignment="Left" Margin="10,366,0,0" VerticalAlignment="Top" Click="CbStartup_OnClick"/>
+        <tb:TaskbarIcon x:Name="trayIcon"
+                    Visibility="Visible"
+                    ToolTipText="Janus"
+                    IconSource="Media/Janus.ico"
+                        TrayMouseDoubleClick="TrayIcon_OnTrayMouseDoubleClick"
+                        
+        >
+            <tb:TaskbarIcon.ContextMenu>
+                <ContextMenu>
+                    <MenuItem Header="Show" Click="MenuItem_OnClick"/>
+                    <MenuItem Header="Exit" Click="Exit_OnClick" />
+                </ContextMenu>
+            </tb:TaskbarIcon.ContextMenu>
+        </tb:TaskbarIcon>
     </Grid>
+    
 </Window>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,8 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
+using System.ComponentModel;
+using System.Data;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Threading;
 
 namespace Janus
 {
@@ -11,7 +15,11 @@ namespace Janus
     /// </summary>
     public partial class MainWindow : Window
     {
-        public ObservableCollection<Watcher> Watchers = new ObservableCollection<Watcher>();
+        public static bool Exit = false;
+        public static DataProvider Data;
+        public static ObservableCollection<Watcher> Watchers;
+        private static readonly string Startup = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
+        private static readonly string Shortcut = Path.Combine(Startup, "Janus.url");
 
         public MainWindow()
         {
@@ -27,9 +35,28 @@ namespace Janus
 
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
-            listBox.ItemsSource = Watchers;
+            Hide();
+            DataStore.Initialise();
+            var d = DataStore.Load();
+            Data = d.DataProvider;
+            Watchers = d.Watchers;
 
-            var watch = DataStore.Load(@"D:\Arch");
+            if (Watchers.Count == 0) Show();
+
+            listBox.ItemsSource = Watchers;
+            Watchers.CollectionChanged += Watchers_CollectionChanged;
+
+            cbStartup.IsChecked = File.Exists(Shortcut);
+        }
+
+        private void Watchers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            UpdateStore();
+        }
+
+        public static void UpdateStore()
+        {
+            DataStore.Store(new JanusData(Watchers, Data));
         }
 
         private void btnRemove_Click(object sender, RoutedEventArgs e)
@@ -48,6 +75,64 @@ namespace Janus
             var watcher = btn.DataContext as Watcher;
 
             watcher?.Synchronise();
+        }
+
+        private void CbStartup_OnClick(object sender, RoutedEventArgs e)
+        {
+            if (!cbStartup.IsChecked.HasValue) return;
+            if (cbStartup.IsChecked.Value)
+            {
+                AddToStartup();
+            }
+            else
+            {
+                RemoveFromStartup();
+            }
+        }
+
+        private void RemoveFromStartup()
+        {
+            if (File.Exists(Shortcut))
+            {
+                File.Delete(Shortcut);
+            }
+        }
+
+        private void AddToStartup()
+        {
+            using (var writer = new StreamWriter(Shortcut))
+            {
+                var app = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                writer.WriteLine("[InternetShortcut]");
+                writer.WriteLine("URL=file:///" + app);
+                writer.WriteLine("IconIndex=0");
+                var icon = app.Replace('\\', '/');
+                writer.WriteLine("IconFile=" + icon);
+                writer.Flush();
+            }
+        }
+
+        private void TrayIcon_OnTrayMouseDoubleClick(object sender, RoutedEventArgs e)
+        {
+            Show();
+        }
+
+        private void MainWindow_OnClosing(object sender, CancelEventArgs e)
+        {
+            if (Exit) return;
+            e.Cancel = true;
+            Hide();
+        }
+
+        private void MenuItem_OnClick(object sender, RoutedEventArgs e)
+        {
+            Show();
+        }
+
+        private void Exit_OnClick(object sender, RoutedEventArgs e)
+        {
+            Exit = true;
+            Close();
         }
     }
 }
