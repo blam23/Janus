@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Janus" Height="440" Width="735" Loaded="MainWindow_OnLoaded" Icon="Media/Janus.ico" Closing="MainWindow_OnClosing" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Window.Resources>
-        <DataTemplate x:Key="watcherTemplate">
+        <DataTemplate x:Key="WatcherTemplate">
             <Grid Width="Auto">
                 <StackPanel Margin="5" >
                     <TextBlock Text="{Binding Path=WatchPath}" FontWeight="Bold" FontSize="16"/>
@@ -28,7 +28,7 @@
                 <TextBlock FontSize="14" Margin ="10,0" HorizontalAlignment="Center" VerticalAlignment="Center">New Watcher</TextBlock>
             </StackPanel>
         </Button>
-        <ListBox HorizontalContentAlignment="Stretch" x:Name="listBox" Margin="10,10,10,53" ItemTemplate="{StaticResource watcherTemplate}"/>
+        <ListBox HorizontalContentAlignment="Stretch" x:Name="listBox" Margin="10,10,10,53" ItemTemplate="{StaticResource WatcherTemplate}"/>
         <CheckBox x:Name="cbStartup" Content="Run on Startup" HorizontalAlignment="Left" Margin="10,366,0,0" VerticalAlignment="Top" Click="CbStartup_OnClick"/>
         <tb:TaskbarIcon x:Name="trayIcon"
                     Visibility="Visible"

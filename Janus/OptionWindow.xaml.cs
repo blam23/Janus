@@ -15,6 +15,7 @@ namespace Janus
     /// </summary>
     public partial class MainWindow : Window
     {
+        public static readonly DataStore MainStore = new DataStore();
         public static bool Exit = false;
         public static DataProvider Data;
         public static ObservableCollection<Watcher> Watchers;
@@ -36,8 +37,8 @@ namespace Janus
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
             Hide();
-            DataStore.Initialise();
-            var d = DataStore.Load();
+            MainStore.Initialise();
+            var d = MainStore.Load();
             Data = d.DataProvider;
             Watchers = d.Watchers;
 
@@ -56,7 +57,7 @@ namespace Janus
 
         public static void UpdateStore()
         {
-            DataStore.Store(new JanusData(Watchers, Data));
+            MainStore.Store(new JanusData(Watchers, Data));
         }
 
         private void btnRemove_Click(object sender, RoutedEventArgs e)

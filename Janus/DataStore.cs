@@ -7,19 +7,27 @@ using System.Reflection;
 
 namespace Janus
 {
-    static class DataStore
+    public class DataStore
     {
-        public static readonly string AppData      = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
-        public static readonly string DataLocation = Path.Combine(AppData, Assembly.GetEntryAssembly().GetName().Name);
+        public DataStore(string pathOverride = null)
+        {
+            DataLocation   = pathOverride ?? Path.Combine(AppData, Assembly.GetEntryAssembly().GetName().Name);
+            DataLocation   = Path.GetFullPath(DataLocation);
+            LoaderLocation = Path.Combine(AssemblyDirectory, LoaderName);
+            StoreName      = Path.Combine(DataLocation, "watchdata");
+        }
+
+        public static readonly string AppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+        public readonly string DataLocation;
 
         /// <summary>
         /// Maps Version numbers to data loaders.
         /// Enables backwards compatibility.
         /// </summary>
-        private static readonly Dictionary<long, IDataStorageFormat> DataLoaders = new Dictionary<long, IDataStorageFormat>();
-        private static readonly string LoaderName = "StorageFormats.dll";
+        public readonly Dictionary<long, IDataStorageFormat> DataLoaders = new Dictionary<long, IDataStorageFormat>();
+        private readonly string LoaderName = "StorageFormats.dll";
 
-        public static string AssemblyDirectory
+        public string AssemblyDirectory
         {
             get
             {
@@ -31,15 +39,15 @@ namespace Janus
             }
         }
 
-        private static readonly string LoaderLocation = Path.Combine(AssemblyDirectory, LoaderName);
-        private const long Version = 0x1;
+        public readonly string LoaderLocation;
+        public const long Version = 0x2;
 
-        private static readonly byte[] HeaderBytes = { 0x04, (byte)'j', (byte)'w', 0x23};
-        public  static readonly char[] Copy        = { (char)0x03, 'a', 'd', 'd' };
-        public  static readonly char[] Delete      = { (char)0x02, 'r', 'm' };
-        private static readonly string StoreName   = Path.Combine(DataLocation, "watchdata");
+        private readonly byte[] HeaderBytes = { 0x04, (byte)'j', (byte)'w', 0x23};
+        private readonly char[] Copy        = { (char)0x03, 'a', 'd', 'd' };
+        private readonly char[] Delete      = { (char)0x02, 'r', 'm' };
+        private readonly string StoreName;
 
-        public static void Initialise()
+        public void Initialise()
         {
             Console.WriteLine(AssemblyDirectory);
             Console.WriteLine(LoaderLocation);
@@ -56,7 +64,7 @@ namespace Janus
             }
         }
 
-        public static void Store(JanusData data)
+        public void Store(JanusData data)
         {
             if (!Directory.Exists(DataLocation))
             {
@@ -84,7 +92,7 @@ namespace Janus
             }
         }
 
-        public static JanusData Load()
+        public JanusData Load()
         {
             if (!Directory.Exists(DataLocation))
             {
@@ -98,7 +106,6 @@ namespace Janus
 
             using (var fs = File.OpenRead(StoreName))
             {
-                // TODO: BinaryReader
                 using (var reader = new BinaryReader(fs))
                 {
                     var header = reader.ReadBytes(4);
@@ -129,9 +136,9 @@ namespace Janus
             }
         }
 
-        private static void InvalidDataStore(string message)
+        private void InvalidDataStore(string message)
         {
-            Debug.WriteLine($"Invalid DataStore file found: '{message}'; removing file.");
+            Console.WriteLine($"Invalid DataStore file found: '{message}'; removing file.");
             File.Delete(StoreName);
         }
     }

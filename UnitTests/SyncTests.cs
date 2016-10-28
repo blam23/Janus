@@ -54,12 +54,14 @@ namespace UnitTests
 
             watcher.Sync.Add(testFile1, true);
 
-            Assert.IsTrue(File.Exists(Path.Combine(testOutput, "add_test_1.txt")));
+            Assert.IsTrue(File.Exists(Path.Combine(testOutput, "add_test_1.txt")),
+                "First test file was not copied to out dir.");
 
 
             watcher.Sync.Add(testFile2, false);
 
-            Assert.IsTrue(File.Exists(Path.Combine(testOutput, "add_test_2.txt")));
+            Assert.IsTrue(File.Exists(Path.Combine(testOutput, "add_test_2.txt")),
+                "Second test file was not copied to out dir.");
         }
 
         [TestMethod]
@@ -71,11 +73,13 @@ namespace UnitTests
 
             watcher.Sync.Add(testFile1, true);
 
-            Assert.IsTrue(File.Exists(Path.Combine(testOutput, "delete_test_1.txt")));
+            Assert.IsTrue(File.Exists(Path.Combine(testOutput, "delete_test_1.txt")),
+                "Delete test file was not copied to out dir.");
 
             watcher.Sync.Delete(testFile1);
 
-            Assert.IsFalse(File.Exists(Path.Combine(testOutput, "delete_test_1.txt")));
+            Assert.IsFalse(File.Exists(Path.Combine(testOutput, "delete_test_1.txt")),
+                "Delete test file was not removed from out dir.");
         }
     }
 }

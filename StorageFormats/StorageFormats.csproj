@@ -40,7 +40,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DSF_0x1.cs" />
+    <Compile Include="DSF_0x2.cs" />
+    <Compile Include="OldFormats\DSF_0x1.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -54,6 +54,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="DataStoreTests.cs" />
     <Compile Include="SyncTests.cs" />
     <Compile Include="TestHelper.cs" />
   </ItemGroup>
@@ -64,6 +65,10 @@
     <ProjectReference Include="..\Janus\Janus.csproj">
       <Project>{492b7459-6839-401d-bab6-55b23a01690d}</Project>
       <Name>Janus</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\StorageFormats\StorageFormats.csproj">
+      <Project>{f375d773-7141-4c59-9ed7-a7371e3b1b47}</Project>
+      <Name>StorageFormats</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />

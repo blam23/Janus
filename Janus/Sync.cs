@@ -163,5 +163,29 @@ namespace Janus
                 Delete(path, isPathFull, count - 1);
             }
         }
+
+        public override bool Equals(object obj)
+        {
+            var sobj = obj as Sync;
+            return sobj != null && Equals(sobj);
+        }
+
+        private bool Equals(Sync other)
+        {
+            return _addFiles == other._addFiles &&
+                _deleteFiles == other._deleteFiles && 
+                string.Equals(EndPath, other.EndPath);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = _addFiles.GetHashCode();
+                hashCode = (hashCode*397) ^ _deleteFiles.GetHashCode();
+                hashCode = (hashCode*397) ^ (EndPath?.GetHashCode() ?? 0);
+                return hashCode;
+            }
+        }
     }
 }

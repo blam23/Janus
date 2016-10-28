@@ -16,10 +16,12 @@ namespace Janus
         public List<string> Delete = new List<string>();
         public List<string> Copy = new List<string>();
 
+        public readonly bool Observe = false;
+
         private FileSystemWatcher _writeWatcher;
         private FileSystemWatcher _deleteWatcher;
 
-        public Watcher(string watchPath, string endPath, bool addFiles, bool deleteFiles, string filter, bool recursive)
+        public Watcher(string watchPath, string endPath, bool addFiles, bool deleteFiles, string filter, bool recursive, bool observe = false)
         {
             WatchPath = watchPath;
 
@@ -27,6 +29,12 @@ namespace Janus
 
             Filter = filter;
             Recursive = recursive;
+
+            if (observe)
+            {
+                Observe = true;
+                return;
+            }
 
             _writeWatcher = new FileSystemWatcher
             {
@@ -134,6 +142,34 @@ namespace Janus
         {
             _deleteWatcher.EnableRaisingEvents = false;
             _writeWatcher.EnableRaisingEvents = false;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var wobj = obj as Watcher;
+            return wobj != null && Equals(wobj);
+        }
+
+        private bool Equals(Watcher other)
+        {
+            return Observe == other.Observe && 
+                string.Equals(WatchPath, other.WatchPath) && 
+                Equals(Sync, other.Sync) && 
+                string.Equals(Filter, other.Filter) && 
+                Recursive == other.Recursive;
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var hashCode = Observe.GetHashCode();
+                hashCode = (hashCode*397) ^ (WatchPath?.GetHashCode() ?? 0);
+                hashCode = (hashCode*397) ^ (Sync?.GetHashCode() ?? 0);
+                hashCode = (hashCode*397) ^ (Filter?.GetHashCode() ?? 0);
+                hashCode = (hashCode*397) ^ Recursive.GetHashCode();
+                return hashCode;
+            }
         }
     }
 }
