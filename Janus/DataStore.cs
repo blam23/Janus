@@ -18,15 +18,28 @@ namespace Janus
         }
 
         public static readonly string AppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
+
+        /// <summary>
+        /// Directory of the data storage file for this DataStore object.
+        /// </summary>
         public readonly string DataLocation;
+
+        /// <summary>
+        /// Full file path of the data file (DataLocation\watchdata)
+        /// </summary>
+        private readonly string StoreName;
 
         /// <summary>
         /// Maps Version numbers to data loaders.
         /// Enables backwards compatibility.
         /// </summary>
         public readonly Dictionary<long, IDataStorageFormat> DataLoaders = new Dictionary<long, IDataStorageFormat>();
+
         private readonly string LoaderName = "StorageFormats.dll";
 
+        /// <summary>
+        /// Location of the exe (not current directory!)
+        /// </summary>
         public string AssemblyDirectory
         {
             get
@@ -39,14 +52,28 @@ namespace Janus
             }
         }
 
+        /// <summary>
+        /// Full location of the DLL that contains storage formats that will be loaded.
+        /// </summary>
         public readonly string LoaderLocation;
+
+        /// <summary>
+        /// Current StorageFormat version.
+        /// Used for maintaining possible backwards compatibilty.
+        /// </summary>
         public const long Version = 0x2;
 
+        /// <summary>
+        /// First bytes in the store file.
+        /// Should NEVER change.
+        /// </summary>
         private readonly byte[] HeaderBytes = { 0x04, (byte)'j', (byte)'w', 0x23};
-        private readonly char[] Copy        = { (char)0x03, 'a', 'd', 'd' };
-        private readonly char[] Delete      = { (char)0x02, 'r', 'm' };
-        private readonly string StoreName;
 
+
+        /// <summary>
+        /// Loads in StorageFormats.dll and all it's IDataStorageFormat classes.
+        /// (Classes must be marked with StorageFormat attribute)
+        /// </summary>
         public void Initialise()
         {
             Console.WriteLine(AssemblyDirectory);
@@ -64,6 +91,10 @@ namespace Janus
             }
         }
 
+        /// <summary>
+        /// Saves Watcher data + any DataProvider data
+        /// </summary>
+        /// <param name="data">Data to be saved to disk</param>
         public void Store(JanusData data)
         {
             if (!Directory.Exists(DataLocation))
@@ -92,6 +123,10 @@ namespace Janus
             }
         }
 
+        /// <summary>
+        /// Loads in data from [StoreName].
+        /// </summary>
+        /// <returns>Watchers and DataProvider data</returns>
         public JanusData Load()
         {
             if (!Directory.Exists(DataLocation))
@@ -136,6 +171,12 @@ namespace Janus
             }
         }
 
+        /// <summary>
+        /// Called when an invalid data store is tried to be loaded.
+        /// Prints an error and deletes the invalid store.
+        /// TODO: Rename instead of delete for recovery?
+        /// </summary>
+        /// <param name="message">Error reason</param>
         private void InvalidDataStore(string message)
         {
             Console.WriteLine($"Invalid DataStore file found: '{message}'; removing file.");

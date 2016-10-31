@@ -27,6 +27,10 @@ namespace Janus
         private bool _addFiles;
         private bool _deleteFiles;
 
+        /// <summary>
+        /// If true files will be automatically added to the EndPath directory
+        /// when they are added to the Watcher's WatchPath.
+        /// </summary>
         public bool AddFiles
         {
             get { return _addFiles; }
@@ -37,6 +41,10 @@ namespace Janus
             }
         }
 
+        /// <summary>
+        /// If true files will be automatically deleted from the EndPath directory
+        /// when they are removed from the Watcher's WatchPath.
+        /// </summary>
         public bool DeleteFiles
         {
             get { return _deleteFiles; }
@@ -47,6 +55,9 @@ namespace Janus
             }
         }
 
+        /// <summary>
+        /// Parent watcher that contains the event logic
+        /// </summary>
         public Watcher Watcher { get; set; }
 
 #if MD5_CHECK
@@ -62,6 +73,10 @@ namespace Janus
         }
 #endif
 
+        /// <summary>
+        /// Attempts to make the EndPath directory a 1:1 copy of the
+        /// Watcher's WatchPath.
+        /// </summary>
         public void TryFullSynchronise()
         {
             if (!AddFiles && !DeleteFiles) return;
@@ -126,6 +141,12 @@ namespace Janus
             // TODO: Add path sync
         }
 
+        /// <summary>
+        /// Adds a file from the WatchPath to the EndPath.
+        /// </summary>
+        /// <param name="path">The path of the file that you want to add</param>
+        /// <param name="isPathFull">If the path is a full path or relative to the WatchPath</param>
+        /// <param name="count">Amount of times to retry on failure</param>
         public async void Add(string path, bool isPathFull = true, int count = 5)
         {
             if (count <= 0) return;
@@ -148,6 +169,13 @@ namespace Janus
             }
         }
 
+
+        /// <summary>
+        /// Removes a file from the EndPath
+        /// </summary>
+        /// <param name="path">The path of the file that you want to add</param>
+        /// <param name="isPathFull">If the path is a full path or relative to the WatchPath</param>
+        /// <param name="count">Amount of times to retry on failure</param>
         public async void Delete(string path, bool isPathFull = true, int count = 5)
         {
             if (count <= 0) return;
@@ -164,12 +192,23 @@ namespace Janus
             }
         }
 
+        /// <summary>
+        /// Equality Check wrapper.
+        /// </summary>
+        /// <param name="obj">Object to compare (always false if not Sync type)</param>
+        /// <returns>True or false if object is a Sync object with matching properties</returns>
         public override bool Equals(object obj)
         {
             var sobj = obj as Sync;
             return sobj != null && Equals(sobj);
         }
 
+        /// <summary>
+        /// Equality check.
+        /// Used in test.
+        /// </summary>
+        /// <param name="other">Sync to compare</param>
+        /// <returns>True or false if "other" has same peroperties</returns>
         private bool Equals(Sync other)
         {
             return _addFiles == other._addFiles &&
@@ -177,6 +216,10 @@ namespace Janus
                 string.Equals(EndPath, other.EndPath);
         }
 
+        /// <summary>
+        /// Calculates a "unique" hash code based on the properties of this object.
+        /// </summary>
+        /// <returns>A hash code</returns>
         public override int GetHashCode()
         {
             unchecked
