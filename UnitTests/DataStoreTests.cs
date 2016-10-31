@@ -85,6 +85,7 @@ namespace UnitTests
         [TestMethod]
         public void DataStoreChange()
         {
+            Reset();
             var testStore = new DataStore("test");
 
             Assert.IsFalse(string.IsNullOrEmpty(DataStore.AppData),
