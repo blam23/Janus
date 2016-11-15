@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
 using Janus;
 
-namespace StorageFormats
+namespace StorageFormats.OldFormats
 {
     [StorageFormat(0x1)]
     // ReSharper disable once InconsistentNaming
@@ -12,7 +11,7 @@ namespace StorageFormats
         private const char Start  = '[';
         private const char End    = ']';
         private const char Switch = '.';
-        private const char EoF = '#';
+        private const char EoF    = '#';
 
         public JanusData Read(BinaryReader reader)
         {

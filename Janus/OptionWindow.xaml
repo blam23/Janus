@@ -23,14 +23,14 @@
         </DataTemplate>
     </Window.Resources>
     <Grid>
-        <Button x:Name="btnWatcher" Margin="0,0,10,10" HorizontalContentAlignment="Center" HorizontalAlignment="Right" Width="189" Click="btnWatcher_Click" Height="33" VerticalAlignment="Bottom">
+        <Button x:Name="BtnWatcher" Margin="0,0,10,10" HorizontalContentAlignment="Center" HorizontalAlignment="Right" Width="189" Click="btnWatcher_Click" Height="33" VerticalAlignment="Bottom">
             <StackPanel Orientation="Horizontal" Margin="5,5,5,5">
                 <TextBlock FontSize="14" Margin ="10,0" HorizontalAlignment="Center" VerticalAlignment="Center">New Watcher</TextBlock>
             </StackPanel>
         </Button>
-        <ListBox HorizontalContentAlignment="Stretch" x:Name="listBox" Margin="10,10,10,53" ItemTemplate="{StaticResource WatcherTemplate}"/>
-        <CheckBox x:Name="cbStartup" Content="Run on Startup" HorizontalAlignment="Left" Margin="10,366,0,0" VerticalAlignment="Top" Click="CbStartup_OnClick"/>
-        <tb:TaskbarIcon x:Name="trayIcon"
+        <ListBox HorizontalContentAlignment="Stretch" x:Name="ListBox" Margin="10,10,10,53" ItemTemplate="{StaticResource WatcherTemplate}"/>
+        <CheckBox x:Name="CbStartup" Content="Run on Startup" HorizontalAlignment="Left" Margin="10,366,0,0" VerticalAlignment="Top" Click="CbStartup_OnClick"/>
+        <tb:TaskbarIcon x:Name="TrayIcon"
                     Visibility="Visible"
                     ToolTipText="Janus"
                     IconSource="Media/Janus.ico"

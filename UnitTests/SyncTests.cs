@@ -7,33 +7,33 @@ namespace UnitTests
     [TestClass]
     public class SyncTests
     {
-        readonly string path = Path.GetFullPath(@"Tests\Sync");
-        readonly string dataPath = Path.GetFullPath(@"..\..\Data\Sync");
+        private readonly string _path = Path.GetFullPath(@"Tests\Sync");
+        private readonly string _dataPath = Path.GetFullPath(@"..\..\Data\Sync");
 
-        string testInput;
-        string testOutput;
-        Watcher watcher;
+        private string _testInput;
+        private string _testOutput;
+        private Watcher _watcher;
 
 
-        public void Setup(string test, bool addFiles, bool deleteFiles, string filter, bool recursive)
+        private void Setup(string test, bool addFiles, bool deleteFiles, string filter, bool recursive)
         {
-            string dataInput = Path.Combine(dataPath, test, @"in");
+            var dataInput = Path.Combine(_dataPath, test, @"in");
 
-            testInput = Path.Combine(path, test, @"in");
-            testOutput = Path.Combine(path, test, @"out");
+            _testInput = Path.Combine(_path, test, @"in");
+            _testOutput = Path.Combine(_path, test, @"out");
 
             // Clear existing test data
-            if (Directory.Exists(testInput))
-                Directory.Delete(testInput, true);
-            if (Directory.Exists(testOutput))
-                Directory.Delete(testOutput, true);
+            if (Directory.Exists(_testInput))
+                Directory.Delete(_testInput, true);
+            if (Directory.Exists(_testOutput))
+                Directory.Delete(_testOutput, true);
 
             // Copy needed files from data directory
-            TestHelper.CopyDirectory(testInput, dataInput);
+            TestHelper.CopyDirectory(_testInput, dataInput);
 
-            watcher = new Watcher(
-                testInput,
-                testOutput,
+            _watcher = new Watcher(
+                _testInput,
+                _testOutput,
                 addFiles,
                 deleteFiles,
                 filter,
@@ -48,19 +48,19 @@ namespace UnitTests
         {
             const string testName = "Copy";
             Setup(testName, false, false, "*", false);
-            var testFile1 = Path.Combine(testInput, "add_test_1.txt");
-            var testFile2 = "add_test_2.txt";
+            var testFile1 = Path.Combine(_testInput, "add_test_1.txt");
+            const string testFile2 = "add_test_2.txt";
 
 
-            watcher.Sync.Add(testFile1, true);
+            _watcher.Sync.Add(testFile1, true);
 
-            Assert.IsTrue(File.Exists(Path.Combine(testOutput, "add_test_1.txt")),
+            Assert.IsTrue(File.Exists(Path.Combine(_testOutput, "add_test_1.txt")),
                 "First test file was not copied to out dir.");
 
 
-            watcher.Sync.Add(testFile2, false);
+            _watcher.Sync.Add(testFile2, false);
 
-            Assert.IsTrue(File.Exists(Path.Combine(testOutput, "add_test_2.txt")),
+            Assert.IsTrue(File.Exists(Path.Combine(_testOutput, "add_test_2.txt")),
                 "Second test file was not copied to out dir.");
         }
 
@@ -69,16 +69,16 @@ namespace UnitTests
         {
             const string testName = "Delete";
             Setup(testName, false, false, "*", false);
-            var testFile1 = Path.Combine(testInput, "delete_test_1.txt");
+            var testFile1 = Path.Combine(_testInput, "delete_test_1.txt");
 
-            watcher.Sync.Add(testFile1, true);
+            _watcher.Sync.Add(testFile1, true);
 
-            Assert.IsTrue(File.Exists(Path.Combine(testOutput, "delete_test_1.txt")),
+            Assert.IsTrue(File.Exists(Path.Combine(_testOutput, "delete_test_1.txt")),
                 "Delete test file was not copied to out dir.");
 
-            watcher.Sync.Delete(testFile1);
+            _watcher.Sync.Delete(testFile1);
 
-            Assert.IsFalse(File.Exists(Path.Combine(testOutput, "delete_test_1.txt")),
+            Assert.IsFalse(File.Exists(Path.Combine(_testOutput, "delete_test_1.txt")),
                 "Delete test file was not removed from out dir.");
         }
     }

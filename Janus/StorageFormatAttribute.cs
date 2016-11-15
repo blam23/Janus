@@ -5,7 +5,7 @@ namespace Janus
     [AttributeUsage(AttributeTargets.Class)]
     public class StorageFormatAttribute : Attribute
     {
-        public long VersionNumber;
+        public readonly long VersionNumber;
 
         public StorageFormatAttribute(long versionNumber)
         {

@@ -1,5 +1,4 @@
 #define TEST
-using System.Collections.ObjectModel;
 using Janus;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -10,7 +9,7 @@ namespace UnitTests
     {
         private JanusData _data = new JanusData();
 
-        public void Reset()
+        private void Reset()
         {
             _data = new JanusData();
         }
@@ -39,39 +38,39 @@ namespace UnitTests
         }
 
 
-        private int count = 1;
+        private int _count = 1;
 
         private void AssertLoadedWatchersAreCorrect(JanusData storedList)
         {
             Assert.AreEqual(storedList.Watchers.Count, _data.Watchers.Count,
-                "[{0}] Number of watchers in loaded list does not match saved list.", count);
+                "[{0}] Number of watchers in loaded list does not match saved list.", _count);
 
             for (var i = 0; i < storedList.Watchers.Count; i++)
             {
                 Assert.AreEqual(storedList.Watchers[i], _data.Watchers[i],
-                    "[{0}-{1}] Stored watcher was not the same as saved watcher.", count, i);
+                    "[{0}-{1}] Stored watcher was not the same as saved watcher.", _count, i);
             }
 
-            count++;
+            _count++;
         }
 
         private void AssertDataProvidersAreEqual(JanusData storedList)
         {
             Assert.AreEqual(storedList.DataProvider.Dict.Count, _data.DataProvider.Dict.Count,
-                "[{0}] Number of values in loaded data provider did not match.", count);
+                "[{0}] Number of values in loaded data provider did not match.", _count);
 
             foreach (var kvp in _data.DataProvider.Dict)
             {
                 AssertLoadedDataProviderContains(storedList, kvp.Key, kvp.Value);
             }
-            count++;
+            _count++;
         }
 
         private void AssertLoadedDataProviderContains<T>(JanusData storedList, string key, T expected)
         {
             var data = storedList.DataProvider.Get<T>(key);
             Assert.AreEqual(data, expected, 
-                "[{0}] Loaded DataProvider value did not match.", count);
+                "[{0}] Loaded DataProvider value did not match.", _count);
         }
 
         private JanusData StoreAndLoad(DataStore testStore)
@@ -90,7 +89,7 @@ namespace UnitTests
 
             Assert.IsFalse(string.IsNullOrEmpty(DataStore.AppData),
                 "DataStore did not get the AppData folder.");
-            Assert.IsFalse(string.IsNullOrEmpty(testStore.AssemblyDirectory),
+            Assert.IsFalse(string.IsNullOrEmpty(DataStore.AssemblyDirectory),
                 "DataStore did not get the AssemblyDirectory.");
             Assert.IsFalse(string.IsNullOrEmpty(testStore.DataLocation),
                 "DataStore did not set the DataLocation.");

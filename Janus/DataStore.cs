@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using Janus.Properties;
 
 namespace Janus
 {
@@ -14,7 +14,7 @@ namespace Janus
             DataLocation   = pathOverride ?? Path.Combine(AppData, Assembly.GetEntryAssembly().GetName().Name);
             DataLocation   = Path.GetFullPath(DataLocation);
             LoaderLocation = Path.Combine(AssemblyDirectory, LoaderName);
-            StoreName      = Path.Combine(DataLocation, "watchdata");
+            _storeName      = Path.Combine(DataLocation, "watchdata");
         }
 
         public static readonly string AppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -27,7 +27,7 @@ namespace Janus
         /// <summary>
         /// Full file path of the data file (DataLocation\watchdata)
         /// </summary>
-        private readonly string StoreName;
+        private readonly string _storeName;
 
         /// <summary>
         /// Maps Version numbers to data loaders.
@@ -35,12 +35,12 @@ namespace Janus
         /// </summary>
         public readonly Dictionary<long, IDataStorageFormat> DataLoaders = new Dictionary<long, IDataStorageFormat>();
 
-        private readonly string LoaderName = "StorageFormats.dll";
+        private const string LoaderName = "StorageFormats.dll";
 
         /// <summary>
         /// Location of the exe (not current directory!)
         /// </summary>
-        public string AssemblyDirectory
+        public static string AssemblyDirectory
         {
             get
             {
@@ -67,7 +67,7 @@ namespace Janus
         /// First bytes in the store file.
         /// Should NEVER change.
         /// </summary>
-        private readonly byte[] HeaderBytes = { 0x04, (byte)'j', (byte)'w', 0x23};
+        private readonly byte[] _headerBytes = { 0x04, (byte)'j', (byte)'w', 0x23};
 
 
         /// <summary>
@@ -102,11 +102,11 @@ namespace Janus
                 Directory.CreateDirectory(DataLocation);
             }
 
-            using (var fs = File.Create(StoreName))
+            using (var fs = File.Create(_storeName))
             {
                 using (var writer = new BinaryWriter(fs))
                 {
-                    writer.Write(HeaderBytes);
+                    writer.Write(_headerBytes);
                     writer.Write(Version);
                     IDataStorageFormat format;
                     if (DataLoaders.TryGetValue(Version, out format))
@@ -134,17 +134,17 @@ namespace Janus
                 Directory.CreateDirectory(DataLocation);
             }
 
-            if (!File.Exists(StoreName))
+            if (!File.Exists(_storeName))
             {
                 return new JanusData();
             }
 
-            using (var fs = File.OpenRead(StoreName))
+            using (var fs = File.OpenRead(_storeName))
             {
                 using (var reader = new BinaryReader(fs))
                 {
                     var header = reader.ReadBytes(4);
-                    if (!header.SequenceEqual(HeaderBytes))
+                    if (!header.SequenceEqual(_headerBytes))
                     {
                         fs.Close();
                         InvalidDataStore("Invalid header");
@@ -179,8 +179,8 @@ namespace Janus
         /// <param name="message">Error reason</param>
         private void InvalidDataStore(string message)
         {
-            Console.WriteLine($"Invalid DataStore file found: '{message}'; removing file.");
-            File.Delete(StoreName);
+            Console.WriteLine(Resources.Invalid_DataStore, message);
+            File.Delete(_storeName);
         }
     }
 }

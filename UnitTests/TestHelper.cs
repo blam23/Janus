@@ -4,12 +4,17 @@ namespace UnitTests
 {
     public static class TestHelper
     {
-        public static void CopyDirectory(System.String testInput, System.String dataInput)
+        public static void CopyDirectory(string testInput, string dataInput)
         {
-            Process proc = new Process();
-            proc.StartInfo.UseShellExecute = true;
-            proc.StartInfo.FileName = @"C:\WINDOWS\system32\xcopy.exe";
-            proc.StartInfo.Arguments = $@"""{dataInput}"" ""{testInput}"" /E /I /Y";
+            var proc = new Process
+            {
+                StartInfo =
+                {
+                    UseShellExecute = true,
+                    FileName = @"C:\WINDOWS\system32\xcopy.exe",
+                    Arguments = $@"""{dataInput}"" ""{testInput}"" /E /I /Y"
+                }
+            };
             proc.Start();
             proc.WaitForExit();
         }

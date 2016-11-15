@@ -25,18 +25,18 @@ namespace Janus
 
         private async void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            if (Directory.Exists(txtDirectory.Text)
-                && Directory.Exists(txtOutDirectory.Text))
+            if (Directory.Exists(TxtDirectory.Text)
+                && Directory.Exists(TxtOutDirectory.Text))
             {
                 var watcher = new Watcher(
-                    txtDirectory.Text,
-                    txtOutDirectory.Text,
-                    cbAdd.IsChecked ?? false,
-                    cbDelete.IsChecked ?? false,
-                    txtFilter.Text,
-                    cbRecurse.IsChecked ?? false);
+                    TxtDirectory.Text,
+                    TxtOutDirectory.Text,
+                    CbAdd.IsChecked ?? false,
+                    CbDelete.IsChecked ?? false,
+                    TxtFilter.Text,
+                    CbRecurse.IsChecked ?? false);
 
-                if (cbImmediate.IsChecked ?? false)
+                if (CbImmediate.IsChecked ?? false)
                 {
                     await watcher.DoInitialSynchronise();
                 }
@@ -55,7 +55,7 @@ namespace Janus
 
         private void btnBrowseDirectory_Click(object sender, RoutedEventArgs e)
         {
-            ShowFolderBrowser(txtDirectory);
+            ShowFolderBrowser(TxtDirectory);
         }
 
         private void ShowFolderBrowser(TextBox tb)
@@ -71,23 +71,23 @@ namespace Janus
 
         private void Unconfirm()
         {
-            cbConfirm.IsChecked = false;
-            btnAdd.IsEnabled = false;
+            CbConfirm.IsChecked = false;
+            BtnAdd.IsEnabled = false;
         }
 
         private void btnBrowseOutDirectory_Click(object sender, RoutedEventArgs e)
         {
-            ShowFolderBrowser(txtOutDirectory);
+            ShowFolderBrowser(TxtOutDirectory);
         }
 
         private void cbConfirm_Checked(object sender, RoutedEventArgs e)
         {
-            btnAdd.IsEnabled = cbConfirm.IsChecked ?? false;
+            BtnAdd.IsEnabled = CbConfirm.IsChecked ?? false;
         }
 
         private void OptionChangeEvent(object sender, RoutedEventArgs e)
         {
-            if (cbConfirm != null) Unconfirm();
+            if (CbConfirm != null) Unconfirm();
         }
     }
 }

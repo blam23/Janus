@@ -114,4 +114,23 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="Sync_Add_" xml:space="preserve">
+    <value>An exception occured while copying file {1}:
+	</value>
+  </data>
+  <data name="Sync_Delete_" xml:space="preserve">
+    <value>An exception occured while deleting file {1}:
+	</value>
+  </data>
+  <data name="Copy_Error" xml:space="preserve">
+    <value>An exception occured while copying file {1}:
+	</value>
+  </data>
+  <data name="Delete_Error" xml:space="preserve">
+    <value>An exception occured while deleting file {1}:
+	</value>
+  </data>
+  <data name="Invalid_DataStore" xml:space="preserve">
+    <value>Invalid DataStore file found: '{0}'; removing file.</value>
+  </data>
 </root>

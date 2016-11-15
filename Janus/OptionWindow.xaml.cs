@@ -2,11 +2,9 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
-using System.Data;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Threading;
 
 namespace Janus
 {
@@ -44,10 +42,10 @@ namespace Janus
 
             if (Watchers.Count == 0) Show();
 
-            listBox.ItemsSource = Watchers;
+            ListBox.ItemsSource = Watchers;
             Watchers.CollectionChanged += Watchers_CollectionChanged;
 
-            cbStartup.IsChecked = File.Exists(Shortcut);
+            CbStartup.IsChecked = File.Exists(Shortcut);
         }
 
         private void Watchers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -80,8 +78,8 @@ namespace Janus
 
         private void CbStartup_OnClick(object sender, RoutedEventArgs e)
         {
-            if (!cbStartup.IsChecked.HasValue) return;
-            if (cbStartup.IsChecked.Value)
+            if (!CbStartup.IsChecked.HasValue) return;
+            if (CbStartup.IsChecked.Value)
             {
                 AddToStartup();
             }
