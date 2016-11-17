@@ -52,13 +52,13 @@ namespace UnitTests
             const string testFile2 = "add_test_2.txt";
 
 
-            _watcher.Sync.Add(testFile1, true);
+            _watcher.Sync.AddAsync(testFile1, true);
 
             Assert.IsTrue(File.Exists(Path.Combine(_testOutput, "add_test_1.txt")),
                 "First test file was not copied to out dir.");
 
 
-            _watcher.Sync.Add(testFile2, false);
+            _watcher.Sync.AddAsync(testFile2, false);
 
             Assert.IsTrue(File.Exists(Path.Combine(_testOutput, "add_test_2.txt")),
                 "Second test file was not copied to out dir.");
@@ -71,12 +71,12 @@ namespace UnitTests
             Setup(testName, false, false, "*", false);
             var testFile1 = Path.Combine(_testInput, "delete_test_1.txt");
 
-            _watcher.Sync.Add(testFile1, true);
+            _watcher.Sync.AddAsync(testFile1, true);
 
             Assert.IsTrue(File.Exists(Path.Combine(_testOutput, "delete_test_1.txt")),
                 "Delete test file was not copied to out dir.");
 
-            _watcher.Sync.Delete(testFile1);
+            _watcher.Sync.DeleteAsync(testFile1);
 
             Assert.IsFalse(File.Exists(Path.Combine(_testOutput, "delete_test_1.txt")),
                 "Delete test file was not removed from out dir.");

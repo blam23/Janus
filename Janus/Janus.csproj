@@ -71,7 +71,9 @@
     </Compile>
     <Compile Include="DataProvider.cs" />
     <Compile Include="DataStore.cs" />
+    <Compile Include="Filter\ExcludeFilter.cs" />
     <Compile Include="IDataStorageFormat.cs" />
+    <Compile Include="Filter\Filter.cs" />
     <Compile Include="JanusData.cs" />
     <Compile Include="StorageFormatAttribute.cs" />
     <Compile Include="Sync.cs" />

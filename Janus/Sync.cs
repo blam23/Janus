@@ -100,7 +100,7 @@ namespace Janus
             {
                 foreach (var file in toAdd)
                 {
-                    Add(file, false);
+                    AddAsync(file, false);
                 }
             }
 
@@ -134,7 +134,7 @@ namespace Janus
 
             foreach (var file in toDelete)
             {
-                Delete(file, false);
+                DeleteAsync(file, false);
             }
 
             // TODO: Add path sync
@@ -146,7 +146,7 @@ namespace Janus
         /// <param name="path">The path of the file that you want to add</param>
         /// <param name="isPathFull">If the path is a full path or relative to the WatchPath</param>
         /// <param name="count">Amount of times to retry on failure</param>
-        public async void Add(string path, bool isPathFull = true, int count = 5)
+        public async void AddAsync(string path, bool isPathFull = true, int count = 5)
         {
             if (count <= 0) return;
             var partPath = isPathFull ? path.Substring(Watcher.WatchPath.Length+1) : path;
@@ -164,7 +164,7 @@ namespace Janus
             {
                 Console.WriteLine(Resources.Copy_Error, partPath, e.Message);
                 await Task.Delay(300);
-                Add(path, isPathFull, count-1);
+                AddAsync(path, isPathFull, count-1);
             }
         }
 
@@ -175,7 +175,7 @@ namespace Janus
         /// <param name="path">The path of the file that you want to add</param>
         /// <param name="isPathFull">If the path is a full path or relative to the WatchPath</param>
         /// <param name="count">Amount of times to retry on failure</param>
-        public async void Delete(string path, bool isPathFull = true, int count = 5)
+        public async void DeleteAsync(string path, bool isPathFull = true, int count = 5)
         {
             if (count <= 0) return;
             var partPath = isPathFull ? path.Substring(Watcher.WatchPath.Length+1) : path;
@@ -187,7 +187,7 @@ namespace Janus
             {
                 Console.WriteLine(Resources.Delete_Error, partPath, e.Message);
                 await Task.Delay(300);
-                Delete(path, isPathFull, count - 1);
+                DeleteAsync(path, isPathFull, count - 1);
             }
         }
 

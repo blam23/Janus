@@ -121,13 +121,13 @@ namespace Janus
             foreach (var file in Copy) 
             {
                 Console.WriteLine("[Manual] Copying: {0}", file);
-                Sync.Add(file);
+                Sync.AddAsync(file);
             }
 
             foreach (var file in Delete)
             {
                 Console.WriteLine("[Manual] Deleting: {0}", file);
-                Sync.Delete(file);
+                Sync.DeleteAsync(file);
             }
 
             Copy.Clear();
@@ -150,7 +150,7 @@ namespace Janus
             if (Sync.DeleteFiles)
             {
                 Console.WriteLine("Deleting: {0}", e.FullPath);
-                Sync.Delete(e.FullPath);
+                Sync.DeleteAsync(e.FullPath);
             }
             else
             {
@@ -188,7 +188,7 @@ namespace Janus
             if (Sync.AddFiles)
             {
                 Console.WriteLine("Copying: {0}", e.FullPath);
-                Sync.Add(e.FullPath);
+                Sync.AddAsync(e.FullPath);
             }
             else
             {
