@@ -84,13 +84,13 @@ namespace Janus
 
             var start = Directory.GetFiles(
                 Watcher.WatchPath,
-                Watcher.Filter,
+                "*",
                 Watcher.Recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly
             );
 
             var end = Directory.GetFiles(
                 EndPath,
-                Watcher.Filter,
+                "*",
                 Watcher.Recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly
             );
 

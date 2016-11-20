@@ -53,12 +53,13 @@
     <Reference Include="System.Core" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataTestTemplate.cs" />
+    <Compile Include="Helpers\DataTestTemplate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataStoreTests.cs" />
     <Compile Include="SyncTests.cs" />
-    <Compile Include="TestHelper.cs" />
+    <Compile Include="Helpers\TestHelper.cs" />
     <Compile Include="FilterTest.cs" />
+    <Compile Include="MatcherTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

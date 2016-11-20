@@ -1,14 +1,21 @@
 ﻿using System;
 using System.IO;
 using Janus;
-using System.Collections.Generic;
 using Janus.Filters;
+using System.Collections.Generic;
 
-namespace StorageFormats.OldFormats
+namespace StorageFormats
 {
-    [StorageFormat(0x1)]
+    /* CHANGELOG FROM 0x2:
+     * 
+     *  Added support for IFilter storage.
+     *  
+     *  Added by: Elliot
+     */
+
+    [StorageFormat(0x3)]
     // ReSharper disable once InconsistentNaming
-    public class DSF_0x1 : IDataStorageFormat
+    public class DSF_0x3 : IDataStorageFormat
     {
         private const char Start  = '[';
         private const char End    = ']';
@@ -25,17 +32,46 @@ namespace StorageFormats.OldFormats
 
             if (startChar != Start)
             {
-                throw new Exception($"Invalid format. Start expected found: '{startChar}' instead");
+                if (startChar == Switch)
+                {
+                    watchMode = false;
+                    dataMode = true;
+                }
+                else
+                {
+                    throw new Exception($"Invalid format. Start expected found: '{startChar}' instead");
+                }
             }
 
             while (watchMode)
             {
                 var watchPath = reader.ReadString();
                 var endPath = reader.ReadString();
-                var filter = reader.ReadString();
+                var filterCount = reader.ReadInt32();
+                var filters = new List<IFilter>(filterCount);
+                for (var i = 0; i < filterCount; i++)
+                {
+                    var behaviour = (FilterBehaviour)reader.ReadUInt32();
+                    var type = reader.ReadString();
+                    switch (type)
+                    {
+                        case "EFF":
+                            var patternCount = reader.ReadInt32();
+                            var patterns = new string[patternCount];
+                            for (int j = 0; j < patternCount; j++)
+                            {
+                                patterns[j] = reader.ReadString();
+                            }
+                            filters[i] = new ExcludeFileFilter(patterns);
+                            break;
+                        default:
+                            throw new Exception($"Invalid format. Unknown filter: '{type}' found.");
+                    }
+                }
                 var recursive = reader.ReadBoolean();
                 var addFiles = reader.ReadBoolean();
                 var deleteFiles = reader.ReadBoolean();
+                var observe = reader.ReadBoolean();
                 var endChar = reader.ReadChar();
 
                 if (endChar != End)
@@ -43,8 +79,7 @@ namespace StorageFormats.OldFormats
                     throw new Exception($"Invalid format. End expected found: '{endChar}' instead");
                 }
 
-                List<IFilter> filters = new List<IFilter>(); 
-                data.Watchers.Add(new Watcher(watchPath, endPath, addFiles, deleteFiles, filters, recursive));
+                data.Watchers.Add(new Watcher(watchPath, endPath, addFiles, deleteFiles, filters, recursive, observe));
 
                 var next = reader.ReadChar();
 
@@ -72,8 +107,6 @@ namespace StorageFormats.OldFormats
 
             while (dataMode)
             {
-                
-
                 var key = reader.ReadString();
                 var type = reader.ReadChar();
                 object value;
@@ -93,6 +126,12 @@ namespace StorageFormats.OldFormats
                         break;
                     default:
                         throw new Exception($"Invalid format. Unknown DataType: '{type}' instead");
+                }
+
+                var endChar = reader.ReadChar();
+                if (endChar != End)
+                {
+                    throw new Exception($"Invalid format. End expected found: '{endChar}' instead");
                 }
 
                 data.DataProvider.Add(key, value);
@@ -127,10 +166,29 @@ namespace StorageFormats.OldFormats
                 writer.Write(Start);
                 writer.Write(watcher.WatchPath);
                 writer.Write(watcher.Sync.EndPath);
-                writer.Write("*");
+                writer.Write(watcher.Filters.Count);
+                foreach(var filter in watcher.Filters)
+                {
+                    writer.Write((uint)filter.Behaviour);
+                    switch(filter)
+                    {
+                        case ExcludeFileFilter ef:
+                            writer.Write("EFF");
+                            writer.Write(ef.Filters.Length);
+                            foreach(var pattern in ef.Filters)
+                            {
+                                writer.Write(pattern);
+                            }
+                            break;
+                        default:
+                            writer.Write("???");
+                            break;
+                    }
+                }
                 writer.Write(watcher.Recursive);
                 writer.Write(watcher.Sync.AddFiles);
                 writer.Write(watcher.Sync.DeleteFiles);
+                writer.Write(watcher.Observe);
                 writer.Write(End);
             }
 

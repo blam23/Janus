@@ -1,6 +1,6 @@
 ﻿using System.Diagnostics;
 
-namespace UnitTests
+namespace UnitTests.Helpers
 {
     public static class TestHelper
     {

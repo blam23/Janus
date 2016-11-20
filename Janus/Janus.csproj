@@ -71,10 +71,12 @@
     </Compile>
     <Compile Include="DataProvider.cs" />
     <Compile Include="DataStore.cs" />
-    <Compile Include="Filter\ExcludeFilter.cs" />
+    <Compile Include="Filters\ExcludeFilter.cs" />
+    <Compile Include="Matchers\IMatcher.cs" />
     <Compile Include="IDataStorageFormat.cs" />
-    <Compile Include="Filter\Filter.cs" />
+    <Compile Include="Filters\IFilter.cs" />
     <Compile Include="JanusData.cs" />
+    <Compile Include="Matchers\SimpleStringMatcher.cs" />
     <Compile Include="StorageFormatAttribute.cs" />
     <Compile Include="Sync.cs" />
     <Compile Include="Watcher.cs" />

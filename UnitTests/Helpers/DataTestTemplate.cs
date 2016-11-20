@@ -1,6 +1,6 @@
 ﻿using System.IO;
 
-namespace UnitTests
+namespace UnitTests.Helpers
 {
     public class DataTestTemplate
     {

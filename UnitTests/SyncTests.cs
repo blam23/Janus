@@ -1,6 +1,7 @@
 using Janus;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.IO;
+using UnitTests.Helpers;
 
 namespace UnitTests
 {
@@ -15,7 +16,7 @@ namespace UnitTests
         private Watcher _watcher;
 
 
-        private void Setup(string test, bool addFiles, bool deleteFiles, string filter, bool recursive)
+        private void Setup(string test, bool addFiles, bool deleteFiles, bool recursive)
         {
             var dataInput = Path.Combine(_dataPath, test, @"in");
 
@@ -36,7 +37,7 @@ namespace UnitTests
                 _testOutput,
                 addFiles,
                 deleteFiles,
-                filter,
+                null,
                 recursive
             );
         }
@@ -47,7 +48,7 @@ namespace UnitTests
         public void Add()
         {
             const string testName = "Copy";
-            Setup(testName, false, false, "*", false);
+            Setup(testName, false, false, false);
             var testFile1 = Path.Combine(_testInput, "add_test_1.txt");
             const string testFile2 = "add_test_2.txt";
 
@@ -68,7 +69,7 @@ namespace UnitTests
         public void Delete()
         {
             const string testName = "Delete";
-            Setup(testName, false, false, "*", false);
+            Setup(testName, false, false, false);
             var testFile1 = Path.Combine(_testInput, "delete_test_1.txt");
 
             _watcher.Sync.AddAsync(testFile1, true);

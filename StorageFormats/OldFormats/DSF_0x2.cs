@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using Janus;
+using Janus.Filters;
+using System.Collections.Generic;
 
 namespace StorageFormats
 {
@@ -58,7 +60,8 @@ namespace StorageFormats
                     throw new Exception($"Invalid format. End expected found: '{endChar}' instead");
                 }
 
-                data.Watchers.Add(new Watcher(watchPath, endPath, addFiles, deleteFiles, filter, recursive, observe));
+                List<IFilter> filters = new List<IFilter>(); 
+                data.Watchers.Add(new Watcher(watchPath, endPath, addFiles, deleteFiles, filters, recursive, observe));
 
                 var next = reader.ReadChar();
 
@@ -147,7 +150,7 @@ namespace StorageFormats
                 writer.Write(Start);
                 writer.Write(watcher.WatchPath);
                 writer.Write(watcher.Sync.EndPath);
-                writer.Write(watcher.Filter);
+                writer.Write("*");
                 writer.Write(watcher.Recursive);
                 writer.Write(watcher.Sync.AddFiles);
                 writer.Write(watcher.Sync.DeleteFiles);

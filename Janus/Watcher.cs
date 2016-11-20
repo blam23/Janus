@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Janus.Filters;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -14,11 +15,9 @@ namespace Janus
         public Sync Sync { get; }
 
         /// <summary>
-        /// Inclusive Filter.
-        /// TODO: Test this
-        /// TODO: Add exclude filter
+        /// Filters that will be applied (in order).
         /// </summary>
-        public string Filter { get; }
+        public List<IFilter> Filters { get; }
 
         /// <summary>
         /// If enabled all subdirectories and their files will be copied/deleted.
@@ -59,13 +58,13 @@ namespace Janus
         /// </summary>
         private FileSystemWatcher _deleteWatcher;
 
-        public Watcher(string watchPath, string endPath, bool addFiles, bool deleteFiles, string filter, bool recursive, bool observe = false)
+        public Watcher(string watchPath, string endPath, bool addFiles, bool deleteFiles, List<IFilter> filters, bool recursive, bool observe = false)
         {
             WatchPath = watchPath;
 
             Sync = new Sync(endPath, this, addFiles, deleteFiles);
 
-            Filter = filter;
+            Filters = filters;
             Recursive = recursive;
 
             if (observe)
@@ -244,7 +243,6 @@ namespace Janus
             return Observe == other.Observe && 
                 string.Equals(WatchPath, other.WatchPath) && 
                 Equals(Sync, other.Sync) && 
-                string.Equals(Filter, other.Filter) && 
                 Recursive == other.Recursive;
         }
 
@@ -259,7 +257,6 @@ namespace Janus
                 var hashCode = Observe.GetHashCode();
                 hashCode = (hashCode*397) ^ (WatchPath?.GetHashCode() ?? 0);
                 hashCode = (hashCode*397) ^ (Sync?.GetHashCode() ?? 0);
-                hashCode = (hashCode*397) ^ (Filter?.GetHashCode() ?? 0);
                 hashCode = (hashCode*397) ^ Recursive.GetHashCode();
                 return hashCode;
             }

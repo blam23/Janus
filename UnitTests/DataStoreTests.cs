@@ -14,7 +14,7 @@ namespace UnitTests
             _data = new JanusData();
         }
 
-        private Watcher AddWatcher(string watchDir, string syncDir, bool addFiles, bool deleteFiles, string filter,
+        private Watcher AddWatcher(string watchDir, string syncDir, bool addFiles, bool deleteFiles,
             bool recursive)
         {
             var watcher = new Watcher(
@@ -22,7 +22,7 @@ namespace UnitTests
                 syncDir,
                 addFiles,
                 deleteFiles,
-                filter,
+                null,
                 recursive,
                 true
             );
@@ -99,7 +99,7 @@ namespace UnitTests
             Assert.IsTrue(testStore.DataLoaders.ContainsKey(DataStore.Version),
                 "DataStore did not load a storage format matching the specified version: {0:X}", DataStore.Version);
 
-            var w1 = AddWatcher("C:\\test\\directory", "C:\\out\\directory", false, false, "*", true);
+            var w1 = AddWatcher("C:\\test\\directory", "C:\\out\\directory", false, false, true);
             var data = StoreAndLoad(testStore);
             AssertLoadedWatchersAreCorrect(data);
 
@@ -112,8 +112,7 @@ namespace UnitTests
             AssertLoadedWatchersAreCorrect(data);
             AssertLoadedDataProviderContains(data, "Test", "Hello World");
 
-            var w2 = AddWatcher("C:\\test\\directory2", "C:\\out\\directory2", true, false,
-                "#.*\"sdfas'd\t;lfk^&*%^$%-{}+=", false);
+            var w2 = AddWatcher("C:\\test\\directory2", "C:\\out\\directory2", true, false, false);
             data = StoreAndLoad(testStore);
             AssertLoadedWatchersAreCorrect(data);
             AssertLoadedDataProviderContains(data, "Test", "Hello World");
@@ -130,7 +129,7 @@ namespace UnitTests
             AssertDataProvidersAreEqual(data);
 
 
-            var w3 = AddWatcher("C:\\test\\directory3", "C:\\out\\directory3", false, true, "", true);
+            var w3 = AddWatcher("C:\\test\\directory3", "C:\\out\\directory3", false, true, true);
             data = StoreAndLoad(testStore);
             AssertLoadedWatchersAreCorrect(data);
             AssertDataProvidersAreEqual(data);

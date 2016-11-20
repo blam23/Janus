@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Janus.Filters;
+using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Forms;
@@ -33,7 +35,7 @@ namespace Janus
                     TxtOutDirectory.Text,
                     CbAdd.IsChecked ?? false,
                     CbDelete.IsChecked ?? false,
-                    TxtFilter.Text,
+                    new List<IFilter>(),
                     CbRecurse.IsChecked ?? false);
 
                 if (CbImmediate.IsChecked ?? false)
