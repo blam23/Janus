@@ -13,13 +13,15 @@
         <Button x:Name="BtnBrowseOutDirectory" Content="..." Margin="0,35,10,0" VerticalAlignment="Top" HorizontalAlignment="Right" Width="19" Click="btnBrowseOutDirectory_Click"/>
         <Label x:Name="Label" Content="Watch Directory:" HorizontalAlignment="Left" Margin="5,7,0,0" VerticalAlignment="Top"/>
         <Label x:Name="LabelCopy" Content="Out Directory:" HorizontalAlignment="Left" Margin="19,32,0,0" VerticalAlignment="Top"/>
-        <CheckBox x:Name="CbAdd" Content="Automatically add files that are added to watch directory" Margin="108,105,10,0" VerticalAlignment="Top"  Checked="OptionChangeEvent" Unchecked="OptionChangeEvent"/>
-        <CheckBox x:Name="CbDelete" Content="Automatically remove files that are removed from watch directory" Margin="108,125,10,0" VerticalAlignment="Top"  Checked="OptionChangeEvent" Unchecked="OptionChangeEvent"/>
+        <CheckBox x:Name="CbAdd" Content="Automatically add files that are added to watch directory" Margin="108,132,10,0" VerticalAlignment="Top"  Checked="OptionChangeEvent" Unchecked="OptionChangeEvent"/>
+        <CheckBox x:Name="CbDelete" Content="Automatically remove files that are removed from watch directory" Margin="108,152,10,0" VerticalAlignment="Top"  Checked="OptionChangeEvent" Unchecked="OptionChangeEvent"/>
         <Button x:Name="BtnAdd" Content="Add" Margin="0,0,10,9" HorizontalAlignment="Right" Width="75" Height="20" VerticalAlignment="Bottom" IsEnabled="False" Click="btnAdd_Click"/>
-        <CheckBox x:Name="CbImmediate" Content="Immediately synchronise out directory" Margin="108,145,97,0" VerticalAlignment="Top"  Checked="OptionChangeEvent" Unchecked="OptionChangeEvent"/>
-        <CheckBox x:Name="CbRecurse" Content="Watch all subfolders and files" Margin="108,85,97,0" VerticalAlignment="Top"  Checked="OptionChangeEvent" Unchecked="OptionChangeEvent"/>
-        <TextBox x:Name="TxtFilter" Height="20" Margin="108,60,10,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" TextChanged="OptionChangeEvent"/>
-        <Label x:Name="LabelCopy1" Content="Filter:" HorizontalAlignment="Left" Margin="64,56,0,0" VerticalAlignment="Top"/>
+        <CheckBox x:Name="CbImmediate" Content="Immediately synchronise out directory" Margin="108,172,97,0" VerticalAlignment="Top"  Checked="OptionChangeEvent" Unchecked="OptionChangeEvent"/>
+        <CheckBox x:Name="CbRecurse" Content="Watch all subfolders and files" Margin="108,112,97,0" VerticalAlignment="Top"  Checked="OptionChangeEvent" Unchecked="OptionChangeEvent"/>
+        <TextBox x:Name="TxtFilterExclude" Height="20" Margin="108,60,10,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" TextChanged="OptionChangeEvent"/>
+        <Label x:Name="LabelCopy1" Content="Include:" HorizontalAlignment="Left" Margin="50,57,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="CbConfirm" Content="These settings are correct" Margin="10,0,97,11" Foreground="Red" FontWeight="Bold" Height="15" VerticalAlignment="Bottom" Checked="cbConfirm_Checked"/>
+        <TextBox x:Name="TxtFilterInclude" Height="20" Margin="108,85,10,0" TextWrapping="Wrap" Text="*.pdb;*.txt" VerticalAlignment="Top" TextChanged="OptionChangeEvent"/>
+        <Label Content="Exclude:" HorizontalAlignment="Left" Margin="50,82,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

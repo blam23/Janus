@@ -61,7 +61,7 @@ namespace Janus
         /// Current StorageFormat version.
         /// Used for maintaining possible backwards compatibilty.
         /// </summary>
-        public const long Version = 0x2;
+        public const long Version = 0x3;
 
         /// <summary>
         /// First bytes in the store file.
@@ -104,22 +104,19 @@ namespace Janus
 
             using (var fs = File.Create(_storeName))
             {
-                using (var writer = new BinaryWriter(fs))
+                var writer = new BinaryWriter(fs);
+                writer.Write(_headerBytes);
+                writer.Write(Version);
+                if (DataLoaders.TryGetValue(Version, out var format))
                 {
-                    writer.Write(_headerBytes);
-                    writer.Write(Version);
-                    IDataStorageFormat format;
-                    if (DataLoaders.TryGetValue(Version, out format))
-                    {
-                        format.Save(writer, data);
-                    }
-                    // To get here the user's install must be corrupted.
-
-                    // TODO: Add user dialog prompting a reinstall here
-                    // TODO: Check this on startup so we don't only error on save.
-                    // TODO: Automatically pull correct IDataStore from server?
-                    //        Could apply to loading too. 
+                    format.Save(writer, data);
                 }
+                // To get here the user's install must be corrupted.
+
+                // TODO: Add user dialog prompting a reinstall here
+                // TODO: Check this on startup so we don't only error on save.
+                // TODO: Automatically pull correct IDataStore from server?
+                //        Could apply to loading too. 
             }
         }
 
@@ -141,33 +138,31 @@ namespace Janus
 
             using (var fs = File.OpenRead(_storeName))
             {
-                using (var reader = new BinaryReader(fs))
+                var reader = new BinaryReader(fs);
+                var header = reader.ReadBytes(4);
+                if (!header.SequenceEqual(_headerBytes))
                 {
-                    var header = reader.ReadBytes(4);
-                    if (!header.SequenceEqual(_headerBytes))
-                    {
-                        fs.Close();
-                        InvalidDataStore("Invalid header");
-                        return new JanusData();
-                    }
-                    var version = reader.ReadInt64();
-                    IDataStorageFormat format;
-                    if (DataLoaders.TryGetValue(version, out format))
-                    {
-                        try
-                        {
-                            return format.Read(reader);
-                        }
-                        catch (Exception e)
-                        {
-                            fs.Close();
-                            InvalidDataStore(e.Message);
-                        }
-                    }
-                    fs.Close();
-                    InvalidDataStore("Unsupported format");
+                    InvalidDataStore("Invalid header");
                     return new JanusData();
                 }
+                var version = reader.ReadInt64();
+                if (DataLoaders.TryGetValue(version, out var format))
+                {
+                    //try
+                    //{
+                        return format.Read(reader);
+                    //}
+                    //catch (IOException e)
+                    //{
+                     //   return format.Read(reader);
+                    //}
+                    //catch (Exception e)
+                    //{
+                    //    InvalidDataStore(e.Message);
+                    //}
+                }
+                InvalidDataStore("Unsupported format");
+                return new JanusData();
             }
         }
 

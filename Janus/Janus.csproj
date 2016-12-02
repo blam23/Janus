@@ -71,6 +71,9 @@
     </Compile>
     <Compile Include="DataProvider.cs" />
     <Compile Include="DataStore.cs" />
+    <Compile Include="Extensions.cs" />
+    <Compile Include="Filters\ExcludeFileFilter.cs" />
+    <Compile Include="Filters\IncludeFilter.cs" />
     <Compile Include="Filters\ExcludeFilter.cs" />
     <Compile Include="Matchers\IMatcher.cs" />
     <Compile Include="IDataStorageFormat.cs" />

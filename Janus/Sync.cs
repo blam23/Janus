@@ -88,13 +88,29 @@ namespace Janus
                 Watcher.Recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly
             );
 
+            if (!Directory.Exists(EndPath))
+            {
+                Directory.CreateDirectory(EndPath);
+            }
+
             var end = Directory.GetFiles(
                 EndPath,
                 "*",
                 Watcher.Recursive ? SearchOption.AllDirectories : SearchOption.TopDirectoryOnly
             );
 
-            var toAdd = start.Select(t => t.Substring(Watcher.WatchPath.Length + 1)).ToList();
+            var toAdd = new List<string>();
+            foreach (var file in start)
+            {
+                var filtered = false;
+                foreach (var filter in Watcher.Filters)
+                {
+                    if (!filter.ShouldExcludeFile(file)) continue;
+                    filtered = true;
+                }
+                if (filtered) continue;
+                toAdd.Add(file.Substring(Watcher.WatchPath.Length + 1));
+            }
 
             if (AddFiles)
             {
@@ -108,6 +124,13 @@ namespace Janus
             var toDelete = new List<string>();
             for (var i = 0; i < end.Length; i++)
             {
+                var filtered = false;
+                foreach (var filter in Watcher.Filters)
+                {
+                    if (!filter.ShouldExcludeFile(toDelete[i])) continue;
+                    filtered = true;
+                }
+                if (filtered) continue;
                 end[i] = end[i].Substring(EndPath.Length + 1);
                 var match = toAdd.IndexOf(end[i]);
                 if (match >= 0)

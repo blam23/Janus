@@ -56,10 +56,12 @@
     <Compile Include="Helpers\DataTestTemplate.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="DataStoreTests.cs" />
+    <Compile Include="ExtensionsTest.cs" />
     <Compile Include="SyncTests.cs" />
     <Compile Include="Helpers\TestHelper.cs" />
     <Compile Include="FilterTest.cs" />
     <Compile Include="MatcherTest.cs" />
+    <Compile Include="WatcherTest.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

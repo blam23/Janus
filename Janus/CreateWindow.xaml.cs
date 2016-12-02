@@ -25,19 +25,32 @@ namespace Janus
             _parent = parent;
         }
 
+
+
         private async void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             if (Directory.Exists(TxtDirectory.Text)
                 && Directory.Exists(TxtOutDirectory.Text))
             {
+                var filters = new List<IFilter>();
+                if (!string.IsNullOrEmpty(TxtFilterExclude.Text))
+                {
+                    filters.Add(new ExcludeFilter(TxtFilterExclude.Text.SplitEscapable(';')));
+                }
+                if (!string.IsNullOrEmpty(TxtFilterInclude.Text))
+                {
+                    filters.Add(new IncludeFilter(TxtFilterInclude.Text.SplitEscapable(';')));
+                }
+
                 var watcher = new Watcher(
                     TxtDirectory.Text,
                     TxtOutDirectory.Text,
                     CbAdd.IsChecked ?? false,
                     CbDelete.IsChecked ?? false,
-                    new List<IFilter>(),
+                    filters,
                     CbRecurse.IsChecked ?? false);
 
+                
                 if (CbImmediate.IsChecked ?? false)
                 {
                     await watcher.DoInitialSynchronise();

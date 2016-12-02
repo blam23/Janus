@@ -30,14 +30,14 @@ namespace Janus
         /// Used for manual synchronisation.
         /// Will be empty when it's automatic sync.
         /// </summary>
-        public List<string> Delete = new List<string>();
+        private readonly List<string> _delete = new List<string>();
 
         /// <summary>
         /// List of files that have been added to or modified in the WatchPath directory.
         /// Used for manual synchronisation.
         /// Will be empty when it's automatic sync.
         /// </summary>
-        public List<string> Copy = new List<string>();
+        private readonly List<string> _copy = new List<string>();
 
         /// <summary>
         /// This can only be set when instantiating.
@@ -51,7 +51,7 @@ namespace Janus
         /// This only triggers on "LastWrite" so as to help mitigate double events, 
         ///  one for initial creation and one for when it's written to.
         /// </summary>
-        private FileSystemWatcher _writeWatcher;
+        private readonly FileSystemWatcher _writeWatcher;
 
         /// <summary>
         /// Watches for file deletions in the WatchPath directory.
@@ -90,6 +90,11 @@ namespace Janus
             EnableEvents();
         }
 
+        public void AddFilter(IFilter filter)
+        {
+            Filters.Add(filter);
+        }
+
         /// <summary>
         /// Enables events from both FileSystemWatcher classes
         /// (copy + delete)
@@ -117,20 +122,20 @@ namespace Janus
         /// </summary>
         public void Synchronise()
         {
-            foreach (var file in Copy) 
+            foreach (var file in _copy) 
             {
                 Console.WriteLine("[Manual] Copying: {0}", file);
                 Sync.AddAsync(file);
             }
 
-            foreach (var file in Delete)
+            foreach (var file in _delete)
             {
                 Console.WriteLine("[Manual] Deleting: {0}", file);
                 Sync.DeleteAsync(file);
             }
 
-            Copy.Clear();
-            Delete.Clear();
+            _copy.Clear();
+            _delete.Clear();
         }
 
         /// <summary>
@@ -140,10 +145,18 @@ namespace Janus
         /// <param name="e">Event Parameters (contains file path)</param>
         private void WriteWatcherDeleted(object sender, FileSystemEventArgs e)
         {
-            if(Copy.Contains(e.FullPath))
+            foreach (var filter in Filters)
+            {
+                if (filter.ShouldExcludeFile(e.FullPath))
+                {
+                    return;
+                }
+            }
+
+            if(_copy.Contains(e.FullPath))
             {
                 Console.WriteLine("Removing from copy list: {0}", e.FullPath);
-                var succ = Copy.Remove(e.FullPath);
+                var succ = _copy.Remove(e.FullPath);
                 Console.WriteLine("Removed from copy list? {0}", succ);
             }
             if (Sync.DeleteFiles)
@@ -154,7 +167,7 @@ namespace Janus
             else
             {
                 Console.WriteLine("Marking for delete: {0}", e.FullPath);
-                Delete.Add(e.FullPath);
+                _delete.Add(e.FullPath);
             }
         }
 
@@ -172,16 +185,24 @@ namespace Janus
         /// <param name="e">Event Parameters (contains file path)</param>
         private void WriteWatcherChanged(object sender, FileSystemEventArgs e)
         {
+            foreach (var filter in Filters)
+            {
+                if (filter.ShouldExcludeFile(e.FullPath))
+                {
+                    return;
+                }
+            }
+
             if (_lastPath == e.FullPath)
             {
                 return;
             }
             _lastPath = e.FullPath;
             Console.WriteLine(e.ChangeType);
-            if (Delete.Contains(e.FullPath))
+            if (_delete.Contains(e.FullPath))
             {
                 Console.WriteLine("Removing from delete list: {0}", e.FullPath);
-                var succ = Delete.Remove(e.FullPath);
+                var succ = _delete.Remove(e.FullPath);
                 Console.WriteLine("Removed from delete list? {0}", succ);
             }
             if (Sync.AddFiles)
@@ -192,7 +213,7 @@ namespace Janus
             else
             {
                 Console.WriteLine("Marking for copy: {0}", e.FullPath);
-                Copy.Add(e.FullPath);
+                _copy.Add(e.FullPath);
             }
         }
 

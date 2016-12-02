@@ -56,13 +56,16 @@ namespace StorageFormats
                     switch (type)
                     {
                         case "EFF":
-                            var patternCount = reader.ReadInt32();
-                            var patterns = new string[patternCount];
-                            for (int j = 0; j < patternCount; j++)
-                            {
-                                patterns[j] = reader.ReadString();
-                            }
-                            filters[i] = new ExcludeFileFilter(patterns);
+                            var patterns = ExtractPatterns(reader);
+                            filters.Add(new ExcludeFileFilter(patterns));
+                            break;
+                        case "EF":
+                            patterns = ExtractPatterns(reader);
+                            filters.Add(new ExcludeFilter(patterns));
+                            break;
+                        case "IF":
+                            patterns = ExtractPatterns(reader);
+                            filters.Add(new IncludeFilter(patterns));
                             break;
                         default:
                             throw new Exception($"Invalid format. Unknown filter: '{type}' found.");
@@ -151,6 +154,17 @@ namespace StorageFormats
             return data;
         }
 
+        private static string[] ExtractPatterns(BinaryReader reader)
+        {
+            var patternCount = reader.ReadInt32();
+            var patterns = new string[patternCount];
+            for (int j = 0; j < patternCount; j++)
+            {
+                patterns[j] = reader.ReadString();
+            }
+            return patterns;
+        }
+
         private static void Seek(BinaryReader reader, char x)
         {
             var c = '\0';
@@ -166,23 +180,46 @@ namespace StorageFormats
                 writer.Write(Start);
                 writer.Write(watcher.WatchPath);
                 writer.Write(watcher.Sync.EndPath);
-                writer.Write(watcher.Filters.Count);
-                foreach(var filter in watcher.Filters)
+                if (watcher.Filters == null)
                 {
-                    writer.Write((uint)filter.Behaviour);
-                    switch(filter)
+                    writer.Write(0);
+                }
+                else
+                {
+                    writer.Write(watcher.Filters.Count);
+                    foreach (var filter in watcher.Filters)
                     {
-                        case ExcludeFileFilter ef:
-                            writer.Write("EFF");
-                            writer.Write(ef.Filters.Length);
-                            foreach(var pattern in ef.Filters)
-                            {
-                                writer.Write(pattern);
-                            }
-                            break;
-                        default:
-                            writer.Write("???");
-                            break;
+                        writer.Write((uint)filter.Behaviour);
+                        switch (filter)
+                        {
+                            case ExcludeFilter ef:
+                                writer.Write("EF");
+                                writer.Write(ef.Filters.Count);
+                                foreach (var pattern in ef.Filters)
+                                {
+                                    writer.Write(pattern);
+                                }
+                                break;
+                            case ExcludeFileFilter ef:
+                                writer.Write("EFF");
+                                writer.Write(ef.Filters.Count);
+                                foreach (var pattern in ef.Filters)
+                                {
+                                    writer.Write(pattern);
+                                }
+                                break;
+                            case IncludeFilter ef:
+                                writer.Write("IF");
+                                writer.Write(ef.Filters.Count);
+                                foreach (var pattern in ef.Filters)
+                                {
+                                    writer.Write(pattern);
+                                }
+                                break;
+                            default:
+                                writer.Write("???");
+                                break;
+                        }
                     }
                 }
                 writer.Write(watcher.Recursive);

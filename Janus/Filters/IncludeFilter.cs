@@ -1,44 +1,42 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using Janus.Matchers;
 
 namespace Janus.Filters
 {
-    public class ExcludeFilter : IFilter
+    public class IncludeFilter : IFilter
     {
-        public FilterBehaviour Behaviour => FilterBehaviour.Blacklist;
+        public FilterBehaviour Behaviour => FilterBehaviour.Whitelist;
 
-        private IPatternMatcher<string> _matcher = new SimpleStringMatcher();
+        private readonly IPatternMatcher<string> _matcher = new SimpleStringMatcher();
 
         private IList<string> _filters;
 
         public IList<string> Filters => _filters;
 
-        public ExcludeFilter(params string[] filters)
+        public IncludeFilter(params string[] filters)
         {
             _filters = filters;
         }
 
-        public ExcludeFilter(IList<string> filters)
+        public IncludeFilter(IList<string> filters)
         {
             _filters = filters;
         }
-
         public bool ShouldExcludeFile(string fullPath)
         {
-            var ret = false;
+            var ret = true;
             foreach (var filter in _filters)
             {
                 if (_matcher.Matches(fullPath, filter))
                 {
-                    ret = true;
+                    ret = false;
                 }
             }
             return ret;
         }
 
-        private bool Equals(ExcludeFilter other)
+        private bool Equals(IncludeFilter other)
         {
             if (other.Behaviour != Behaviour || other.Filters.Count != Filters.Count) return false;
             return !Filters.Where((filter, i) => filter != other.Filters[i]).Any();
@@ -48,7 +46,7 @@ namespace Janus.Filters
         {
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
-            return obj.GetType() == GetType() && Equals((ExcludeFilter)obj);
+            return obj.GetType() == GetType() && Equals((IncludeFilter)obj);
         }
 
         public override int GetHashCode()
