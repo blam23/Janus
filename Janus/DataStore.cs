@@ -148,18 +148,18 @@ namespace Janus
                 var version = reader.ReadInt64();
                 if (DataLoaders.TryGetValue(version, out var format))
                 {
-                    //try
-                    //{
+                    try
+                    {
                         return format.Read(reader);
-                    //}
-                    //catch (IOException e)
-                    //{
-                     //   return format.Read(reader);
-                    //}
-                    //catch (Exception e)
-                    //{
-                    //    InvalidDataStore(e.Message);
-                    //}
+                    }
+                    catch (IOException e)
+                    {
+                        return format.Read(reader);
+                    }
+                    catch (Exception e)
+                    {
+                        InvalidDataStore(e.Message);
+                    }
                 }
                 InvalidDataStore("Unsupported format");
                 return new JanusData();
