@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,7 +25,7 @@ namespace UnitTests
                     _testOutput,
                     true,
                     true,
-                    new List<IFilter>(), 
+                    new List<IFilter>(),
                     true
                 );
 

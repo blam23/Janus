@@ -76,7 +76,7 @@ namespace UnitTests
         private void AssertLoadedDataProviderContains<T>(JanusData storedList, string key, T expected)
         {
             var data = storedList.DataProvider.Get<T>(key);
-            Assert.AreEqual(data, expected, 
+            Assert.AreEqual(data, expected,
                 "[{0}] Loaded DataProvider value did not match.", _count);
         }
 

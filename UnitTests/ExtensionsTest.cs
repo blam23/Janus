@@ -1,9 +1,6 @@
 using System.Collections.Generic;
 using Janus;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
-using System.Linq;
-using UnitTests.Helpers;
 
 namespace UnitTests
 {

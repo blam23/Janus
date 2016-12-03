@@ -40,8 +40,14 @@ namespace Janus
             Data = d.DataProvider;
             Watchers = d.Watchers;
 
-            if (Watchers.Count == 0) Show();
-
+            if (Watchers.Count == 0)
+            {
+                Show();
+            }
+            else
+            {
+                NotificationSystem.Default.Push(NotifcationType.Info, "Janus", "Started in minimised mode. Double click 'Ja' icon to interact.");
+            }
             ListBox.ItemsSource = Watchers;
             Watchers.CollectionChanged += Watchers_CollectionChanged;
 
@@ -66,6 +72,7 @@ namespace Janus
             if (watcher == null) return;
             watcher.Stop();
             Watchers.Remove(watcher);
+            NotificationSystem.Default.Push(NotifcationType.Info, "Removed Watcher", "Removed watcher successfully.");
         }
 
         private void btnSync_Click(object sender, RoutedEventArgs e)

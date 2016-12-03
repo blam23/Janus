@@ -50,7 +50,7 @@ namespace Janus
                     filters,
                     CbRecurse.IsChecked ?? false);
 
-                
+
                 if (CbImmediate.IsChecked ?? false)
                 {
                     await watcher.DoInitialSynchronise();
@@ -58,11 +58,12 @@ namespace Janus
 
                 MainWindow.Watchers.Add(watcher);
                 Console.WriteLine("Added new watcher.");
+                NotificationSystem.Default.Push(NotifcationType.Info, "New Watcher", "Added a new watcher successfully.");
                 Close();
             }
             else
             {
-                Console.WriteLine("Invalid path!"); 
+                Console.WriteLine("Invalid path!");
             }
         }
 

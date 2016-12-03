@@ -1,9 +1,7 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Janus.Filters;
 using System.IO;
 using UnitTests.Helpers;
-using System.Collections.Generic;
 
 namespace UnitTests
 {
@@ -11,7 +9,7 @@ namespace UnitTests
     public class FilterTest : DataTestTemplate
     {
         public FilterTest() : base("Filter") { }
-        
+
         [TestMethod]
         public void ExcludeFileTest()
         {

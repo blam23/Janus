@@ -48,7 +48,7 @@ namespace Janus
 
         /// <summary>
         /// Watches for file additions + modifications in the WatchPath directory.
-        /// This only triggers on "LastWrite" so as to help mitigate double events, 
+        /// This only triggers on "LastWrite" so as to help mitigate double events,
         ///  one for initial creation and one for when it's written to.
         /// </summary>
         private readonly FileSystemWatcher _writeWatcher;
@@ -106,7 +106,7 @@ namespace Janus
         }
 
         /// <summary>
-        /// Asynchronously does a full synchronisation, making sure the 
+        /// Asynchronously does a full synchronisation, making sure the
         /// WatchPath matches up with the EndPath.
         /// </summary>
         /// <returns>Async Task</returns>
@@ -122,7 +122,7 @@ namespace Janus
         /// </summary>
         public void Synchronise()
         {
-            foreach (var file in _copy) 
+            foreach (var file in _copy)
             {
                 Console.WriteLine("[Manual] Copying: {0}", file);
                 Sync.AddAsync(file);
@@ -261,9 +261,9 @@ namespace Janus
         /// <returns>If Watcher is equal to this one</returns>
         private bool Equals(Watcher other)
         {
-            return Observe == other.Observe && 
-                string.Equals(WatchPath, other.WatchPath) && 
-                Equals(Sync, other.Sync) && 
+            return Observe == other.Observe &&
+                string.Equals(WatchPath, other.WatchPath) &&
+                Equals(Sync, other.Sync) &&
                 Recursive == other.Recursive;
         }
 

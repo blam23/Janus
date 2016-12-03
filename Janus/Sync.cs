@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 using Janus.Properties;
 
@@ -234,7 +233,7 @@ namespace Janus
         private bool Equals(Sync other)
         {
             return _addFiles == other._addFiles &&
-                _deleteFiles == other._deleteFiles && 
+                _deleteFiles == other._deleteFiles &&
                 string.Equals(EndPath, other.EndPath);
         }
 

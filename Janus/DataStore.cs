@@ -116,7 +116,7 @@ namespace Janus
                 // TODO: Add user dialog prompting a reinstall here
                 // TODO: Check this on startup so we don't only error on save.
                 // TODO: Automatically pull correct IDataStore from server?
-                //        Could apply to loading too. 
+                //        Could apply to loading too.
             }
         }
 
@@ -152,7 +152,7 @@ namespace Janus
                     {
                         return format.Read(reader);
                     }
-                    catch (IOException e)
+                    catch (IOException)
                     {
                         return format.Read(reader);
                     }

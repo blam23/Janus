@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-
-namespace Janus.Filters
+﻿namespace Janus.Filters
 {
     public enum FilterBehaviour
     {

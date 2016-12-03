@@ -43,7 +43,7 @@ namespace StorageFormats.OldFormats
                     throw new Exception($"Invalid format. End expected found: '{endChar}' instead");
                 }
 
-                List<IFilter> filters = new List<IFilter>(); 
+                List<IFilter> filters = new List<IFilter>();
                 data.Watchers.Add(new Watcher(watchPath, endPath, addFiles, deleteFiles, filters, recursive));
 
                 var next = reader.ReadChar();
@@ -72,7 +72,7 @@ namespace StorageFormats.OldFormats
 
             while (dataMode)
             {
-                
+
 
                 var key = reader.ReadString();
                 var type = reader.ReadChar();
