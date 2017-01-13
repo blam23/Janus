@@ -190,35 +190,39 @@ namespace StorageFormats
                     foreach (var filter in watcher.Filters)
                     {
                         writer.Write((uint)filter.Behaviour);
-                        switch (filter)
+                        var excludeFilter = filter as ExcludeFilter;
+                        var excludeFileFilter = filter as ExcludeFileFilter;
+                        var includeFilter = filter as IncludeFilter;
+                        if (excludeFilter != null)
                         {
-                            case ExcludeFilter ef:
-                                writer.Write("EF");
-                                writer.Write(ef.Filters.Count);
-                                foreach (var pattern in ef.Filters)
-                                {
-                                    writer.Write(pattern);
-                                }
-                                break;
-                            case ExcludeFileFilter ef:
-                                writer.Write("EFF");
-                                writer.Write(ef.Filters.Count);
-                                foreach (var pattern in ef.Filters)
-                                {
-                                    writer.Write(pattern);
-                                }
-                                break;
-                            case IncludeFilter ef:
-                                writer.Write("IF");
-                                writer.Write(ef.Filters.Count);
-                                foreach (var pattern in ef.Filters)
-                                {
-                                    writer.Write(pattern);
-                                }
-                                break;
-                            default:
-                                writer.Write("???");
-                                break;
+                            writer.Write("EF");
+                            writer.Write(excludeFilter.Filters.Count);
+                            foreach (var pattern in excludeFilter.Filters)
+                            {
+                                writer.Write(pattern);
+                            }
+                        }
+                        else if (excludeFileFilter != null)
+                        {
+                            writer.Write("EFF");
+                            writer.Write(excludeFileFilter.Filters.Count);
+                            foreach (var pattern in excludeFileFilter.Filters)
+                            {
+                                writer.Write(pattern);
+                            }
+                        }
+                        else if (includeFilter != null)
+                        {
+                            writer.Write("IF");
+                            writer.Write(includeFilter.Filters.Count);
+                            foreach (var pattern in includeFilter.Filters)
+                            {
+                                writer.Write(pattern);
+                            }
+                        }
+                        else
+                        {
+                            writer.Write("???");
                         }
                     }
                 }
