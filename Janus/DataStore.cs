@@ -107,7 +107,8 @@ namespace Janus
                 var writer = new BinaryWriter(fs);
                 writer.Write(_headerBytes);
                 writer.Write(Version);
-                if (DataLoaders.TryGetValue(Version, out var format))
+                IDataStorageFormat format;
+                if (DataLoaders.TryGetValue(Version, out format))
                 {
                     format.Save(writer, data);
                 }
@@ -146,7 +147,8 @@ namespace Janus
                     return new JanusData();
                 }
                 var version = reader.ReadInt64();
-                if (DataLoaders.TryGetValue(version, out var format))
+                IDataStorageFormat format;
+                if (DataLoaders.TryGetValue(version, out format))
                 {
                     try
                     {
