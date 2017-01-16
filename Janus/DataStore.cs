@@ -102,7 +102,7 @@ namespace Janus
                 Directory.CreateDirectory(DataLocation);
             }
 
-            using (var fs = File.Create(_storeName))5
+            using (var fs = File.Create(_storeName))
             {
                 var writer = new BinaryWriter(fs);
                 writer.Write(_headerBytes);
