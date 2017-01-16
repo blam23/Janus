@@ -2,6 +2,9 @@
 
 namespace Janus
 {
+    /// <summary>
+    /// Class that gets written out and read in by DataStorage.
+    /// </summary>
     public class JanusData
     {
         public readonly ObservableCollection<Watcher> Watchers;

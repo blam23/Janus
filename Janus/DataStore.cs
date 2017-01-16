@@ -102,7 +102,7 @@ namespace Janus
                 Directory.CreateDirectory(DataLocation);
             }
 
-            using (var fs = File.Create(_storeName))
+            using (var fs = File.Create(_storeName))5
             {
                 var writer = new BinaryWriter(fs);
                 writer.Write(_headerBytes);
@@ -147,6 +147,7 @@ namespace Janus
                     return new JanusData();
                 }
                 var version = reader.ReadInt64();
+                // TODO: Inline this when supported by VSTS (out var format)
                 IDataStorageFormat format;
                 if (DataLoaders.TryGetValue(version, out format))
                 {

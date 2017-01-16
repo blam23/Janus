@@ -10,6 +10,8 @@ namespace Janus
     {
         /// <summary>
         /// The input path where changes are being made by something else
+        /// The EndPath is in Sync class for some reason
+        /// TODO: Fix path split
         /// </summary>
         public string WatchPath { get; }
         public Sync Sync { get; }

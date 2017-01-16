@@ -11,6 +11,10 @@ using System.Text;
 
 namespace Janus
 {
+    /// <summary>
+    /// Handles all of the actual file synchronisation functionality
+    /// TODO: Combine with Watcher / Better Split / Use Interfaces to decouple
+    /// </summary>
     public class Sync
     {
 
@@ -22,6 +26,11 @@ namespace Janus
             Watcher = parent;
         }
 
+        /// <summary>
+        /// Path that gets changed
+        /// For some reason the start path is in Watcher
+        /// TODO: Refactor this
+        /// </summary>
         public string  EndPath { get; }
 
         private bool _addFiles;
@@ -57,6 +66,7 @@ namespace Janus
 
         /// <summary>
         /// Parent watcher that contains the event logic
+        /// TODO: Circular reference can't be good code practice.
         /// </summary>
         private Watcher Watcher { get; set; }
 

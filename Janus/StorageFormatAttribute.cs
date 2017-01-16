@@ -2,6 +2,10 @@
 
 namespace Janus
 {
+    /// <summary>
+    /// The DataStore class uses this via Reflection to detect all
+    ///  IDataStorageFormat classes it can load from a DLL
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class)]
     public class StorageFormatAttribute : Attribute
     {
