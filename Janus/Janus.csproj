@@ -29,6 +29,7 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <!--<TargetPlatformVersion>8.1</TargetPlatformVersion>-->
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -78,6 +79,8 @@
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
     <Reference Include="Windows" />
+    <!--<Reference Include="Windows.Data" />
+    <Reference Include="Windows.UI" />-->
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -97,6 +100,7 @@
     <Compile Include="Filters\IncludeFilter.cs" />
     <Compile Include="Filters\ExcludeFilter.cs" />
     <Compile Include="INotificationSystem.cs" />
+    <Compile Include="IDirectorySynchroniser.cs" />
     <Compile Include="MainWindow.xaml.cs" />
     <Compile Include="Matchers\IMatcher.cs" />
     <Compile Include="IDataStorageFormat.cs" />
@@ -104,9 +108,10 @@
     <Compile Include="JanusData.cs" />
     <Compile Include="Matchers\SimpleStringMatcher.cs" />
     <Compile Include="NotifcationType.cs" />
+    <Compile Include="SyncData.cs" />
     <Compile Include="WindowsToast.cs" />
     <Compile Include="StorageFormatAttribute.cs" />
-    <Compile Include="Sync.cs" />
+    <Compile Include="MetaDataSynchroniser.cs" />
     <Compile Include="Watcher.cs" />
     <Page Include="CreateWindow.xaml">
       <SubType>Designer</SubType>
