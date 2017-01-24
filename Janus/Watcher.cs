@@ -8,24 +8,8 @@ namespace Janus
 {
     public class Watcher
     {
-        /// <summary>
-        /// The input path where changes are being made by something else
-        /// The EndPath is in Sync class for some reason
-        /// TODO: Fix path split
-        /// </summary>
-        public string WatchPath { get; }
-        public Sync Sync { get; }
-
-        /// <summary>
-        /// Filters that will be applied (in order).
-        /// </summary>
-        public List<IFilter> Filters { get; }
-
-        /// <summary>
-        /// If enabled all subdirectories and their files will be copied/deleted.
-        /// TODO: Test this
-        /// </summary>
-        public bool Recursive { get; }
+        public SyncData Data { get; }
+        public ISynchroniser Synchroniser { get; }
 
         /// <summary>
         /// List of files that have been deleted in the WatchPath directory.
@@ -58,16 +42,21 @@ namespace Janus
         /// <summary>
         /// Watches for file deletions in the WatchPath directory.
         /// </summary>
-        private FileSystemWatcher _deleteWatcher;
+        private readonly FileSystemWatcher _deleteWatcher;
 
         public Watcher(string watchPath, string endPath, bool addFiles, bool deleteFiles, List<IFilter> filters, bool recursive, bool observe = false)
         {
-            WatchPath = watchPath;
+            Data = new SyncData
+            {
+                AddFiles = addFiles,
+                DeleteFiles = deleteFiles,
+                Filters = filters,
+                Recursive = recursive,
+                WatchDirectory = watchPath,
+                SyncDirectory = endPath
+            };
 
-            Sync = new Sync(endPath, this, addFiles, deleteFiles);
-
-            Filters = filters;
-            Recursive = recursive;
+            Synchroniser = new MetaDataSynchroniser(Data);
 
             if (observe)
             {
@@ -94,7 +83,7 @@ namespace Janus
 
         public void AddFilter(IFilter filter)
         {
-            Filters.Add(filter);
+            Data.Filters.Add(filter);
         }
 
         /// <summary>
@@ -114,7 +103,7 @@ namespace Janus
         /// <returns>Async Task</returns>
         public Task DoInitialSynchronise()
         {
-            return Task.Run(() => Sync.TryFullSynchronise());
+            return Task.Run(() => Synchroniser.TryFullSynchronise());
         }
 
         /// <summary>
@@ -127,13 +116,13 @@ namespace Janus
             foreach (var file in _copy)
             {
                 Console.WriteLine("[Manual] Copying: {0}", file);
-                Sync.AddAsync(file);
+                Synchroniser.AddAsync(file);
             }
 
             foreach (var file in _delete)
             {
                 Console.WriteLine("[Manual] Deleting: {0}", file);
-                Sync.DeleteAsync(file);
+                Synchroniser.DeleteAsync(file);
             }
 
             _copy.Clear();
@@ -147,7 +136,7 @@ namespace Janus
         /// <param name="e">Event Parameters (contains file path)</param>
         private void WriteWatcherDeleted(object sender, FileSystemEventArgs e)
         {
-            foreach (var filter in Filters)
+            foreach (var filter in Data.Filters)
             {
                 if (filter.ShouldExcludeFile(e.FullPath))
                 {
@@ -161,10 +150,10 @@ namespace Janus
                 var succ = _copy.Remove(e.FullPath);
                 Console.WriteLine("Removed from copy list? {0}", succ);
             }
-            if (Sync.DeleteFiles)
+            if (Data.DeleteFiles)
             {
                 Console.WriteLine("Deleting: {0}", e.FullPath);
-                Sync.DeleteAsync(e.FullPath);
+                Synchroniser.DeleteAsync(e.FullPath);
             }
             else
             {
@@ -187,7 +176,7 @@ namespace Janus
         /// <param name="e">Event Parameters (contains file path)</param>
         private void WriteWatcherChanged(object sender, FileSystemEventArgs e)
         {
-            foreach (var filter in Filters)
+            foreach (var filter in Data.Filters)
             {
                 if (filter.ShouldExcludeFile(e.FullPath))
                 {
@@ -207,10 +196,10 @@ namespace Janus
                 var succ = _delete.Remove(e.FullPath);
                 Console.WriteLine("Removed from delete list? {0}", succ);
             }
-            if (Sync.AddFiles)
+            if (Data.AddFiles)
             {
                 Console.WriteLine("Copying: {0}", e.FullPath);
-                Sync.AddAsync(e.FullPath);
+                Synchroniser.AddAsync(e.FullPath);
             }
             else
             {
@@ -226,7 +215,7 @@ namespace Janus
         /// </summary>
         public void Stop()
         {
-            Console.WriteLine("Stopping watcher for '{0}'", WatchPath);
+            Console.WriteLine("Stopping watcher for '{0}'", Data.WatchDirectory);
             DisableEvents();
             _writeWatcher.Dispose();
             _writeWatcher.Dispose();
@@ -264,9 +253,7 @@ namespace Janus
         private bool Equals(Watcher other)
         {
             return Observe == other.Observe &&
-                string.Equals(WatchPath, other.WatchPath) &&
-                Equals(Sync, other.Sync) &&
-                Recursive == other.Recursive;
+                   Data.Equals(other.Data);
         }
 
         /// <summary>
@@ -278,9 +265,9 @@ namespace Janus
             unchecked
             {
                 var hashCode = Observe.GetHashCode();
-                hashCode = (hashCode*397) ^ (WatchPath?.GetHashCode() ?? 0);
-                hashCode = (hashCode*397) ^ (Sync?.GetHashCode() ?? 0);
-                hashCode = (hashCode*397) ^ Recursive.GetHashCode();
+                hashCode = (hashCode*397) ^ (Data.WatchDirectory?.GetHashCode() ?? 0);
+                hashCode = (hashCode*397) ^ (Synchroniser?.GetHashCode() ?? 0);
+                hashCode = (hashCode*397) ^ Data.Recursive.GetHashCode();
                 return hashCode;
             }
         }

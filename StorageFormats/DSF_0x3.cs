@@ -178,16 +178,16 @@ namespace StorageFormats
             foreach (var watcher in watchers)
             {
                 writer.Write(Start);
-                writer.Write(watcher.WatchPath);
-                writer.Write(watcher.Sync.EndPath);
-                if (watcher.Filters == null)
+                writer.Write(watcher.Data.WatchDirectory);
+                writer.Write(watcher.Data.SyncDirectory);
+                if (watcher.Data.Filters == null)
                 {
                     writer.Write(0);
                 }
                 else
                 {
-                    writer.Write(watcher.Filters.Count);
-                    foreach (var filter in watcher.Filters)
+                    writer.Write(watcher.Data.Filters.Count);
+                    foreach (var filter in watcher.Data.Filters)
                     {
                         writer.Write((uint)filter.Behaviour);
                         var excludeFilter = filter as ExcludeFilter;
@@ -226,9 +226,9 @@ namespace StorageFormats
                         }
                     }
                 }
-                writer.Write(watcher.Recursive);
-                writer.Write(watcher.Sync.AddFiles);
-                writer.Write(watcher.Sync.DeleteFiles);
+                writer.Write(watcher.Data.Recursive);
+                writer.Write(watcher.Data.AddFiles);
+                writer.Write(watcher.Data.DeleteFiles);
                 writer.Write(watcher.Observe);
                 writer.Write(End);
             }

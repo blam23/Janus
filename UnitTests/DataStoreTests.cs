@@ -54,7 +54,7 @@ namespace UnitTests
                 Assert.AreEqual(storedList.Watchers[i], _data.Watchers[i],
                     "[{0}-{1}] Stored watcher was not the same as saved watcher.", _count, i);
 
-                CollectionAssert.AreEqual(storedList.Watchers[i].Filters, _data.Watchers[i].Filters,
+                CollectionAssert.AreEqual(storedList.Watchers[i].Data.Filters, _data.Watchers[i].Data.Filters,
                     "[{0}-{1}] Watcher filters were not the same.", _count, i);
             }
 

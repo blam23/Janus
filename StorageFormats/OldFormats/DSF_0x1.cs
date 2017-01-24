@@ -125,12 +125,12 @@ namespace StorageFormats.OldFormats
             foreach (var watcher in watchers)
             {
                 writer.Write(Start);
-                writer.Write(watcher.WatchPath);
-                writer.Write(watcher.Sync.EndPath);
+                writer.Write(watcher.Data.WatchDirectory);
+                writer.Write(watcher.Data.SyncDirectory);
                 writer.Write("*");
-                writer.Write(watcher.Recursive);
-                writer.Write(watcher.Sync.AddFiles);
-                writer.Write(watcher.Sync.DeleteFiles);
+                writer.Write(watcher.Data.Recursive);
+                writer.Write(watcher.Data.AddFiles);
+                writer.Write(watcher.Data.DeleteFiles);
                 writer.Write(End);
             }
 
