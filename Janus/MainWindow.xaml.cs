@@ -29,7 +29,7 @@ namespace Janus
         private void btnWatcher_Click(object sender, RoutedEventArgs e)
         {
             var createWindow = new CreateWindow();
-            createWindow.Init(this);
+            createWindow.Init();
             createWindow.Show();
         }
 

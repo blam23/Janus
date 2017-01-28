@@ -35,7 +35,7 @@ namespace UnitTests
             {
                 writer.WriteLine("Hello World");
             }
-            Thread.Sleep(200);
+            Thread.Sleep(400);
 
             Assert.IsTrue(File.Exists(fileOut), "Watcher did not copy over created file.");
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -47,7 +48,7 @@ namespace Janus
                 var codeBase = Assembly.GetExecutingAssembly().CodeBase;
                 var uri = new UriBuilder(codeBase);
                 var path = Uri.UnescapeDataString(uri.Path);
-                Console.WriteLine(path);
+                Debug.WriteLine(path);
                 return Path.GetDirectoryName(path);
             }
         }
@@ -76,8 +77,8 @@ namespace Janus
         /// </summary>
         public void Initialise()
         {
-            Console.WriteLine(AssemblyDirectory);
-            Console.WriteLine(LoaderLocation);
+            Debug.WriteLine(AssemblyDirectory);
+            Debug.WriteLine(LoaderLocation);
             var a = Assembly.UnsafeLoadFrom(LoaderLocation);
             foreach (var t in a.GetTypes())
             {
@@ -177,7 +178,7 @@ namespace Janus
         /// <param name="message">Error reason</param>
         private void InvalidDataStore(string message)
         {
-            Console.WriteLine(Resources.Invalid_DataStore, message);
+            Debug.WriteLine(Resources.Invalid_DataStore, message);
             File.Delete(_storeName);
         }
     }

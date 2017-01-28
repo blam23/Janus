@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Janus.Properties;
@@ -149,7 +150,7 @@ namespace Janus
             }
             catch (Exception e)
             {
-                Console.WriteLine(Resources.Copy_Error, partPath, e.Message);
+                Debug.WriteLine(Resources.Copy_Error, partPath, e.Message);
                 await Task.Delay(300);
                 AddAsync(path, isPathFull, count-1);
             }
@@ -172,7 +173,7 @@ namespace Janus
             }
             catch (Exception e)
             {
-                Console.WriteLine(Resources.Delete_Error, partPath, e.Message);
+                Debug.WriteLine(Resources.Delete_Error, partPath, e.Message);
                 await Task.Delay(300);
                 DeleteAsync(path, isPathFull, count - 1);
             }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 using System.Windows.Forms;
@@ -18,7 +19,7 @@ namespace Janus
             InitializeComponent();
         }
 
-        public void Init(MainWindow parent)
+        public void Init()
         {
         }
 
@@ -54,13 +55,13 @@ namespace Janus
                 }
 
                 MainWindow.Watchers.Add(watcher);
-                Console.WriteLine(Properties.Resources.Debug_Added_Watcher);
+                Debug.WriteLine(Properties.Resources.Debug_Added_Watcher);
                 NotificationSystem.Default.Push(NotifcationType.Info, "New Watcher", "Added a new watcher successfully.");
                 Close();
             }
             else
             {
-                Console.WriteLine(Properties.Resources.Debug_Invalid_Path);
+                Debug.WriteLine(Properties.Resources.Debug_Invalid_Path);
             }
         }
 

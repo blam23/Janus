@@ -172,4 +172,10 @@
   <data name="Debug_Invalid_Path" xml:space="preserve">
     <value>Invalid path!</value>
   </data>
+  <data name="Auto_Deleted_Target" xml:space="preserve">
+    <value>Deleted: {0}</value>
+  </data>
+  <data name="Auto_Copied_Target" xml:space="preserve">
+    <value>Copied: {0}</value>
+  </data>
 </root>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Janus.Filters;
@@ -116,13 +117,13 @@ namespace Janus
         {
             foreach (var file in _copy)
             {
-                Console.WriteLine(Resources.Manual_Copying_Target, file);
+                Debug.WriteLine(Resources.Manual_Copying_Target, file);
                 Synchroniser.AddAsync(file);
             }
 
             foreach (var file in _delete)
             {
-                Console.WriteLine(Resources.Manual_Deleting_Target, file);
+                Debug.WriteLine(Resources.Manual_Deleting_Target, file);
                 Synchroniser.DeleteAsync(file);
             }
 
@@ -147,18 +148,19 @@ namespace Janus
 
             if(_copy.Contains(e.FullPath))
             {
-                Console.WriteLine(Resources.Auto_Removing_Target, e.FullPath);
+                Debug.WriteLine(Resources.Auto_Removing_Target, e.FullPath);
                 var succ = _copy.Remove(e.FullPath);
-                Console.WriteLine(Resources.Auto_Removed_Target, succ);
+                Debug.WriteLine(Resources.Auto_Removed_Target, succ);
             }
             if (Data.DeleteFiles)
             {
-                Console.WriteLine(Resources.Auto_Deleting_Target, e.FullPath);
+                Debug.WriteLine(Resources.Auto_Deleting_Target, e.FullPath);
                 Synchroniser.DeleteAsync(e.FullPath);
+                Debug.WriteLine(Resources.Auto_Deleted_Target, e.FullPath);
             }
             else
             {
-                Console.WriteLine(Resources.Auto_Mark_Delete_Target, e.FullPath);
+                Debug.WriteLine(Resources.Auto_Mark_Delete_Target, e.FullPath);
                 _delete.Add(e.FullPath);
             }
         }
@@ -190,21 +192,22 @@ namespace Janus
                 return;
             }
             _lastPath = e.FullPath;
-            Console.WriteLine(e.ChangeType);
+            Debug.WriteLine(e.ChangeType);
             if (_delete.Contains(e.FullPath))
             {
-                Console.WriteLine(Resources.Auto_Remove_Delete_Target, e.FullPath);
+                Debug.WriteLine(Resources.Auto_Remove_Delete_Target, e.FullPath);
                 var succ = _delete.Remove(e.FullPath);
-                Console.WriteLine(Resources.Auto_Remove_Delete_List, succ);
+                Debug.WriteLine(Resources.Auto_Remove_Delete_List, succ);
             }
             if (Data.AddFiles)
             {
-                Console.WriteLine(Resources.Auto_Copying_Target, e.FullPath);
+                Debug.WriteLine(Resources.Auto_Copying_Target, e.FullPath);
                 Synchroniser.AddAsync(e.FullPath);
+                Debug.WriteLine(Resources.Auto_Copied_Target, e.FullPath);
             }
             else
             {
-                Console.WriteLine(Resources.Auto_Mark_Copy_Target, e.FullPath);
+                Debug.WriteLine(Resources.Auto_Mark_Copy_Target, e.FullPath);
                 _copy.Add(e.FullPath);
             }
         }
@@ -216,7 +219,7 @@ namespace Janus
         /// </summary>
         public void Stop()
         {
-            Console.WriteLine(Resources.Watcher_Stop_Target, Data.WatchDirectory);
+            Debug.WriteLine(Resources.Watcher_Stop_Target, Data.WatchDirectory);
             DisableEvents();
             _writeWatcher.Dispose();
             _writeWatcher.Dispose();
