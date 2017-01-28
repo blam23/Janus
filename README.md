@@ -6,5 +6,6 @@ Given a source directory and a target directory, it will copy any new files adde
 Includes basic filtering support and recursion.
 
 Simple use cases:
-    * Backing up to a USB or remote directory
-    * Automatically copying built files to a VM
+
+ * Backing up to a USB or remote directory
+ * Automatically copying built files to a VM
