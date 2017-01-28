@@ -13,8 +13,6 @@ namespace Janus
     /// </summary>
     public partial class CreateWindow
     {
-        private MainWindow _parent;
-
         public CreateWindow()
         {
             InitializeComponent();
@@ -22,7 +20,6 @@ namespace Janus
 
         public void Init(MainWindow parent)
         {
-            _parent = parent;
         }
 
 
@@ -78,11 +75,9 @@ namespace Janus
         {
             var dialog = new FolderBrowserDialog {SelectedPath = tb.Text};
             var result = dialog.ShowDialog();
-            if (result == System.Windows.Forms.DialogResult.OK)
-            {
-                tb.Text = dialog.SelectedPath;
-                Unconfirm();
-            }
+            if (result != System.Windows.Forms.DialogResult.OK) return;
+            tb.Text = dialog.SelectedPath;
+            Unconfirm();
         }
 
         private void Unconfirm()
