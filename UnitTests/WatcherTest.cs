@@ -35,12 +35,12 @@ namespace UnitTests
             {
                 writer.WriteLine("Hello World");
             }
-            Thread.Sleep(100);
+            Thread.Sleep(200);
 
             Assert.IsTrue(File.Exists(fileOut), "Watcher did not copy over created file.");
 
             File.Delete(fileIn);
-            Thread.Sleep(100);
+            Thread.Sleep(200);
 
             Assert.IsFalse(File.Exists(fileOut), "Watcher did not delete file.");
 
@@ -78,7 +78,7 @@ namespace UnitTests
             {
                 writer.WriteLine("Hello World");
             }
-            Thread.Sleep(100);
+            Thread.Sleep(200);
 
             Assert.IsFalse(File.Exists(fileOut), "Watcher copied over filtered created file.");
 
@@ -88,12 +88,12 @@ namespace UnitTests
             {
                 writer.WriteLine("Hello World.");
             }
-            Thread.Sleep(50);
+            Thread.Sleep(200);
 
             Assert.IsTrue(File.Exists(fileOut), "Watcher did not copy over created file.");
 
             File.Delete(fileIn);
-            Thread.Sleep(50);
+            Thread.Sleep(200);
 
             Assert.IsFalse(File.Exists(fileOut), "Watcher did not delete file.");
 
