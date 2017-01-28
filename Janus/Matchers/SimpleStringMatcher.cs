@@ -38,12 +38,9 @@
                                 ret = true;
                                 continue;
                             }
-                            else
-                            {
-                                j++;
-                                i++;
-                                continue; // double star - unsure what to do here.
-                            }
+                            j++;
+                            i++;
+                            continue; // double star - unsure what to do here.
                         }
 
                         if (blockLength > text.Length - j) // not long enough to match

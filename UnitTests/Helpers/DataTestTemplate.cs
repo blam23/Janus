@@ -4,33 +4,33 @@ namespace UnitTests.Helpers
 {
     public class DataTestTemplate
     {
-        internal readonly string _path;
-        internal readonly string _dataPath;
+        internal readonly string StartPath;
+        internal readonly string DataPath;
 
-        internal string _testInput;
-        internal string _testOutput;
+        internal string TestInput;
+        internal string TestOutput;
 
         public DataTestTemplate(string name)
         {
-            _path = Path.GetFullPath($"Tests\\{name}");
-            _dataPath = Path.GetFullPath($"..\\..\\Data\\{name}");
+            StartPath = Path.GetFullPath($"Tests\\{name}");
+            DataPath = Path.GetFullPath($"..\\..\\Data\\{name}");
         }
 
         internal void SetupData(string test)
         {
-            var dataInput = Path.Combine(_dataPath, test, @"in");
+            var dataInput = Path.Combine(DataPath, test, @"in");
 
-            _testInput = Path.Combine(_path, test, @"in");
-            _testOutput = Path.Combine(_path, test, @"out");
+            TestInput = Path.Combine(StartPath, test, @"in");
+            TestOutput = Path.Combine(StartPath, test, @"out");
 
             // Clear existing test data
-            if (Directory.Exists(_testInput))
-                Directory.Delete(_testInput, true);
-            if (Directory.Exists(_testOutput))
-                Directory.Delete(_testOutput, true);
+            if (Directory.Exists(TestInput))
+                Directory.Delete(TestInput, true);
+            if (Directory.Exists(TestOutput))
+                Directory.Delete(TestOutput, true);
 
             // Copy needed files from data directory
-            TestHelper.CopyDirectory(_testInput, dataInput);
+            TestHelper.CopyDirectory(TestInput, dataInput);
         }
     }
 }

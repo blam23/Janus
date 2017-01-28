@@ -1,7 +1,7 @@
-﻿using Janus.Matchers;
+﻿using System.Collections.Generic;
 using System.IO;
-using System.Collections.Generic;
 using System.Linq;
+using Janus.Matchers;
 
 namespace Janus.Filters
 {
@@ -11,25 +11,23 @@ namespace Janus.Filters
 
         private readonly IPatternMatcher<string> _matcher = new SimpleStringMatcher();
 
-        private IList<string> _filters;
-
-        public IList<string> Filters => _filters;
+        public IList<string> Filters { get; }
 
         public ExcludeFileFilter(params string[] filters)
         {
-            _filters = filters;
+            Filters = filters;
         }
 
         public ExcludeFileFilter(IList<string> filters)
         {
-            _filters = filters;
+            Filters = filters;
         }
 
         public bool ShouldExcludeFile(string fullPath)
         {
             var file = Path.GetFileName(fullPath);
             var ret = false;
-            foreach (var filter in _filters)
+            foreach (var filter in Filters)
             {
                 if(_matcher.Matches(file, filter))
                 {
@@ -56,7 +54,7 @@ namespace Janus.Filters
         {
             unchecked
             {
-                return ((_matcher?.GetHashCode() ?? 0)*397) ^ (_filters?.GetHashCode() ?? 0);
+                return ((_matcher?.GetHashCode() ?? 0)*397) ^ (Filters?.GetHashCode() ?? 0);
             }
         }
     }

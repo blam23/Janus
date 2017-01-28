@@ -1,8 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Janus;
 using Janus.Filters;
-using System.Collections.Generic;
 
 namespace StorageFormats
 {
@@ -51,7 +51,7 @@ namespace StorageFormats
                 var filters = new List<IFilter>(filterCount);
                 for (var i = 0; i < filterCount; i++)
                 {
-                    var behaviour = (FilterBehaviour)reader.ReadUInt32();
+                    reader.ReadUInt32(); // Filter Behaviour - Unused.
                     var type = reader.ReadString();
                     switch (type)
                     {
@@ -158,17 +158,11 @@ namespace StorageFormats
         {
             var patternCount = reader.ReadInt32();
             var patterns = new string[patternCount];
-            for (int j = 0; j < patternCount; j++)
+            for (var j = 0; j < patternCount; j++)
             {
                 patterns[j] = reader.ReadString();
             }
             return patterns;
-        }
-
-        private static void Seek(BinaryReader reader, char x)
-        {
-            var c = '\0';
-            while (c != x) c = reader.ReadChar();
         }
 
         public void Save(BinaryWriter writer, JanusData data)

@@ -4,16 +4,17 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:tb="http://www.hardcodet.net/taskbar"
+        xmlns:janus="clr-namespace:Janus"
         mc:Ignorable="d"
         Title="Janus" Height="440" Width="735" Loaded="MainWindow_OnLoaded" Icon="Media/Janus.ico" Closing="MainWindow_OnClosing" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
     <Window.Resources>
-        <DataTemplate x:Key="WatcherTemplate">
+        <DataTemplate x:Key="WatcherTemplate" DataType="janus:Watcher">
             <Grid Width="Auto">
                 <StackPanel Margin="5" >
-                    <TextBlock Text="{Binding Path=WatchPath}" FontWeight="Bold" FontSize="16"/>
-                    <TextBlock Text="{Binding Path=Sync.EndPath}" FontSize="14"/>
-                    <CheckBox Content="Automatically copy files" IsChecked="{Binding Path=Sync.AddFiles, Mode=TwoWay}" />
-                    <CheckBox Content="Automatically delete files" IsChecked="{Binding Path=Sync.DeleteFiles, Mode=TwoWay}" />
+                    <TextBlock Text="{Binding Path=Data.WatchDirectory}" FontWeight="Bold" FontSize="16"/>
+                    <TextBlock Text="{Binding Path=Data.SyncDirectory}" FontSize="14"/>
+                    <CheckBox Content="Automatically copy files" IsChecked="{Binding Path=Data.AddFiles, Mode=TwoWay}" />
+                    <CheckBox Content="Automatically delete files" IsChecked="{Binding Path=Data.DeleteFiles, Mode=TwoWay}" />
                 </StackPanel>
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="5" >
                     <Button Margin="5" Click="btnSync_Click" Padding="10" Content="Sync" FontSize="14" />

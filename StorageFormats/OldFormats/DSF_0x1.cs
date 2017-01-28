@@ -1,7 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using Janus;
-using System.Collections.Generic;
 using Janus.Filters;
 
 namespace StorageFormats.OldFormats
@@ -32,7 +32,7 @@ namespace StorageFormats.OldFormats
             {
                 var watchPath = reader.ReadString();
                 var endPath = reader.ReadString();
-                var filter = reader.ReadString();
+                reader.ReadString(); // filter - unused
                 var recursive = reader.ReadBoolean();
                 var addFiles = reader.ReadBoolean();
                 var deleteFiles = reader.ReadBoolean();
@@ -110,12 +110,6 @@ namespace StorageFormats.OldFormats
             }
 
             return data;
-        }
-
-        private static void Seek(BinaryReader reader, char x)
-        {
-            var c = '\0';
-            while (c != x) c = reader.ReadChar();
         }
 
         public void Save(BinaryWriter writer, JanusData data)

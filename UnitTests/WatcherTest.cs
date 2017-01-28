@@ -21,16 +21,16 @@ namespace UnitTests
 
             var watcher = new Watcher
                 (
-                    _testInput,
-                    _testOutput,
+                    TestInput,
+                    TestOutput,
                     true,
                     true,
                     new List<IFilter>(),
                     true
                 );
 
-            var fileIn = Path.Combine(_testInput, "test.txt");
-            var fileOut = Path.Combine(_testOutput, "test.txt");
+            var fileIn = Path.Combine(TestInput, "test.txt");
+            var fileOut = Path.Combine(TestOutput, "test.txt");
             using (var writer = File.CreateText(fileIn))
             {
                 writer.WriteLine("Hello World");
@@ -43,6 +43,8 @@ namespace UnitTests
             Thread.Sleep(100);
 
             Assert.IsFalse(File.Exists(fileOut), "Watcher did not delete file.");
+
+            watcher.DisableEvents();
         }
 
         [TestMethod]
@@ -56,8 +58,8 @@ namespace UnitTests
 
             var watcher = new Watcher
                 (
-                    _testInput,
-                    _testOutput,
+                    TestInput,
+                    TestOutput,
                     true,
                     true,
                     filters,
@@ -66,12 +68,12 @@ namespace UnitTests
 
             Task.WaitAll(watcher.DoInitialSynchronise());
 
-            Assert.IsFalse(File.Exists(Path.Combine(_testOutput, "hello.txt")));
-            Assert.IsFalse(File.Exists(Path.Combine(_testOutput, "test.ini")));
-            Assert.IsTrue(File.Exists(Path.Combine(_testOutput, "othertest.bork")));
+            Assert.IsFalse(File.Exists(Path.Combine(TestOutput, "hello.txt")));
+            Assert.IsFalse(File.Exists(Path.Combine(TestOutput, "test.ini")));
+            Assert.IsTrue(File.Exists(Path.Combine(TestOutput, "othertest.bork")));
 
-            var fileIn = Path.Combine(_testInput, "test.txt");
-            var fileOut = Path.Combine(_testOutput, "test.txt");
+            var fileIn = Path.Combine(TestInput, "test.txt");
+            var fileOut = Path.Combine(TestOutput, "test.txt");
             using (var writer = File.CreateText(fileIn))
             {
                 writer.WriteLine("Hello World");
@@ -80,8 +82,8 @@ namespace UnitTests
 
             Assert.IsFalse(File.Exists(fileOut), "Watcher copied over filtered created file.");
 
-            fileIn = Path.Combine(_testInput, "test");
-            fileOut = Path.Combine(_testOutput, "test");
+            fileIn = Path.Combine(TestInput, "test");
+            fileOut = Path.Combine(TestOutput, "test");
             using (var writer = File.CreateText(fileIn))
             {
                 writer.WriteLine("Hello World.");
@@ -94,6 +96,8 @@ namespace UnitTests
             Thread.Sleep(50);
 
             Assert.IsFalse(File.Exists(fileOut), "Watcher did not delete file.");
+
+            watcher.DisableEvents();
         }
     }
 }

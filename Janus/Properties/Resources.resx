@@ -133,4 +133,43 @@
   <data name="Invalid_DataStore" xml:space="preserve">
     <value>Invalid DataStore file found: '{0}'; removing file.</value>
   </data>
+  <data name="Manual_Copying_Target" xml:space="preserve">
+    <value>[Manual] Copying: {0}</value>
+  </data>
+  <data name="Manual_Deleting_Target" xml:space="preserve">
+    <value>[Manual] Deleting: {0}</value>
+  </data>
+  <data name="Auto_Removing_Target" xml:space="preserve">
+    <value>Removing from copy list: {0}</value>
+  </data>
+  <data name="Auto_Removed_Target" xml:space="preserve">
+    <value>Removed from copy list? {0}</value>
+  </data>
+  <data name="Auto_Deleting_Target" xml:space="preserve">
+    <value>Deleting: {0}</value>
+  </data>
+  <data name="Auto_Mark_Delete_Target" xml:space="preserve">
+    <value>Marking for delete: {0}</value>
+  </data>
+  <data name="Auto_Remove_Delete_Target" xml:space="preserve">
+    <value>Removing from delete list: {0}</value>
+  </data>
+  <data name="Auto_Remove_Delete_List" xml:space="preserve">
+    <value>Removed from delete list? {0}</value>
+  </data>
+  <data name="Auto_Copying_Target" xml:space="preserve">
+    <value>Copying: {0}</value>
+  </data>
+  <data name="Auto_Mark_Copy_Target" xml:space="preserve">
+    <value>Marking for copy: {0}</value>
+  </data>
+  <data name="Watcher_Stop_Target" xml:space="preserve">
+    <value>Stopping watcher for '{0}'</value>
+  </data>
+  <data name="Debug_Added_Watcher" xml:space="preserve">
+    <value>Added new watcher.</value>
+  </data>
+  <data name="Debug_Invalid_Path" xml:space="preserve">
+    <value>Invalid path!</value>
+  </data>
 </root>

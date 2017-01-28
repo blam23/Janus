@@ -1,6 +1,6 @@
+using System.IO;
 using Janus;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System.IO;
 using UnitTests.Helpers;
 
 namespace UnitTests
@@ -53,7 +53,7 @@ namespace UnitTests
             const string testFile2 = "add_test_2.txt";
 
 
-            _watcher.Synchroniser.AddAsync(testFile1, true);
+            _watcher.Synchroniser.AddAsync(testFile1);
 
             Assert.IsTrue(File.Exists(Path.Combine(_testOutput, "add_test_1.txt")),
                 "First test file was not copied to out dir.");
@@ -72,7 +72,7 @@ namespace UnitTests
             Setup(testName, false, false, false);
             var testFile1 = Path.Combine(_testInput, "delete_test_1.txt");
 
-            _watcher.Synchroniser.AddAsync(testFile1, true);
+            _watcher.Synchroniser.AddAsync(testFile1);
 
             Assert.IsTrue(File.Exists(Path.Combine(_testOutput, "delete_test_1.txt")),
                 "Delete test file was not copied to out dir.");

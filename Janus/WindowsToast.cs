@@ -11,8 +11,8 @@ namespace Janus
     internal class WindowsToast : INotificationSystem
     {
         // TODO: This is what gets displayed in the Notifcation Center on Win 10, need a way to make it display a proper name.
-        private const string AppID = "Janus.Main";
-        private readonly ToastNotifier _notifier = ToastNotificationManager.CreateToastNotifier(AppID);
+        private const string AppId = "Janus.Main";
+        private readonly ToastNotifier _notifier = ToastNotificationManager.CreateToastNotifier(AppId);
 
         /// <summary>
         /// Sends out a basic Windows 8 style notification
@@ -22,10 +22,10 @@ namespace Janus
         /// <param name="message">Main message content (plaintext only)</param>
         public void Push(NotifcationType type, string title, string message)
         {
-            var toastXML = new XmlDocument();
-            toastXML.LoadXml($@"<toast><visual><binding template='ToastGeneric'><text>{title}</text><text>{message}</text></binding></visual></toast>");
+            var toastXml = new XmlDocument();
+            toastXml.LoadXml($@"<toast><visual><binding template='ToastGeneric'><text>{title}</text><text>{message}</text></binding></visual></toast>");
 
-            var toast = new ToastNotification(toastXML) {ExpirationTime = DateTimeOffset.Now.AddHours(1)};
+            var toast = new ToastNotification(toastXml) {ExpirationTime = DateTimeOffset.Now.AddHours(1)};
             _notifier.Show(toast);
         }
     }

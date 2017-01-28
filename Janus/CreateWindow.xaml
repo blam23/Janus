@@ -3,7 +3,6 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Janus"
         mc:Ignorable="d"
         Title="Add New Watcher" Height="308" Width="497">
     <Grid>
@@ -18,10 +17,10 @@
         <Button x:Name="BtnAdd" Content="Add" Margin="0,0,10,9" HorizontalAlignment="Right" Width="75" Height="20" VerticalAlignment="Bottom" IsEnabled="False" Click="btnAdd_Click"/>
         <CheckBox x:Name="CbImmediate" Content="Immediately synchronise out directory" Margin="108,172,97,0" VerticalAlignment="Top"  Checked="OptionChangeEvent" Unchecked="OptionChangeEvent"/>
         <CheckBox x:Name="CbRecurse" Content="Watch all subfolders and files" Margin="108,112,97,0" VerticalAlignment="Top"  Checked="OptionChangeEvent" Unchecked="OptionChangeEvent"/>
-        <TextBox x:Name="TxtFilterExclude" Height="20" Margin="108,60,10,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" TextChanged="OptionChangeEvent"/>
+        <TextBox x:Name="TxtFilterInclude" Height="20" Margin="108,60,10,0" TextWrapping="Wrap" Text="*" VerticalAlignment="Top" TextChanged="OptionChangeEvent"/>
         <Label x:Name="LabelCopy1" Content="Include:" HorizontalAlignment="Left" Margin="50,57,0,0" VerticalAlignment="Top"/>
         <CheckBox x:Name="CbConfirm" Content="These settings are correct" Margin="10,0,97,11" Foreground="Red" FontWeight="Bold" Height="15" VerticalAlignment="Bottom" Checked="cbConfirm_Checked"/>
-        <TextBox x:Name="TxtFilterInclude" Height="20" Margin="108,85,10,0" TextWrapping="Wrap" Text="*.pdb;*.txt" VerticalAlignment="Top" TextChanged="OptionChangeEvent"/>
+        <TextBox x:Name="TxtFilterExclude" Height="20" Margin="108,85,10,0" TextWrapping="Wrap" Text="*.pdb;*.txt" VerticalAlignment="Top" TextChanged="OptionChangeEvent"/>
         <Label Content="Exclude:" HorizontalAlignment="Left" Margin="50,82,0,0" VerticalAlignment="Top"/>
     </Grid>
 </Window>

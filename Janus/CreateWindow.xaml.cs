@@ -1,9 +1,9 @@
-﻿using Janus.Filters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Windows;
 using System.Windows.Forms;
+using Janus.Filters;
 using TextBox = System.Windows.Controls.TextBox;
 
 namespace Janus
@@ -11,7 +11,7 @@ namespace Janus
     /// <summary>
     /// Interaction logic for CreateWindow.xaml
     /// </summary>
-    public partial class CreateWindow : Window
+    public partial class CreateWindow
     {
         private MainWindow _parent;
 
@@ -57,13 +57,13 @@ namespace Janus
                 }
 
                 MainWindow.Watchers.Add(watcher);
-                Console.WriteLine("Added new watcher.");
+                Console.WriteLine(Properties.Resources.Debug_Added_Watcher);
                 NotificationSystem.Default.Push(NotifcationType.Info, "New Watcher", "Added a new watcher successfully.");
                 Close();
             }
             else
             {
-                Console.WriteLine("Invalid path!");
+                Console.WriteLine(Properties.Resources.Debug_Invalid_Path);
             }
         }
 

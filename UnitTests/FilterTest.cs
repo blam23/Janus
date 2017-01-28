@@ -1,6 +1,6 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using System.IO;
 using Janus.Filters;
-using System.IO;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests.Helpers;
 
 namespace UnitTests
@@ -17,15 +17,15 @@ namespace UnitTests
 
             var filter = new ExcludeFileFilter(".*", "testfile");
 
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testOutput, "testfile")), true);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testOutput, ".testfile")), true);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testOutput, ".")), true);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testOutput, "..")), true);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testOutput, "... ")), true);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestOutput, "testfile")), true);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestOutput, ".testfile")), true);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestOutput, ".")), true);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestOutput, "..")), true);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestOutput, "... ")), true);
 
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testOutput, "false")), false);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testOutput, "fa.lse")), false);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testOutput, "testfile2")), false);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestOutput, "false")), false);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestOutput, "fa.lse")), false);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestOutput, "testfile2")), false);
         }
 
         [TestMethod]
@@ -36,22 +36,22 @@ namespace UnitTests
             var filter = new ExcludeFilter("*\\out\\*", "*testfile");
 
             // These have "/out/" in their path
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testOutput, "testfile")), true);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testOutput, ".testfile")), true);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testOutput, "asdf")), true);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testOutput, "out")), true);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testOutput, "krout")), true);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testInput, "out\\")), true);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestOutput, "testfile")), true);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestOutput, ".testfile")), true);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestOutput, "asdf")), true);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestOutput, "out")), true);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestOutput, "krout")), true);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestInput, "out\\")), true);
 
             // Matches against second filter
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testInput, "testfile")), true);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestInput, "testfile")), true);
 
             // Shouldn't match against either filter, unless
             // test system somewhere has an out in it! D:
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testInput, "false")), false);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testInput, "out")), false);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testInput, "fa.lse")), false);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testInput, "testfile2")), false);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestInput, "false")), false);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestInput, "out")), false);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestInput, "fa.lse")), false);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestInput, "testfile2")), false);
         }
 
         [TestMethod]
@@ -62,22 +62,22 @@ namespace UnitTests
             var filter = new IncludeFilter("*\\out\\*", "*testfile");
 
             // These have "/out/" in their path
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testOutput, "testfile")), false);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testOutput, ".testfile")), false);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testOutput, "asdf")), false);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testOutput, "out")), false);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testOutput, "krout")), false);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testInput, "out\\")), false);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestOutput, "testfile")), false);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestOutput, ".testfile")), false);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestOutput, "asdf")), false);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestOutput, "out")), false);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestOutput, "krout")), false);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestInput, "out\\")), false);
 
             // Matches against second filter
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testInput, "testfile")), false);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestInput, "testfile")), false);
 
             // Shouldn't match against either filter, unless
             // test system somewhere has an out in it! D:
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testInput, "false")), true);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testInput, "out")), true);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testInput, "fa.lse")), true);
-            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(_testInput, "testfile2")), true);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestInput, "false")), true);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestInput, "out")), true);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestInput, "fa.lse")), true);
+            Assert.AreEqual(filter.ShouldExcludeFile(Path.Combine(TestInput, "testfile2")), true);
         }
     }
 }

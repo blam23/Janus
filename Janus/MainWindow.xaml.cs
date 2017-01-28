@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.IO;
+using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
 
@@ -11,10 +12,10 @@ namespace Janus
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         public static readonly DataStore MainStore = new DataStore();
-        public static bool Exit = false;
+        public static bool Exit;
         public static DataProvider Data;
         public static ObservableCollection<Watcher> Watchers;
         private static readonly string Startup = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
@@ -67,7 +68,7 @@ namespace Janus
         private void btnRemove_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
-            var watcher = btn.DataContext as Watcher;
+            var watcher = btn?.DataContext as Watcher;
 
             if (watcher == null) return;
             watcher.Stop();
@@ -78,6 +79,7 @@ namespace Janus
         private void btnSync_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
+            if (btn == null) return;
             var watcher = btn.DataContext as Watcher;
 
             watcher?.Synchronise();
@@ -96,7 +98,7 @@ namespace Janus
             }
         }
 
-        private void RemoveFromStartup()
+        private static void RemoveFromStartup()
         {
             if (File.Exists(Shortcut))
             {
@@ -104,11 +106,12 @@ namespace Janus
             }
         }
 
-        private void AddToStartup()
+        private static void AddToStartup()
         {
             using (var writer = new StreamWriter(Shortcut))
             {
-                var app = System.Reflection.Assembly.GetExecutingAssembly().Location;
+                var app = Assembly.GetExecutingAssembly().Location;
+                if (app == null) return; // TODO: error handling / message
                 writer.WriteLine("[InternetShortcut]");
                 writer.WriteLine("URL=file:///" + app);
                 writer.WriteLine("IconIndex=0");

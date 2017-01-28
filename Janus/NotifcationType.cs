@@ -9,6 +9,6 @@
     {
         Error,
         Warning,
-        Info,
+        Info
     }
 }

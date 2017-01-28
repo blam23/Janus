@@ -1,8 +1,9 @@
-﻿using Janus.Filters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using Janus.Filters;
+using Janus.Properties;
 
 namespace Janus
 {
@@ -30,7 +31,7 @@ namespace Janus
         /// This will disable all file watching.
         /// Used for testing, should never be true in normal use.
         /// </summary>
-        public readonly bool Observe = false;
+        public readonly bool Observe;
 
         /// <summary>
         /// Watches for file additions + modifications in the WatchPath directory.
@@ -72,7 +73,7 @@ namespace Janus
 
             _deleteWatcher = new FileSystemWatcher
             {
-                Path = watchPath,
+                Path = watchPath
             };
 
 
@@ -115,13 +116,13 @@ namespace Janus
         {
             foreach (var file in _copy)
             {
-                Console.WriteLine("[Manual] Copying: {0}", file);
+                Console.WriteLine(Resources.Manual_Copying_Target, file);
                 Synchroniser.AddAsync(file);
             }
 
             foreach (var file in _delete)
             {
-                Console.WriteLine("[Manual] Deleting: {0}", file);
+                Console.WriteLine(Resources.Manual_Deleting_Target, file);
                 Synchroniser.DeleteAsync(file);
             }
 
@@ -146,18 +147,18 @@ namespace Janus
 
             if(_copy.Contains(e.FullPath))
             {
-                Console.WriteLine("Removing from copy list: {0}", e.FullPath);
+                Console.WriteLine(Resources.Auto_Removing_Target, e.FullPath);
                 var succ = _copy.Remove(e.FullPath);
-                Console.WriteLine("Removed from copy list? {0}", succ);
+                Console.WriteLine(Resources.Auto_Removed_Target, succ);
             }
             if (Data.DeleteFiles)
             {
-                Console.WriteLine("Deleting: {0}", e.FullPath);
+                Console.WriteLine(Resources.Auto_Deleting_Target, e.FullPath);
                 Synchroniser.DeleteAsync(e.FullPath);
             }
             else
             {
-                Console.WriteLine("Marking for delete: {0}", e.FullPath);
+                Console.WriteLine(Resources.Auto_Mark_Delete_Target, e.FullPath);
                 _delete.Add(e.FullPath);
             }
         }
@@ -192,18 +193,18 @@ namespace Janus
             Console.WriteLine(e.ChangeType);
             if (_delete.Contains(e.FullPath))
             {
-                Console.WriteLine("Removing from delete list: {0}", e.FullPath);
+                Console.WriteLine(Resources.Auto_Remove_Delete_Target, e.FullPath);
                 var succ = _delete.Remove(e.FullPath);
-                Console.WriteLine("Removed from delete list? {0}", succ);
+                Console.WriteLine(Resources.Auto_Remove_Delete_List, succ);
             }
             if (Data.AddFiles)
             {
-                Console.WriteLine("Copying: {0}", e.FullPath);
+                Console.WriteLine(Resources.Auto_Copying_Target, e.FullPath);
                 Synchroniser.AddAsync(e.FullPath);
             }
             else
             {
-                Console.WriteLine("Marking for copy: {0}", e.FullPath);
+                Console.WriteLine(Resources.Auto_Mark_Copy_Target, e.FullPath);
                 _copy.Add(e.FullPath);
             }
         }
@@ -215,7 +216,7 @@ namespace Janus
         /// </summary>
         public void Stop()
         {
-            Console.WriteLine("Stopping watcher for '{0}'", Data.WatchDirectory);
+            Console.WriteLine(Resources.Watcher_Stop_Target, Data.WatchDirectory);
             DisableEvents();
             _writeWatcher.Dispose();
             _writeWatcher.Dispose();
