@@ -73,11 +73,13 @@ namespace Janus
 
         private void ShowFolderBrowser(TextBox tb)
         {
-            var dialog = new FolderBrowserDialog {SelectedPath = tb.Text};
-            var result = dialog.ShowDialog();
-            if (result != System.Windows.Forms.DialogResult.OK) return;
-            tb.Text = dialog.SelectedPath;
-            Unconfirm();
+            using (var dialog = new FolderBrowserDialog {SelectedPath = tb.Text})
+            {
+                var result = dialog.ShowDialog();
+                if (result != System.Windows.Forms.DialogResult.OK) return;
+                tb.Text = dialog.SelectedPath;
+                Unconfirm();
+            }
         }
 
         private void Unconfirm()
