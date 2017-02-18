@@ -20,6 +20,7 @@ namespace Janus
 
         public void Init()
         {
+            GetLastData();
         }
 
 
@@ -53,9 +54,12 @@ namespace Janus
                     await watcher.DoInitialSynchronise();
                 }
 
+                UpdateLastData();
                 MainWindow.Watchers.Add(watcher);
                 Debug.WriteLine(Properties.Resources.Debug_Added_Watcher);
                 NotificationSystem.Default.Push(NotifcationType.Info, "New Watcher", "Added a new watcher successfully.");
+
+
                 Close();
             }
             else
@@ -64,6 +68,27 @@ namespace Janus
             }
         }
 
+        private void UpdateLastData()
+        {
+            MainWindow.Data["lastDirectory"] = TxtDirectory.Text;
+            MainWindow.Data["lastOutDirectory"] = TxtOutDirectory.Text;
+            MainWindow.Data["lastAddOnFile"] = CbAdd.IsChecked ?? false;
+            MainWindow.Data["lastDeleteOnFile"] = CbDelete.IsChecked ?? false;
+            MainWindow.Data["lastIncFilter"] = TxtFilterInclude.Text;
+            MainWindow.Data["lastExcFilter"] = TxtFilterExclude.Text;
+            MainWindow.Data["lastRecurse"] = CbRecurse.IsChecked ?? false;
+        }
+
+        private void GetLastData()
+        {
+            TxtDirectory.Text = MainWindow.Data.GetOr("lastDirectory", TxtDirectory.Text);
+            TxtOutDirectory.Text = MainWindow.Data.GetOr("lastOutDirectory", TxtOutDirectory.Text);
+            CbAdd.IsChecked = MainWindow.Data.GetOr("lastAddOnFile", CbAdd.IsChecked);
+            CbDelete.IsChecked = MainWindow.Data.GetOr("lastDeleteOnFile", CbDelete.IsChecked);
+            TxtFilterInclude.Text = MainWindow.Data.GetOr("lastIncFilter", TxtFilterInclude.Text);
+            TxtFilterExclude.Text = MainWindow.Data.GetOr("lastExcFilter", TxtFilterExclude.Text);
+            CbRecurse.IsChecked = MainWindow.Data.GetOr("lastRecurse", CbRecurse.IsChecked);
+        }
 
 
         private void btnBrowseDirectory_Click(object sender, RoutedEventArgs e)

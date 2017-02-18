@@ -26,5 +26,21 @@ namespace Janus
             }
             return default(T);
         }
+
+        public T GetOr<T>(string key, T defaultValue)
+        {
+            object data;
+            if (Data.TryGetValue(key, out data))
+            {
+                return (T)data;
+            }
+            return defaultValue;
+        }
+
+        public object this[string key]
+        {
+            get { return Dict[key]; }
+            set { Dict[key] = value; }
+        }
     }
 }
