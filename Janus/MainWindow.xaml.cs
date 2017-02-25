@@ -35,9 +35,14 @@ namespace Janus
 
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
         {
+            Logging.WriteLine("Initialising Main Window");
             Hide();
             MainStore.Initialise();
+
+            Logging.WriteLine("Loading Data");
             var d = MainStore.Load();
+            Logging.WriteLine("Finished Loading Data");
+
             Data = d.DataProvider;
             Watchers = d.Watchers;
 
@@ -62,7 +67,9 @@ namespace Janus
 
         public static void UpdateStore()
         {
+            Logging.WriteLine("Saving Data");
             MainStore.Store(new JanusData(Watchers, Data));
+            Logging.WriteLine("Finished Saving Data");
         }
 
         private void btnRemove_Click(object sender, RoutedEventArgs e)
@@ -82,7 +89,7 @@ namespace Janus
             if (btn == null) return;
             var watcher = btn.DataContext as Watcher;
 
-            watcher?.Synchronise();
+            watcher?.SynchroniseAsync();
         }
 
         private void CbStartup_OnClick(object sender, RoutedEventArgs e)

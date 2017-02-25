@@ -102,10 +102,7 @@ namespace Janus
         /// WatchPath matches up with the EndPath.
         /// </summary>
         /// <returns>Async Task</returns>
-        public Task DoInitialSynchronise()
-        {
-            return Task.Run(() => Synchroniser.TryFullSynchronise());
-        }
+        public Task DoInitialSynchronise() => Synchroniser.TryFullSynchroniseAsync();
 
         /// <summary>
         /// Called when the user prompts for a manual synchronisation.
@@ -114,20 +111,36 @@ namespace Janus
         /// </summary>
         public void Synchronise()
         {
-            foreach (var file in _copy)
+            var copyCount = _copy.Count;
+            var deleteCount = _delete.Count;
+            if (copyCount + deleteCount == 0)
             {
-                Debug.WriteLine(Resources.Manual_Copying_Target, file);
-                Synchroniser.AddAsync(file);
+                NotificationSystem.Default.Push(NotifcationType.Info, "Sync Completed.", "No files were changed.");
+                return;
             }
 
+            foreach (var file in _copy)
+            {
+                Logging.WriteLine(Resources.Manual_Copying_Target, file);
+                Synchroniser.AddAsync(file);
+            }
+             
             foreach (var file in _delete)
             {
-                Debug.WriteLine(Resources.Manual_Deleting_Target, file);
+                Logging.WriteLine(Resources.Manual_Deleting_Target, file);
                 Synchroniser.DeleteAsync(file);
             }
 
             _copy.Clear();
             _delete.Clear();
+
+            NotificationSystem.Default.Push(NotifcationType.Info, "Sync Completed.",
+                $"Finished copying {copyCount} files, and deleting {deleteCount} files.");
+        }
+
+        public async Task SynchroniseAsync()
+        {
+            await Task.Run(() => Synchronise());
         }
 
         /// <summary>
@@ -147,19 +160,19 @@ namespace Janus
 
             if(_copy.Contains(e.FullPath))
             {
-                Debug.WriteLine(Resources.Auto_Removing_Target, e.FullPath);
+                Logging.WriteLine(Resources.Auto_Removing_Target, e.FullPath);
                 var succ = _copy.Remove(e.FullPath);
-                Debug.WriteLine(Resources.Auto_Removed_Target, succ);
+                Logging.WriteLine(Resources.Auto_Removed_Target, succ);
             }
             if (Data.DeleteFiles)
             {
-                Debug.WriteLine(Resources.Auto_Deleting_Target, e.FullPath);
+                Logging.WriteLine(Resources.Auto_Deleting_Target, e.FullPath);
                 Synchroniser.DeleteAsync(e.FullPath);
-                Debug.WriteLine(Resources.Auto_Deleted_Target, e.FullPath);
+                Logging.WriteLine(Resources.Auto_Deleted_Target, e.FullPath);
             }
             else
             {
-                Debug.WriteLine(Resources.Auto_Mark_Delete_Target, e.FullPath);
+                Logging.WriteLine(Resources.Auto_Mark_Delete_Target, e.FullPath);
                 _delete.Add(e.FullPath);
             }
         }
@@ -191,22 +204,22 @@ namespace Janus
                 return;
             }
             _lastPath = e.FullPath;
-            Debug.WriteLine(e.ChangeType);
+            Logging.WriteLine(e.ChangeType);
             if (_delete.Contains(e.FullPath))
             {
-                Debug.WriteLine(Resources.Auto_Remove_Delete_Target, e.FullPath);
+                Logging.WriteLine(Resources.Auto_Remove_Delete_Target, e.FullPath);
                 var succ = _delete.Remove(e.FullPath);
-                Debug.WriteLine(Resources.Auto_Remove_Delete_List, succ);
+                Logging.WriteLine(Resources.Auto_Remove_Delete_List, succ);
             }
             if (Data.AddFiles)
             {
-                Debug.WriteLine(Resources.Auto_Copying_Target, e.FullPath);
+                Logging.WriteLine(Resources.Auto_Copying_Target, e.FullPath);
                 Synchroniser.AddAsync(e.FullPath);
-                Debug.WriteLine(Resources.Auto_Copied_Target, e.FullPath);
+                Logging.WriteLine(Resources.Auto_Copied_Target, e.FullPath);
             }
             else
             {
-                Debug.WriteLine(Resources.Auto_Mark_Copy_Target, e.FullPath);
+                Logging.WriteLine(Resources.Auto_Mark_Copy_Target, e.FullPath);
                 _copy.Add(e.FullPath);
             }
         }
@@ -218,7 +231,7 @@ namespace Janus
         /// </summary>
         public void Stop()
         {
-            Debug.WriteLine(Resources.Watcher_Stop_Target, Data.WatchDirectory);
+            Logging.WriteLine(Resources.Watcher_Stop_Target, Data.WatchDirectory);
             DisableEvents();
             _writeWatcher.Dispose();
             _writeWatcher.Dispose();

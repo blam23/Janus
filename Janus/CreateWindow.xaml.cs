@@ -48,15 +48,18 @@ namespace Janus
                     filters,
                     CbRecurse.IsChecked ?? false);
 
+                if (CbSaveSettings.IsChecked ?? false)
+                {
+                    UpdateLastData();
+                }
 
                 if (CbImmediate.IsChecked ?? false)
                 {
                     await watcher.DoInitialSynchronise();
                 }
-
-                UpdateLastData();
+           
                 MainWindow.Watchers.Add(watcher);
-                Debug.WriteLine(Properties.Resources.Debug_Added_Watcher);
+                Logging.WriteLine(Properties.Resources.Debug_Added_Watcher);
                 NotificationSystem.Default.Push(NotifcationType.Info, "New Watcher", "Added a new watcher successfully.");
 
 
@@ -64,7 +67,7 @@ namespace Janus
             }
             else
             {
-                Debug.WriteLine(Properties.Resources.Debug_Invalid_Path);
+                Logging.WriteLine(Properties.Resources.Debug_Invalid_Path);
             }
         }
 

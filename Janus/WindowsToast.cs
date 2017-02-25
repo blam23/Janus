@@ -22,6 +22,7 @@ namespace Janus
         /// <param name="message">Main message content (plaintext only)</param>
         public void Push(NotifcationType type, string title, string message)
         {
+            Logging.WriteLine($"Notification: {type} / {title} / {message}");
             var toastXml = new XmlDocument();
             toastXml.LoadXml($@"<toast><visual><binding template='ToastGeneric'><text>{title}</text><text>{message}</text></binding></visual></toast>");
 

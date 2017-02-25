@@ -16,6 +16,7 @@ namespace Janus
             DataLocation   = Path.GetFullPath(DataLocation);
             LoaderLocation = Path.Combine(AssemblyDirectory, LoaderName);
             _storeName      = Path.Combine(DataLocation, "watchdata");
+            Console.WriteLine(_storeName);
         }
 
         public static readonly string AppData = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData);
@@ -48,7 +49,7 @@ namespace Janus
                 var codeBase = Assembly.GetExecutingAssembly().CodeBase;
                 var uri = new UriBuilder(codeBase);
                 var path = Uri.UnescapeDataString(uri.Path);
-                Debug.WriteLine(path);
+                Logging.WriteLine(path);
                 return Path.GetDirectoryName(path);
             }
         }
@@ -77,8 +78,8 @@ namespace Janus
         /// </summary>
         public void Initialise()
         {
-            Debug.WriteLine(AssemblyDirectory);
-            Debug.WriteLine(LoaderLocation);
+            Logging.WriteLine(AssemblyDirectory);
+            Logging.WriteLine(LoaderLocation);
             var a = Assembly.UnsafeLoadFrom(LoaderLocation);
             foreach (var t in a.GetTypes())
             {
@@ -135,9 +136,10 @@ namespace Janus
 
             if (!File.Exists(_storeName))
             {
+                Logging.WriteLine("No previous data found.");
                 return new JanusData();
             }
-
+            Logging.WriteLine($"Loading from: {_storeName}");
             using (var fs = File.OpenRead(_storeName))
             {
                 var reader = new BinaryReader(fs);
@@ -178,7 +180,7 @@ namespace Janus
         /// <param name="message">Error reason</param>
         private void InvalidDataStore(string message)
         {
-            Debug.WriteLine(Resources.Invalid_DataStore, message);
+            Logging.WriteLine(Resources.Invalid_DataStore, message);
             File.Delete(_storeName);
         }
     }

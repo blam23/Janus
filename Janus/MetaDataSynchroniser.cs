@@ -39,6 +39,11 @@ namespace Janus
         }
 #endif
 
+        public async Task TryFullSynchroniseAsync()
+        {
+            await Task.Run(new Action(TryFullSynchronise));
+        }
+
         /// <summary>
         /// Attempts to make the EndPath directory a 1:1 copy of the
         /// Watcher's WatchPath.
@@ -134,7 +139,7 @@ namespace Janus
         /// <param name="path">The path of the file that you want to add</param>
         /// <param name="isPathFull">If the path is a full path or relative to the WatchPath</param>
         /// <param name="count">Amount of times to retry on failure</param>
-        public async void AddAsync(string path, bool isPathFull = true, int count = 5)
+        public async Task AddAsync(string path, bool isPathFull = true, int count = 5)
         {
             if (count <= 0) return;
             var partPath = isPathFull ? path.Substring(Data.WatchDirectory.Length+1) : path;
@@ -150,9 +155,9 @@ namespace Janus
             }
             catch (Exception e)
             {
-                Debug.WriteLine(Resources.Copy_Error, partPath, e.Message);
+                Logging.WriteLine(Resources.Copy_Error, partPath, e.Message);
                 await Task.Delay(300);
-                AddAsync(path, isPathFull, count-1);
+                await AddAsync(path, isPathFull, count-1);
             }
         }
 
@@ -163,7 +168,7 @@ namespace Janus
         /// <param name="path">The path of the file that you want to add</param>
         /// <param name="isPathFull">If the path is a full path or relative to the WatchPath</param>
         /// <param name="count">Amount of times to retry on failure</param>
-        public async void DeleteAsync(string path, bool isPathFull = true, int count = 5)
+        public async Task DeleteAsync(string path, bool isPathFull = true, int count = 5)
         {
             if (count <= 0) return;
             var partPath = isPathFull ? path.Substring(Data.WatchDirectory.Length+1) : path;
@@ -173,9 +178,9 @@ namespace Janus
             }
             catch (Exception e)
             {
-                Debug.WriteLine(Resources.Delete_Error, partPath, e.Message);
+                Logging.WriteLine(Resources.Delete_Error, partPath, e.Message);
                 await Task.Delay(300);
-                DeleteAsync(path, isPathFull, count - 1);
+                await DeleteAsync(path, isPathFull, count - 1);
             }
         }
 

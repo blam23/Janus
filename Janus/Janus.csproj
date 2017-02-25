@@ -101,6 +101,7 @@
     <Compile Include="Filters\ExcludeFilter.cs" />
     <Compile Include="INotificationSystem.cs" />
     <Compile Include="IDirectorySynchroniser.cs" />
+    <Compile Include="Logging.cs" />
     <Compile Include="MainWindow.xaml.cs" />
     <Compile Include="Matchers\IMatcher.cs" />
     <Compile Include="IDataStorageFormat.cs" />
