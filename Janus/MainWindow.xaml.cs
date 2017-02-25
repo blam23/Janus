@@ -83,13 +83,13 @@ namespace Janus
             NotificationSystem.Default.Push(NotifcationType.Info, "Removed Watcher", "Removed watcher successfully.");
         }
 
-        private void btnSync_Click(object sender, RoutedEventArgs e)
+        private async void btnSync_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
-            if (btn == null) return;
-            var watcher = btn.DataContext as Watcher;
+            var watcher = btn?.DataContext as Watcher;
+            if (watcher == null) return;
 
-            watcher?.SynchroniseAsync();
+            await watcher.SynchroniseAsync();
         }
 
         private void CbStartup_OnClick(object sender, RoutedEventArgs e)

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 using Janus.Properties;
@@ -48,7 +47,7 @@ namespace Janus
         /// Attempts to make the EndPath directory a 1:1 copy of the
         /// Watcher's WatchPath.
         /// </summary>
-        public void TryFullSynchronise()
+        public async void TryFullSynchronise()
         {
             if (!Data.AddFiles && !Data.DeleteFiles) return;
 
@@ -86,7 +85,7 @@ namespace Janus
             {
                 foreach (var file in toAdd)
                 {
-                    AddAsync(file, false);
+                    await AddAsync(file, false);
                 }
             }
 
@@ -127,7 +126,7 @@ namespace Janus
 
             foreach (var file in toDelete)
             {
-                DeleteAsync(file, false);
+                await DeleteAsync(file, false);
             }
 
             // TODO: Add path sync
