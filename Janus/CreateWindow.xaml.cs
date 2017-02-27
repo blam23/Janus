@@ -22,8 +22,6 @@ namespace Janus
             GetLastData();
         }
 
-
-
         private async void btnAdd_Click(object sender, RoutedEventArgs e)
         {
             if (Directory.Exists(TxtDirectory.Text)
@@ -40,6 +38,7 @@ namespace Janus
                 }
 
                 var watcher = new Watcher(
+                    TxtName.Text,
                     TxtDirectory.Text,
                     TxtOutDirectory.Text,
                     CbAdd.IsChecked ?? false,
@@ -79,6 +78,7 @@ namespace Janus
             MainWindow.Data["lastIncFilter"] = TxtFilterInclude.Text;
             MainWindow.Data["lastExcFilter"] = TxtFilterExclude.Text;
             MainWindow.Data["lastRecurse"] = CbRecurse.IsChecked ?? false;
+            MainWindow.Data["lastName"] = TxtName.Text;
         }
 
         private void GetLastData()
@@ -90,6 +90,7 @@ namespace Janus
             TxtFilterInclude.Text = MainWindow.Data.GetOr("lastIncFilter", TxtFilterInclude.Text);
             TxtFilterExclude.Text = MainWindow.Data.GetOr("lastExcFilter", TxtFilterExclude.Text);
             CbRecurse.IsChecked = MainWindow.Data.GetOr("lastRecurse", CbRecurse.IsChecked);
+            TxtName.Text = MainWindow.Data.GetOr("lastName", TxtName.Text);
         }
 
 

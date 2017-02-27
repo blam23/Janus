@@ -21,6 +21,7 @@ namespace UnitTests
 
             var watcher = new Watcher
                 (
+                    "StandardWatcherTest",
                     TestInput,
                     TestOutput,
                     true,
@@ -58,6 +59,7 @@ namespace UnitTests
 
             var watcher = new Watcher
                 (
+                    "FilterWatcherTest",
                     TestInput,
                     TestOutput,
                     true,

@@ -22,6 +22,7 @@ namespace UnitTests
             if(filters == null) filters = new List<IFilter>();
 
             var watcher = new Watcher(
+                "DataStoreTest",
                 watchDir,
                 syncDir,
                 addFiles,

@@ -44,8 +44,11 @@ namespace Janus
         /// </summary>
         private readonly FileSystemWatcher _deleteWatcher;
 
-        public Watcher(string watchPath, string endPath, bool addFiles, bool deleteFiles, List<IFilter> filters, bool recursive, bool observe = false)
+        public string Name { get; set; }
+
+        public Watcher(string name, string watchPath, string endPath, bool addFiles, bool deleteFiles, List<IFilter> filters, bool recursive, bool observe = false)
         {
+            Name = name;
             Data = new SyncData
             {
                 AddFiles = addFiles,
@@ -268,6 +271,7 @@ namespace Janus
         private bool Equals(Watcher other)
         {
             return Observe == other.Observe &&
+                   Name == other.Name &&
                    Data.Equals(other.Data);
         }
 
@@ -283,6 +287,7 @@ namespace Janus
                 hashCode = (hashCode*397) ^ (Data.WatchDirectory?.GetHashCode() ?? 0);
                 hashCode = (hashCode*397) ^ (Synchroniser?.GetHashCode() ?? 0);
                 hashCode = (hashCode*397) ^ Data.Recursive.GetHashCode();
+                hashCode = (hashCode*397) ^ Name.GetHashCode();
                 return hashCode;
             }
         }

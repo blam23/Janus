@@ -33,6 +33,7 @@ namespace UnitTests
             TestHelper.CopyDirectory(_testInput, dataInput);
 
             _watcher = new Watcher(
+                "SyncTest",
                 _testInput,
                 _testOutput,
                 addFiles,

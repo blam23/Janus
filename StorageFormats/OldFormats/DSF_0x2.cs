@@ -61,7 +61,7 @@ namespace StorageFormats.OldFormats
                 }
 
                 List<IFilter> filters = new List<IFilter>();
-                data.Watchers.Add(new Watcher(watchPath, endPath, addFiles, deleteFiles, filters, recursive, observe));
+                data.Watchers.Add(new Watcher(watchPath, watchPath, endPath, addFiles, deleteFiles, filters, recursive, observe));
 
                 var next = reader.ReadChar();
 

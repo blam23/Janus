@@ -60,7 +60,7 @@ namespace Janus
             CbStartup.IsChecked = File.Exists(Shortcut);
         }
 
-        private void Watchers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        private static void Watchers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             UpdateStore();
         }
