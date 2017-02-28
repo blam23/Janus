@@ -58,7 +58,7 @@ namespace Janus
            
                 MainWindow.Watchers.Add(watcher);
                 Logging.WriteLine(Properties.Resources.Debug_Added_Watcher);
-                NotificationSystem.Default.Push(NotifcationType.Info, "New Watcher", "Added a new watcher successfully.");
+                //NotificationSystem.Default.Push(NotifcationType.Info, "New Watcher", "Added a new watcher successfully.");
 
 
                 Close();

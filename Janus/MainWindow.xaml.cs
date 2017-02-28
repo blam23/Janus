@@ -80,7 +80,7 @@ namespace Janus
             if (watcher == null) return;
             watcher.Stop();
             Watchers.Remove(watcher);
-            NotificationSystem.Default.Push(NotifcationType.Info, "Removed Watcher", "Removed watcher successfully.");
+            //NotificationSystem.Default.Push(NotifcationType.Info, "Removed Watcher", "Removed watcher successfully.");
         }
 
         private async void btnSync_Click(object sender, RoutedEventArgs e)
