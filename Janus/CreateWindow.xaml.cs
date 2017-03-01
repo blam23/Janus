@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using System.Windows;
 using System.Windows.Forms;
 using Janus.Filters;
@@ -24,8 +25,13 @@ namespace Janus
 
         private async void btnAdd_Click(object sender, RoutedEventArgs e)
         {
-            if (Directory.Exists(TxtDirectory.Text)
-                && Directory.Exists(TxtOutDirectory.Text))
+            var errorMsg = new StringBuilder();
+            if(!Directory.Exists(TxtDirectory.Text))
+                errorMsg.AppendLine($"Unable to find/access Watch directory.");
+            if(!Directory.Exists(TxtOutDirectory.Text))
+                errorMsg.AppendLine($"Unable to find/access Out directory.");
+
+            if (errorMsg.Length == 0)
             {
                 var filters = new List<IFilter>();
                 if (!string.IsNullOrEmpty(TxtFilterExclude.Text))
@@ -60,12 +66,12 @@ namespace Janus
                 Logging.WriteLine(Properties.Resources.Debug_Added_Watcher);
                 //NotificationSystem.Default.Push(NotifcationType.Info, "New Watcher", "Added a new watcher successfully.");
 
-
                 Close();
             }
             else
             {
-                Logging.WriteLine(Properties.Resources.Debug_Invalid_Path);
+                Logging.WriteLine($"Error(s) encountered adding watcher:\n{errorMsg}\nWatch Dir: {TxtDirectory.Text}\nOut Dir: {TxtOutDirectory.Text}");
+                NotificationSystem.Default.Push(NotifcationType.Error, "Error", $"Error(s) encountered adding watcher: <br/> {errorMsg}");
             }
         }
 
