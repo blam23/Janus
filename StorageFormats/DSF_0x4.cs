@@ -236,24 +236,25 @@ namespace StorageFormats
                 writer.Write(Start);
                 writer.Write(kvp.Key);
                 // TODO: Change to the nice new C#7 Pattern Match Switch statement when supported.
-                switch (kvp.Value)
+                if (kvp.Value is string)
                 {
-                    case string val:
-                        writer.Write('s');
-                        writer.Write(val);
-                        break;
-                    case int val:
-                        writer.Write('i');
-                        writer.Write(val);
-                        break;
-                    case double val:
-                        writer.Write('d');
-                        writer.Write(val);
-                        break;
-                    case bool val:
-                        writer.Write('b');
-                        writer.Write(val);
-                        break;
+                    writer.Write('s');
+                    writer.Write((string)kvp.Value);
+                }
+                else if (kvp.Value is int)
+                {
+                    writer.Write('i');
+                    writer.Write((int)kvp.Value);
+                }
+                else if (kvp.Value is double)
+                {
+                    writer.Write('d');
+                    writer.Write((double)kvp.Value);
+                }
+                else if (kvp.Value is bool)
+                {
+                    writer.Write('b');
+                    writer.Write((bool)kvp.Value);
                 }
                 writer.Write(End);
             }
