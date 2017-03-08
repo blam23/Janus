@@ -1,5 +1,4 @@
 #define TEST
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Janus;
 using Janus.Filters;
