@@ -5,19 +5,35 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:tb="http://www.hardcodet.net/taskbar"
         xmlns:janus="clr-namespace:Janus"
+        xmlns:filters="clr-namespace:Janus.Filters"
         mc:Ignorable="d"
-        Title="Janus" Height="440" Width="735" Loaded="MainWindow_OnLoaded" Icon="Media/Janus.ico" Closing="MainWindow_OnClosing" WindowStartupLocation="CenterScreen" ResizeMode="NoResize">
+        Title="Janus" Height="440" Width="735" Loaded="MainWindow_OnLoaded" Icon="Media/Janus.ico" Closing="MainWindow_OnClosing" WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip">
     <Window.Resources>
+        <DataTemplate x:Key="FilterTemplate" DataType="filters:IFilter">
+            <Grid Width="Auto">
+                <StackPanel Margin="5" >
+                    <TextBlock Padding="2" Text="{Binding Path=Behaviour}" FontSize="14"/>
+                    <ListBox Padding="2" ItemsSource="{Binding Path=Filters}" FontSize="14"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
         <DataTemplate x:Key="WatcherTemplate" DataType="janus:Watcher">
             <Grid Width="Auto">
                 <StackPanel Margin="5" >
-                    <TextBlock Text="{Binding Path=Data.WatchDirectory}" FontWeight="Bold" FontSize="16"/>
-                    <TextBlock Text="{Binding Path=Data.SyncDirectory}" FontSize="14"/>
-                    <CheckBox Content="Automatically copy files" IsChecked="{Binding Path=Data.AddFiles, Mode=TwoWay}" />
-                    <CheckBox Content="Automatically delete files" IsChecked="{Binding Path=Data.DeleteFiles, Mode=TwoWay}" />
-                </StackPanel>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="5" >
-                    <Button Margin="5" Click="btnSync_Click" Padding="10" Content="Sync" FontSize="14" />
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="2" >
+                        <TextBlock Width="100" Padding="2" Text="Watch:"/>
+                        <TextBox Margin="2,2,2,2" Padding="2" Text="{Binding Path=Data.WatchDirectory, Mode=TwoWay}" FontSize="14"/>
+                    </StackPanel>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="2" >
+                        <TextBlock Width="100" Padding="2" Text="Update:"/>
+                        <TextBox Margin="2,2,2,2" Padding="2" Text="{Binding Path=Data.SyncDirectory, Mode=TwoWay}" FontSize="14"/>
+                    </StackPanel>
+                    <CheckBox Margin="2" Content="Automatically copy files" IsChecked="{Binding Path=Data.AutoAddFiles, Mode=TwoWay}" />
+                    <CheckBox Margin="2" Content="Automatically delete files" IsChecked="{Binding Path=Data.AutoDeleteFiles, Mode=TwoWay}" />
+                    <CheckBox Margin="2" Content="Recursive" IsChecked="{Binding Path=Data.Recursive, Mode=TwoWay}" />
+                    <ListBox  Margin="2" ItemsSource="{Binding Path=Data.Filters}" ItemTemplate="{StaticResource FilterTemplate}" VerticalAlignment="Center"/>
+                    <Button   Margin="2" Click="btnSync_Click" Padding="10" Content="Sync" FontSize="14" VerticalAlignment="Bottom"/>
+                    <Button   Margin="2" Click="btnSave_Click" Padding="10" Content="Save" FontSize="14" VerticalAlignment="Bottom" />
                 </StackPanel>
             </Grid>
         </DataTemplate>
@@ -38,7 +54,7 @@
                 </DataTemplate>
             </TabControl.ItemTemplate>
         </TabControl>
-        <CheckBox x:Name="CbStartup" Content="Run on Startup" HorizontalAlignment="Left" Margin="10,366,0,0" VerticalAlignment="Top" Click="CbStartup_OnClick"/>
+        <CheckBox x:Name="CbStartup" Content="Run on Startup" HorizontalAlignment="Left" Margin="10,0,0,28" Click="CbStartup_OnClick" Height="15" VerticalAlignment="Bottom"/>
         <tb:TaskbarIcon x:Name="TrayIcon"
                     Visibility="Visible"
                     ToolTipText="Janus"
@@ -54,7 +70,7 @@
             </tb:TaskbarIcon.ContextMenu>
         </tb:TaskbarIcon>
     </Grid>
-    
+
 </Window>
 
 

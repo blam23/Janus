@@ -7,7 +7,7 @@ namespace Janus.Filters
 {
     public class ExcludeFileFilter : IFilter
     {
-        public FilterBehaviour Behaviour => FilterBehaviour.Blacklist;
+        public FilterBehaviour Behaviour => FilterBehaviour.Ignore;
 
         private readonly IPatternMatcher<string> _matcher = new SimpleStringMatcher();
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using Janus;
 using Janus.Filters;
@@ -49,7 +50,7 @@ namespace StorageFormats
                 var watchPath = reader.ReadString();
                 var endPath = reader.ReadString();
                 var filterCount = reader.ReadInt32();
-                var filters = new List<IFilter>(filterCount);
+                var filters = new ObservableCollection<IFilter>();
                 for (var i = 0; i < filterCount; i++)
                 {
                     reader.ReadUInt32(); // Filter Behaviour - Unused.
@@ -83,7 +84,18 @@ namespace StorageFormats
                     throw new Exception($"Invalid format. End expected found: '{endChar}' instead");
                 }
 
-                data.Watchers.Add(new Watcher(name, watchPath, endPath, addFiles, deleteFiles, filters, recursive, observe));
+                try
+                {
+                    // TODO: Add some kind of "broken" Watcher list
+                    //  for Watchers who have invalid directories, etc.
+                    //  so they can be recovered.
+                    data.Watchers.Add(new Watcher(name, watchPath, endPath, addFiles, deleteFiles, filters, recursive,
+                        observe));
+                }
+                catch (Exception e)
+                {
+                    Logging.WriteLine($"Failed to add watcher: {e.Message}");
+                }
 
                 var next = reader.ReadChar();
 
@@ -223,8 +235,8 @@ namespace StorageFormats
                     }
                 }
                 writer.Write(watcher.Data.Recursive);
-                writer.Write(watcher.Data.AddFiles);
-                writer.Write(watcher.Data.DeleteFiles);
+                writer.Write(watcher.Data.AutoAddFiles);
+                writer.Write(watcher.Data.AutoDeleteFiles);
                 writer.Write(watcher.Observe);
                 writer.Write(End);
             }

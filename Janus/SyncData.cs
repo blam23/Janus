@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Janus.Filters;
 
 namespace Janus
@@ -7,8 +8,8 @@ namespace Janus
     {
         protected bool Equals(SyncData other)
         {
-            return AddFiles == other.AddFiles && 
-                DeleteFiles == other.DeleteFiles && Recursive == other.Recursive && 
+            return AutoAddFiles == other.AutoAddFiles && 
+                AutoDeleteFiles == other.AutoDeleteFiles && Recursive == other.Recursive && 
                 string.Equals(WatchDirectory, other.WatchDirectory) && 
                 string.Equals(SyncDirectory, other.SyncDirectory);
         }
@@ -25,8 +26,8 @@ namespace Janus
             unchecked
             {
                 var hashCode = Filters?.GetHashCode() ?? 0;
-                hashCode = (hashCode * 397) ^ AddFiles.GetHashCode();
-                hashCode = (hashCode * 397) ^ DeleteFiles.GetHashCode();
+                hashCode = (hashCode * 397) ^ AutoAddFiles.GetHashCode();
+                hashCode = (hashCode * 397) ^ AutoDeleteFiles.GetHashCode();
                 hashCode = (hashCode * 397) ^ Recursive.GetHashCode();
                 hashCode = (hashCode * 397) ^ (WatchDirectory?.GetHashCode() ?? 0);
                 hashCode = (hashCode * 397) ^ (SyncDirectory?.GetHashCode() ?? 0);
@@ -35,9 +36,11 @@ namespace Janus
         }
 
         // TODO: Implement saving these on change
-        public List<IFilter> Filters = new List<IFilter>(); // todo: to prop?
-        public bool AddFiles { get; set; }
-        public bool DeleteFiles { get; set; }
+
+        public ObservableCollection<IFilter> Filters { get; set; } = new ObservableCollection<IFilter>();
+
+        public bool AutoAddFiles { get; set; }
+        public bool AutoDeleteFiles { get; set; }
         public bool Recursive { get; set; }
         public string WatchDirectory { get; set; }
         public string SyncDirectory { get; set; }

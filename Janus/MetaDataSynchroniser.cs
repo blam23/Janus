@@ -49,7 +49,7 @@ namespace Janus
         /// </summary>
         public async void TryFullSynchronise()
         {
-            if (!Data.AddFiles && !Data.DeleteFiles) return;
+            if (!Data.AutoAddFiles && !Data.AutoDeleteFiles) return;
 
             var start = Directory.GetFiles(
                 Data.WatchDirectory,
@@ -81,7 +81,7 @@ namespace Janus
                 toAdd.Add(file.Substring(Data.WatchDirectory.Length + 1));
             }
 
-            if (Data.AddFiles)
+            if (Data.AutoAddFiles)
             {
                 foreach (var file in toAdd)
                 {
@@ -89,7 +89,7 @@ namespace Janus
                 }
             }
 
-            if (!Data.DeleteFiles) return;
+            if (!Data.AutoDeleteFiles) return;
             var toDelete = new List<string>();
             for (var i = 0; i < end.Length; i++)
             {
@@ -213,8 +213,8 @@ namespace Janus
         {
             unchecked
             {
-                var hashCode = Data.AddFiles.GetHashCode();
-                hashCode = (hashCode*397) ^ Data.DeleteFiles.GetHashCode();
+                var hashCode = Data.AutoAddFiles.GetHashCode();
+                hashCode = (hashCode*397) ^ Data.AutoDeleteFiles.GetHashCode();
                 hashCode = (hashCode*397) ^ (Data.SyncDirectory?.GetHashCode() ?? 0);
                 return hashCode;
             }

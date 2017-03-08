@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
 using Janus.Filters;
@@ -46,13 +47,13 @@ namespace Janus
 
         public string Name { get; set; }
 
-        public Watcher(string name, string watchPath, string endPath, bool addFiles, bool deleteFiles, List<IFilter> filters, bool recursive, bool observe = false)
+        public Watcher(string name, string watchPath, string endPath, bool addFiles, bool deleteFiles, ObservableCollection<IFilter> filters, bool recursive, bool observe = false)
         {
             Name = name;
             Data = new SyncData
             {
-                AddFiles = addFiles,
-                DeleteFiles = deleteFiles,
+                AutoAddFiles = addFiles,
+                AutoDeleteFiles = deleteFiles,
                 Filters = filters,
                 Recursive = recursive,
                 WatchDirectory = watchPath,
@@ -166,7 +167,7 @@ namespace Janus
                 var succ = _copy.Remove(e.FullPath);
                 Logging.WriteLine(Resources.Auto_Removed_Target, succ);
             }
-            if (Data.DeleteFiles)
+            if (Data.AutoDeleteFiles)
             {
                 Logging.WriteLine(Resources.Auto_Deleting_Target, e.FullPath);
                 Synchroniser.DeleteAsync(e.FullPath);
@@ -213,7 +214,7 @@ namespace Janus
                 var succ = _delete.Remove(e.FullPath);
                 Logging.WriteLine(Resources.Auto_Remove_Delete_List, succ);
             }
-            if (Data.AddFiles)
+            if (Data.AutoAddFiles)
             {
                 Logging.WriteLine(Resources.Auto_Copying_Target, e.FullPath);
                 Synchroniser.AddAsync(e.FullPath);

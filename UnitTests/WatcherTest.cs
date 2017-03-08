@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
@@ -26,7 +27,7 @@ namespace UnitTests
                     TestOutput,
                     true,
                     true,
-                    new List<IFilter>(),
+                    new ObservableCollection<IFilter>(),
                     true
                 );
 
@@ -52,7 +53,7 @@ namespace UnitTests
         public void FilteredWatcherTest()
         {
             SetupData("Filter");
-            var filters = new List<IFilter>
+            var filters = new ObservableCollection<IFilter>
             {
                 new ExcludeFilter("*.txt;*.ini".SplitEscapable(';'))
             };

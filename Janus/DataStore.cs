@@ -145,10 +145,11 @@ namespace Janus
                 var header = reader.ReadBytes(4);
                 if (!header.SequenceEqual(_headerBytes))
                 {
-                    InvalidDataStore("Invalid header");
+                    InvalidDataStore("Invalid header", fs);
                     return new JanusData();
                 }
                 var version = reader.ReadInt64();
+                Logging.WriteLine($"DataStore Version: {version}");
                 // TODO: Inline this when supported by VSTS (out var format)
                 IDataStorageFormat format;
                 if (DataLoaders.TryGetValue(version, out format))
@@ -163,10 +164,10 @@ namespace Janus
                     }
                     catch (Exception e)
                     {
-                        InvalidDataStore(e.Message);
+                        InvalidDataStore(e.Message, fs);
                     }
                 }
-                InvalidDataStore("Unsupported format");
+                InvalidDataStore("Unsupported format", fs);
                 return new JanusData();
             }
         }
@@ -176,10 +177,12 @@ namespace Janus
         /// Prints an error and deletes the invalid store.
         /// TODO: Rename instead of delete for recovery?
         /// </summary>
+        /// <param name="fs">Open File Stream</param>
         /// <param name="message">Error reason</param>
-        private void InvalidDataStore(string message)
+        private void InvalidDataStore(string message, FileStream fs)
         {
             Logging.WriteLine(Resources.Invalid_DataStore, message);
+            fs?.Close();
             File.Delete(_storeName);
         }
     }

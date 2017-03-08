@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Text;
 using System.Windows;
@@ -33,12 +34,12 @@ namespace Janus
 
             if (errorMsg.Length == 0)
             {
-                var filters = new List<IFilter>();
-                if (!string.IsNullOrEmpty(TxtFilterExclude.Text))
+                var filters = new ObservableCollection<IFilter>();
+                if (!string.IsNullOrEmpty(TxtFilterExclude.Text) && TxtFilterExclude.Text != "*")
                 {
                     filters.Add(new ExcludeFilter(TxtFilterExclude.Text.SplitEscapable(';')));
                 }
-                if (!string.IsNullOrEmpty(TxtFilterInclude.Text))
+                if (!string.IsNullOrEmpty(TxtFilterInclude.Text) && TxtFilterInclude.Text != "*")
                 {
                     filters.Add(new IncludeFilter(TxtFilterInclude.Text.SplitEscapable(';')));
                 }

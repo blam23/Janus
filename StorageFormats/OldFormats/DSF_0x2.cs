@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using Janus;
 using Janus.Filters;
@@ -60,7 +61,7 @@ namespace StorageFormats.OldFormats
                     throw new Exception($"Invalid format. End expected found: '{endChar}' instead");
                 }
 
-                List<IFilter> filters = new List<IFilter>();
+                var filters = new ObservableCollection<IFilter>();
                 data.Watchers.Add(new Watcher(watchPath, watchPath, endPath, addFiles, deleteFiles, filters, recursive, observe));
 
                 var next = reader.ReadChar();
@@ -146,8 +147,8 @@ namespace StorageFormats.OldFormats
                 writer.Write(watcher.Data.SyncDirectory);
                 writer.Write("*");
                 writer.Write(watcher.Data.Recursive);
-                writer.Write(watcher.Data.AddFiles);
-                writer.Write(watcher.Data.DeleteFiles);
+                writer.Write(watcher.Data.AutoAddFiles);
+                writer.Write(watcher.Data.AutoDeleteFiles);
                 writer.Write(watcher.Observe);
                 writer.Write(End);
             }

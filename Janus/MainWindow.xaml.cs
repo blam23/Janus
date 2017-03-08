@@ -92,6 +92,15 @@ namespace Janus
             await watcher.SynchroniseAsync();
         }
 
+        private void btnSave_Click(object sender, RoutedEventArgs e)
+        {
+            var btn = sender as Button;
+            var watcher = btn?.DataContext as Watcher;
+            if (watcher == null) return;
+
+            UpdateStore();
+        }
+
         private void CbStartup_OnClick(object sender, RoutedEventArgs e)
         {
             if (!CbStartup.IsChecked.HasValue) return;
@@ -150,5 +159,7 @@ namespace Janus
             Exit = true;
             Close();
         }
+
+
     }
 }

@@ -1,5 +1,6 @@
 #define TEST
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using Janus;
 using Janus.Filters;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -17,9 +18,9 @@ namespace UnitTests
         }
 
         private Watcher AddWatcher(string watchDir, string syncDir, bool addFiles, bool deleteFiles,
-            bool recursive, List<IFilter> filters = null)
+            bool recursive, ObservableCollection<IFilter> filters = null)
         {
-            if(filters == null) filters = new List<IFilter>();
+            if(filters == null) filters = new ObservableCollection<IFilter>();
 
             var watcher = new Watcher(
                 "DataStoreTest",
@@ -137,7 +138,7 @@ namespace UnitTests
             AssertDataProvidersAreEqual(data);
 
 
-            var w3 = AddWatcher("C:\\test\\directory3", "C:\\out\\directory3", false, true, true, new List<IFilter> { new IncludeFilter("test", "test2") });
+            var w3 = AddWatcher("C:\\test\\directory3", "C:\\out\\directory3", false, true, true, new ObservableCollection<IFilter> { new IncludeFilter("test", "test2") });
             data = StoreAndLoad(testStore);
             AssertLoadedWatchersAreCorrect(data);
             AssertDataProvidersAreEqual(data);

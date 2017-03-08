@@ -6,7 +6,7 @@ namespace Janus.Filters
 {
     public class IncludeFilter : IFilter
     {
-        public FilterBehaviour Behaviour => FilterBehaviour.Whitelist;
+        public FilterBehaviour Behaviour => FilterBehaviour.Include;
 
         private readonly IPatternMatcher<string> _matcher = new SimpleStringMatcher();
 
