@@ -17,14 +17,14 @@ namespace Janus
         /// Used for manual synchronisation.
         /// Will be empty when it's automatic sync.
         /// </summary>
-        private readonly List<string> _delete = new List<string>();
+        private readonly HashSet<string> _delete = new HashSet<string>();
 
         /// <summary>
         /// List of files that have been added to or modified in the WatchPath directory.
         /// Used for manual synchronisation.
         /// Will be empty when it's automatic sync.
         /// </summary>
-        private readonly List<string> _copy = new List<string>();
+        private readonly HashSet<string> _copy = new HashSet<string>();
 
         /// <summary>
         /// This can only be set when instantiating.
