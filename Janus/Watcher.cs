@@ -18,6 +18,7 @@ namespace Janus
         /// Will be empty when it's automatic sync.
         /// </summary>
         private readonly HashSet<string> _delete = new HashSet<string>();
+        public HashSet<string> MarkedForDeletion => _delete;
 
         /// <summary>
         /// List of files that have been added to or modified in the WatchPath directory.
@@ -25,6 +26,7 @@ namespace Janus
         /// Will be empty when it's automatic sync.
         /// </summary>
         private readonly HashSet<string> _copy = new HashSet<string>();
+        public HashSet<string> MarkedForCopy => _copy;
 
         /// <summary>
         /// This can only be set when instantiating.
@@ -146,6 +148,19 @@ namespace Janus
             await Task.Run(() => Synchronise());
         }
 
+        private bool ShouldFilter(string file)
+        {
+            foreach (var filter in Data.Filters)
+            {
+                if (filter.ShouldExcludeFile(file))
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// Event recieved when a file in WatchPath is deleted
         /// </summary>
@@ -153,39 +168,39 @@ namespace Janus
         /// <param name="e">Event Parameters (contains file path)</param>
         private void WriteWatcherDeleted(object sender, FileSystemEventArgs e)
         {
-            foreach (var filter in Data.Filters)
+            MarkFileDelete(e.FullPath);
+        }
+
+        /// <summary>
+        /// Marks a given file for deletion. If the watcher is set to automatically delete
+        /// then it will perform the delete.
+        /// </summary>
+        /// <param name="file">File to mark</param>
+        public void MarkFileDelete(string file)
+        {
+            if (ShouldFilter(file))
             {
-                if (filter.ShouldExcludeFile(e.FullPath))
-                {
-                    return;
-                }
+                return;
             }
 
-            if(_copy.Contains(e.FullPath))
+            if (_copy.Contains(file))
             {
-                Logging.WriteLine(Resources.Auto_Removing_Target, e.FullPath);
-                var succ = _copy.Remove(e.FullPath);
+                Logging.WriteLine(Resources.Auto_Removing_Target, file);
+                var succ = _copy.Remove(file);
                 Logging.WriteLine(Resources.Auto_Removed_Target, succ);
             }
             if (Data.AutoDeleteFiles)
             {
-                Logging.WriteLine(Resources.Auto_Deleting_Target, e.FullPath);
-                Synchroniser.DeleteAsync(e.FullPath);
-                Logging.WriteLine(Resources.Auto_Deleted_Target, e.FullPath);
+                Logging.WriteLine(Resources.Auto_Deleting_Target, file);
+                Synchroniser.DeleteAsync(file);
+                Logging.WriteLine(Resources.Auto_Deleted_Target, file);
             }
             else
             {
-                Logging.WriteLine(Resources.Auto_Mark_Delete_Target, e.FullPath);
-                _delete.Add(e.FullPath);
+                Logging.WriteLine(Resources.Auto_Mark_Delete_Target, file);
+                _delete.Add(file);
             }
         }
-
-        /// <summary>
-        /// Stores the last path that was seen.
-        /// Used for filtering out "double" events.
-        /// TODO: Make this a lot better, very hacky!
-        /// </summary>
-        private string _lastPath = "";
 
         /// <summary>
         /// Event recieved when a file in WatchPath is modified / created
@@ -194,36 +209,38 @@ namespace Janus
         /// <param name="e">Event Parameters (contains file path)</param>
         private void WriteWatcherChanged(object sender, FileSystemEventArgs e)
         {
-            foreach (var filter in Data.Filters)
-            {
-                if (filter.ShouldExcludeFile(e.FullPath))
-                {
-                    return;
-                }
-            }
+            MarkFileCopy(e.FullPath);
+        }
 
-            if (_lastPath == e.FullPath)
+        /// <summary>
+        /// Marks a given file to be copied. If the watcher is set to automatically copy
+        /// then it will perform the copy.
+        /// </summary>
+        /// <param name="file">File to mark</param>
+        public void MarkFileCopy(string file)
+        {
+            if (ShouldFilter(file))
             {
                 return;
             }
-            _lastPath = e.FullPath;
-            Logging.WriteLine(e.ChangeType);
-            if (_delete.Contains(e.FullPath))
+
+            Logging.WriteLine(file);
+            if (_delete.Contains(file))
             {
-                Logging.WriteLine(Resources.Auto_Remove_Delete_Target, e.FullPath);
-                var succ = _delete.Remove(e.FullPath);
+                Logging.WriteLine(Resources.Auto_Remove_Delete_Target, file);
+                var succ = _delete.Remove(file);
                 Logging.WriteLine(Resources.Auto_Remove_Delete_List, succ);
             }
             if (Data.AutoAddFiles)
             {
-                Logging.WriteLine(Resources.Auto_Copying_Target, e.FullPath);
-                Synchroniser.AddAsync(e.FullPath);
-                Logging.WriteLine(Resources.Auto_Copied_Target, e.FullPath);
+                Logging.WriteLine(Resources.Auto_Copying_Target, file);
+                Synchroniser.AddAsync(file);
+                Logging.WriteLine(Resources.Auto_Copied_Target, file);
             }
             else
             {
-                Logging.WriteLine(Resources.Auto_Mark_Copy_Target, e.FullPath);
-                _copy.Add(e.FullPath);
+                Logging.WriteLine(Resources.Auto_Mark_Copy_Target, file);
+                _copy.Add(file);
             }
         }
 

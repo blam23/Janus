@@ -49,6 +49,45 @@ namespace UnitTests
         }
 
         [TestMethod]
+        public void SetOfFilesTest()
+        {
+            var filters = new ObservableCollection<IFilter>();
+
+            var watcher = new Watcher
+               (
+                   "SetOfFilesTest",
+                   TestInput,
+                   TestOutput,
+                   false,
+                   false,
+                   filters,
+                   true,
+                   true
+               );
+
+            watcher.MarkFileCopy("test.txt");
+            watcher.MarkFileCopy("test.txt");
+            watcher.MarkFileCopy("test.txt");
+
+            // Copy and Delete lists are sets - should only have unique entries
+            Assert.AreEqual(1, watcher.MarkedForCopy.Count);
+            Assert.AreEqual(0, watcher.MarkedForDeletion.Count);
+
+            watcher.MarkFileDelete("test.txt");
+            watcher.MarkFileDelete("test.txt");
+
+            // Marking a file for deletion should remove it from copy set
+            Assert.AreEqual(0, watcher.MarkedForCopy.Count);
+            Assert.AreEqual(1, watcher.MarkedForDeletion.Count);
+
+            watcher.MarkFileCopy("test.txt");
+
+            // Similarly adding a file to copy list should remove it from delete list.
+            Assert.AreEqual(1, watcher.MarkedForCopy.Count);
+            Assert.AreEqual(0, watcher.MarkedForDeletion.Count);
+        }
+
+        [TestMethod]
         public void FilteredWatcherTest()
         {
             SetupData("Filter");
