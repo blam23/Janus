@@ -109,6 +109,7 @@
     <Compile Include="JanusData.cs" />
     <Compile Include="Matchers\SimpleStringMatcher.cs" />
     <Compile Include="NotifcationType.cs" />
+    <Compile Include="ObservableHashSet.cs" />
     <Compile Include="SyncData.cs" />
     <Compile Include="WindowsToast.cs" />
     <Compile Include="StorageFormatAttribute.cs" />

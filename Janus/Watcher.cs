@@ -17,16 +17,16 @@ namespace Janus
         /// Used for manual synchronisation.
         /// Will be empty when it's automatic sync.
         /// </summary>
-        private readonly HashSet<string> _delete = new HashSet<string>();
-        public HashSet<string> MarkedForDeletion => _delete;
+        private readonly ObservableSet<string> _delete = new ObservableSet<string>();
+        public ObservableSet<string> MarkedForDeletion => _delete;
 
         /// <summary>
         /// List of files that have been added to or modified in the WatchPath directory.
         /// Used for manual synchronisation.
         /// Will be empty when it's automatic sync.
         /// </summary>
-        private readonly HashSet<string> _copy = new HashSet<string>();
-        public HashSet<string> MarkedForCopy => _copy;
+        private readonly ObservableSet<string> _copy = new ObservableSet<string>();
+        public ObservableSet<string> MarkedForCopy => _copy;
 
         /// <summary>
         /// This can only be set when instantiating.
@@ -186,8 +186,7 @@ namespace Janus
             if (_copy.Contains(file))
             {
                 Logging.WriteLine(Resources.Auto_Removing_Target, file);
-                var succ = _copy.Remove(file);
-                Logging.WriteLine(Resources.Auto_Removed_Target, succ);
+                _copy.Remove(file);
             }
             if (Data.AutoDeleteFiles)
             {
@@ -228,8 +227,7 @@ namespace Janus
             if (_delete.Contains(file))
             {
                 Logging.WriteLine(Resources.Auto_Remove_Delete_Target, file);
-                var succ = _delete.Remove(file);
-                Logging.WriteLine(Resources.Auto_Remove_Delete_List, succ);
+                _delete.Remove(file);
             }
             if (Data.AutoAddFiles)
             {

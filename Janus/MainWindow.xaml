@@ -32,6 +32,7 @@
                     <CheckBox Margin="2" Content="Automatically delete files" IsChecked="{Binding Path=Data.AutoDeleteFiles, Mode=TwoWay}" />
                     <CheckBox Margin="2" Content="Recursive" IsChecked="{Binding Path=Data.Recursive, Mode=TwoWay}" />
                     <ListBox  Margin="2" ItemsSource="{Binding Path=Data.Filters}" ItemTemplate="{StaticResource FilterTemplate}" VerticalAlignment="Center"/>
+                    <ListBox  Margin="2" ItemsSource="{Binding Path=MarkedForCopy}" VerticalAlignment="Center"/>
                     <Button   Margin="2" Click="btnSync_Click" Padding="10" Content="Sync" FontSize="14" VerticalAlignment="Bottom"/>
                     <Button   Margin="2" Click="btnSave_Click" Padding="10" Content="Save" FontSize="14" VerticalAlignment="Bottom" />
                 </StackPanel>
