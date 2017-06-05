@@ -59,9 +59,12 @@ namespace Janus
 
                 if (CbImmediate.IsChecked ?? false)
                 {
+                    // Don't want to move to BG thread here as later on
+                    //  it's required to be UI thread to add watcher.
+                    // Therefore: No ConfigureAwait(false).
                     await watcher.DoInitialSynchronise();
                 }
-           
+
                 MainWindow.Watchers.Add(watcher);
                 Logging.WriteLine(Properties.Resources.Debug_Added_Watcher);
                 //NotificationSystem.Default.Push(NotifcationType.Info, "New Watcher", "Added a new watcher successfully.");

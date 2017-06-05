@@ -31,7 +31,11 @@ namespace UnitTests
                 );
 
             var fileIn = Path.Combine(TestInput, "test.txt");
+            var fileInRenamed = Path.Combine(TestInput, "test-renamed.txt");
             var fileOut = Path.Combine(TestOutput, "test.txt");
+            var fileOutRenamed = Path.Combine(TestOutput, "test-renamed.txt");
+
+            // Add File
             using (var writer = File.CreateText(fileIn))
             {
                 writer.WriteLine("Hello World");
@@ -40,10 +44,98 @@ namespace UnitTests
 
             Assert.IsTrue(File.Exists(fileOut), "Watcher did not copy over created file.");
 
-            File.Delete(fileIn);
-            Thread.Sleep(200);
+            // Rename File
+            File.Move(fileIn, fileInRenamed);
+            Thread.Sleep(400);
 
-            Assert.IsFalse(File.Exists(fileOut), "Watcher did not delete file.");
+            Assert.IsFalse(File.Exists(fileOut), "Watcher did not rename file - found old file name");
+            Assert.IsTrue(File.Exists(fileOutRenamed), "Watcher did not delete file - did not find new file name");
+
+            // Delete File
+            File.Delete(fileInRenamed);
+            Thread.Sleep(400);
+
+            Assert.IsFalse(File.Exists(fileOutRenamed), "Watcher did not delete file.");
+
+            watcher.DisableEvents();
+        }
+
+        [TestMethod]
+        public void ManualCopyTest()
+        {
+            SetupData("Manual");
+            var filters = new ObservableCollection<IFilter>();
+
+            var watcher = new Watcher
+            (
+                "ManualCopyTest",
+                TestInput,
+                TestOutput,
+                false,
+                false,
+                filters,
+                true
+            );
+
+            //
+            // One By One
+            // 
+
+            var fileIn = Path.Combine(TestInput, "test.txt");
+            var fileInRenamed = Path.Combine(TestInput, "test-renamed.txt");
+            var fileOut = Path.Combine(TestOutput, "test.txt");
+            var fileOutRenamed = Path.Combine(TestOutput, "test-renamed.txt");
+
+            // Add File
+            using (var writer = File.CreateText(fileIn))
+            {
+                writer.WriteLine("Hello World");
+            }
+            Thread.Sleep(400);
+            watcher.Synchronise(false);
+
+            Assert.IsTrue(File.Exists(fileOut), "Watcher did not copy over created file.");
+
+            // Rename File
+            File.Move(fileIn, fileInRenamed);
+            Thread.Sleep(400);
+            watcher.Synchronise(false);
+
+
+            Assert.IsFalse(File.Exists(fileOut), "Watcher did not rename file - found old file name");
+            Assert.IsTrue(File.Exists(fileOutRenamed), "Watcher did not delete file - did not find new file name");
+
+            // Delete File
+            File.Delete(fileInRenamed);
+            Thread.Sleep(400);
+            watcher.Synchronise(false);
+
+            Assert.IsFalse(File.Exists(fileOutRenamed), "Watcher did not delete file.");
+
+            //
+            // Batch
+            //
+
+            // Clear out directory
+            Directory.Delete(TestOutput, true);
+            Directory.CreateDirectory(TestOutput);
+
+            // Add File
+            using (var writer = File.CreateText(fileIn))
+            {
+                writer.WriteLine("Hello World");
+            }
+            Thread.Sleep(400);
+
+            // Rename File
+            File.Move(fileIn, fileInRenamed);
+            Thread.Sleep(400);
+
+            watcher.Synchronise(false);
+
+            Assert.IsFalse(File.Exists(fileOut), "Watcher did not rename file - found old file name");
+            Assert.IsTrue(File.Exists(fileOutRenamed), "Watcher did not delete file - did not find new file name");
+
 
             watcher.DisableEvents();
         }

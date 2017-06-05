@@ -9,5 +9,6 @@ namespace Janus
         Task AddAsync(string path, bool isPathFull = true, int retryCount = 5);
         Task DeleteAsync(string path, bool isPathFull = true, int retryCount = 5);
         Task TryFullSynchroniseAsync();
+        Task RenameAsync(string oldPath, string newPath, bool isPathFull = true, int retryCount = 5);
     }
 }

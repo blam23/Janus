@@ -11,15 +11,17 @@
     <Window.Resources>
         <DataTemplate x:Key="FilterTemplate" DataType="filters:IFilter">
             <Grid Width="Auto">
-                <StackPanel Margin="5" >
-                    <TextBlock Padding="2" Text="{Binding Path=Behaviour}" FontSize="14"/>
-                    <ListBox Padding="2" ItemsSource="{Binding Path=Filters}" FontSize="14"/>
+                <StackPanel Margin="5" Orientation="Vertical">
+                    <TextBlock Padding="2" Text="{Binding Path=Behaviour}" FontSize="14" />
+                    <ListBox Padding="2" ItemsSource="{Binding Path=Filters}" FontSize="14" Width="auto" ForceCursor="False" />
                 </StackPanel>
             </Grid>
         </DataTemplate>
         <DataTemplate x:Key="WatcherTemplate" DataType="janus:Watcher">
             <Grid Width="Auto">
                 <StackPanel Margin="5" >
+                    <Button   Margin="2" Click="btnSync_Click" Padding="5" Content="Sync" FontSize="14" VerticalAlignment="Bottom"/>
+                    <Button   Margin="2" Click="btnSave_Click" Padding="5" Content="Save" FontSize="14" VerticalAlignment="Bottom" />
                     <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" Margin="2" >
                         <TextBlock Width="100" Padding="2" Text="Watch:"/>
                         <TextBox Margin="2,2,2,2" Padding="2" Text="{Binding Path=Data.WatchDirectory, Mode=TwoWay}" FontSize="14"/>
@@ -31,10 +33,9 @@
                     <CheckBox Margin="2" Content="Automatically copy files" IsChecked="{Binding Path=Data.AutoAddFiles, Mode=TwoWay}" />
                     <CheckBox Margin="2" Content="Automatically delete files" IsChecked="{Binding Path=Data.AutoDeleteFiles, Mode=TwoWay}" />
                     <CheckBox Margin="2" Content="Recursive" IsChecked="{Binding Path=Data.Recursive, Mode=TwoWay}" />
-                    <ListBox  Margin="2" ItemsSource="{Binding Path=Data.Filters}" ItemTemplate="{StaticResource FilterTemplate}" VerticalAlignment="Center"/>
-                    <ListBox  Margin="2" ItemsSource="{Binding Path=MarkedForCopy}" VerticalAlignment="Center"/>
-                    <Button   Margin="2" Click="btnSync_Click" Padding="10" Content="Sync" FontSize="14" VerticalAlignment="Bottom"/>
-                    <Button   Margin="2" Click="btnSave_Click" Padding="10" Content="Save" FontSize="14" VerticalAlignment="Bottom" />
+                    <ListBox  Margin="2" ItemsSource="{Binding Path=MarkedForCopy}" VerticalAlignment="Center" MaxHeight="100" FontSize="12" Foreground="#FF00530B"/>
+                    <ListBox  Margin="2" ItemsSource="{Binding Path=MarkedForDeletion}" VerticalAlignment="Center" MaxHeight="100" FontSize="12" Foreground="#FF420000"/>
+                    <ListBox  Margin="2" ItemsSource="{Binding Path=Data.Filters}" ItemTemplate="{StaticResource FilterTemplate}" VerticalAlignment="Center" FontSize="12" Foreground="Black"/>
                 </StackPanel>
             </Grid>
         </DataTemplate>

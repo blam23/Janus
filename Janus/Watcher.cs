@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
 using Janus.Filters;
@@ -29,6 +28,14 @@ namespace Janus
         public ObservableSet<string> MarkedForCopy => _copy;
 
         /// <summary>
+        /// List of files that have been added to or modified in the WatchPath directory.
+        /// Used for manual synchronisation.
+        /// Will be empty when it's automatic sync.
+        /// </summary>
+        private readonly ObservableSet<(string, string)> _rename = new ObservableSet<(string, string)>();
+        public ObservableSet<(string, string)> MarkedForRename=> _rename;
+
+        /// <summary>
         /// This can only be set when instantiating.
         /// This will disable all file watching.
         /// Used for testing, should never be true in normal use.
@@ -36,16 +43,9 @@ namespace Janus
         public readonly bool Observe;
 
         /// <summary>
-        /// Watches for file additions + modifications in the WatchPath directory.
-        /// This only triggers on "LastWrite" so as to help mitigate double events,
-        ///  one for initial creation and one for when it's written to.
+        /// Watches for file events in the watch directory
         /// </summary>
-        private readonly FileSystemWatcher _writeWatcher;
-
-        /// <summary>
-        /// Watches for file deletions in the WatchPath directory.
-        /// </summary>
-        private readonly FileSystemWatcher _deleteWatcher;
+        private readonly FileSystemWatcher _watcher;
 
         public string Name { get; set; }
 
@@ -70,20 +70,16 @@ namespace Janus
                 return;
             }
 
-            _writeWatcher = new FileSystemWatcher
+            _watcher = new FileSystemWatcher
             {
                 Path = watchPath,
-                NotifyFilter = NotifyFilters.LastWrite
-            };
-
-            _deleteWatcher = new FileSystemWatcher
-            {
-                Path = watchPath
             };
 
 
-            _writeWatcher.Changed += WriteWatcherChanged;
-            _deleteWatcher.Deleted += WriteWatcherDeleted;
+            _watcher.Created += WriteWatcherChanged;   // Required for copied files
+            _watcher.Changed += WriteWatcherChanged;
+            _watcher.Deleted += WriteWatcherDeleted;
+            _watcher.Renamed += WriteWatcherRenamed;
             EnableEvents();
         }
 
@@ -96,10 +92,10 @@ namespace Janus
         /// Enables events from both FileSystemWatcher classes
         /// (copy + delete)
         /// </summary>
-        public void EnableEvents()
+        private void EnableEvents()
         {
-            _writeWatcher.EnableRaisingEvents = true;
-            _deleteWatcher.EnableRaisingEvents = true;
+            _watcher.EnableRaisingEvents = true;
+            _watcher.EnableRaisingEvents = true;
         }
 
         /// <summary>
@@ -114,13 +110,17 @@ namespace Janus
         /// It will copy all the files that have been modified + deleted
         /// since we started tracking this session.
         /// </summary>
-        public void Synchronise()
+        public void Synchronise(bool notify = true)
         {
             var copyCount = _copy.Count;
+            var renameCount = _rename.Count;
             var deleteCount = _delete.Count;
-            if (copyCount + deleteCount == 0)
+
+            if (copyCount + deleteCount + renameCount == 0)
             {
-                NotificationSystem.Default.Push(NotifcationType.Info, "Sync Completed.", "No files were changed.");
+                if(notify)
+                    NotificationSystem.Default.Push(NotifcationType.Info, "Sync Completed.", "No files were changed.");
+
                 return;
             }
 
@@ -129,23 +129,32 @@ namespace Janus
                 Logging.WriteLine(Resources.Manual_Copying_Target, file);
                 Synchroniser.AddAsync(file);
             }
-             
+
             foreach (var file in _delete)
             {
                 Logging.WriteLine(Resources.Manual_Deleting_Target, file);
                 Synchroniser.DeleteAsync(file);
             }
 
+            foreach (var file in _rename)
+            {
+                Logging.WriteLine("[Manual] Renaming: {0} to {1}", file.Item1, file.Item2);
+                Synchroniser.RenameAsync(file.Item1, file.Item2);
+            }
+
             _copy.Clear();
             _delete.Clear();
+            _rename.Clear();
+
+            if (!notify) return;
 
             NotificationSystem.Default.Push(NotifcationType.Info, "Sync Completed.",
-                $"Finished copying {copyCount} files, and deleting {deleteCount} files.");
+                $"Finished copying {copyCount} files, renaming {renameCount} files, and deleting {deleteCount} files.");
         }
 
         public async Task SynchroniseAsync()
         {
-            await Task.Run(() => Synchronise());
+            await Task.Run(() => Synchronise()).ConfigureAwait(false);
         }
 
         private bool ShouldFilter(string file)
@@ -242,6 +251,60 @@ namespace Janus
             }
         }
 
+
+        /// <summary>
+        /// Event recieved when a file in WatchPath is modified / created
+        /// </summary>
+        /// <param name="sender">FileSystemWatcher</param>
+        /// <param name="e">Event Parameters (contains file path)</param>
+        private void WriteWatcherRenamed(object sender, FileSystemEventArgs e)
+        {
+            var renameArgs = e as RenamedEventArgs;
+            if(renameArgs != null)
+            {
+                MarkFileRenamed(renameArgs.OldFullPath, renameArgs.FullPath);
+            }
+        }
+
+        /// <summary>
+        /// Marks a given file to be copied. If the watcher is set to automatically copy
+        /// then it will perform the copy.
+        /// </summary>
+        /// <param name="oldPath">Pre-rename path</param>
+        /// <param name="newPath">Post-rename path</param>
+        private void MarkFileRenamed(string oldPath, string newPath)
+        {
+            // TODO: Is filtering on just newPath correct?
+            if (ShouldFilter(newPath))
+            {
+                return;
+            }
+
+            Logging.WriteLine(Resources.Renaming_File_From_To, oldPath, newPath);
+
+            if (_delete.Contains(oldPath))
+            {
+                Logging.WriteLine(Resources.Auto_Remove_Delete_Target, oldPath);
+                _delete.Remove(oldPath);
+            }
+
+            if (_copy.Contains(oldPath))
+            {
+                Logging.WriteLine(Resources.Auto_Removing_Target, oldPath);
+                _copy.Remove(oldPath);
+            }
+
+            if (Data.AutoAddFiles)
+            {
+                Synchroniser.RenameAsync(oldPath, newPath);
+            }
+            else
+            {
+                Logging.WriteLine(Resources.Mark_File_Rename, oldPath);
+                _rename.Add((oldPath, newPath));
+            }
+        }
+
         /// <summary>
         /// Stops all events and cleans up the FileSystemWatcher classes.
         /// After Stop is called the class cannot start watching again.
@@ -251,8 +314,8 @@ namespace Janus
         {
             Logging.WriteLine(Resources.Watcher_Stop_Target, Data.WatchDirectory);
             DisableEvents();
-            _writeWatcher.Dispose();
-            _writeWatcher.Dispose();
+            _watcher.Dispose();
+            _watcher.Dispose();
         }
 
         /// <summary>
@@ -261,8 +324,8 @@ namespace Janus
         /// </summary>
         public void DisableEvents()
         {
-            _deleteWatcher.EnableRaisingEvents = false;
-            _writeWatcher.EnableRaisingEvents = false;
+            _watcher.EnableRaisingEvents = false;
+            _watcher.EnableRaisingEvents = false;
         }
 
         /// <summary>

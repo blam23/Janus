@@ -89,7 +89,7 @@ namespace Janus
             if (Count == 0)
                 return;
 
-            Clear();
+            base.Clear();
 
             NotifyCollectionChanged(NotifyCollectionChangedAction.Reset);
             NotifyCountChanged();

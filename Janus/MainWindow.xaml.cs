@@ -89,7 +89,7 @@ namespace Janus
             var watcher = btn?.DataContext as Watcher;
             if (watcher == null) return;
 
-            await watcher.SynchroniseAsync();
+            await watcher.SynchroniseAsync().ConfigureAwait(false);
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)

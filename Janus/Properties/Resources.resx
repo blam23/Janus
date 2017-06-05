@@ -178,4 +178,10 @@
   <data name="Auto_Copied_Target" xml:space="preserve">
     <value>Copied: {0}</value>
   </data>
+  <data name="Renaming_File_From_To" xml:space="preserve">
+    <value>Renaming {0} to {1}</value>
+  </data>
+  <data name="Mark_File_Rename" xml:space="preserve">
+    <value>Marking file to be renamed: {0}</value>
+  </data>
 </root>

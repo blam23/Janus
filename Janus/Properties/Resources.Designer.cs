@@ -216,6 +216,24 @@ namespace Janus.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Marking file to be renamed: {0}.
+        /// </summary>
+        internal static string Mark_File_Rename {
+            get {
+                return ResourceManager.GetString("Mark_File_Rename", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Renaming {0} to {1}.
+        /// </summary>
+        internal static string Renaming_File_From_To {
+            get {
+                return ResourceManager.GetString("Renaming_File_From_To", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to An exception occured while copying file {1}:
         ///	.
         /// </summary>

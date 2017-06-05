@@ -40,14 +40,15 @@ namespace Janus
 
         public async Task TryFullSynchroniseAsync()
         {
-            await Task.Run(new Action(TryFullSynchronise));
+            await Task.Run(new Action(TryFullSynchronise)).ConfigureAwait(false);
         }
+
 
         /// <summary>
         /// Attempts to make the EndPath directory a 1:1 copy of the
         /// Watcher's WatchPath.
         /// </summary>
-        public async void TryFullSynchronise()
+        private async void TryFullSynchronise()
         {
             if (!Data.AutoAddFiles && !Data.AutoDeleteFiles) return;
 
@@ -75,9 +76,12 @@ namespace Janus
                 foreach (var filter in Data.Filters)
                 {
                     if (!filter.ShouldExcludeFile(file)) continue;
+
                     filtered = true;
                 }
+
                 if (filtered) continue;
+
                 toAdd.Add(file.Substring(Data.WatchDirectory.Length + 1));
             }
 
@@ -85,11 +89,12 @@ namespace Janus
             {
                 foreach (var file in toAdd)
                 {
-                    await AddAsync(file, false);
+                    await AddAsync(file, false).ConfigureAwait(false);
                 }
             }
 
             if (!Data.AutoDeleteFiles) return;
+
             var toDelete = new List<string>();
             for (var i = 0; i < end.Length; i++)
             {
@@ -97,9 +102,12 @@ namespace Janus
                 foreach (var filter in Data.Filters)
                 {
                     if (!filter.ShouldExcludeFile(toDelete[i])) continue;
+
                     filtered = true;
                 }
+
                 if (filtered) continue;
+
                 end[i] = end[i].Substring(Data.SyncDirectory.Length + 1);
                 var match = toAdd.IndexOf(end[i]);
                 if (match >= 0)
@@ -126,7 +134,7 @@ namespace Janus
 
             foreach (var file in toDelete)
             {
-                await DeleteAsync(file, false);
+                await DeleteAsync(file, false).ConfigureAwait(false);
             }
 
             // TODO: Add path sync
@@ -141,6 +149,7 @@ namespace Janus
         public async Task AddAsync(string path, bool isPathFull = true, int count = 5)
         {
             if (count <= 0) return;
+
             var partPath = isPathFull ? path.Substring(Data.WatchDirectory.Length+1) : path;
             try
             {
@@ -155,8 +164,8 @@ namespace Janus
             catch (Exception e)
             {
                 Logging.WriteLine(Resources.Copy_Error, partPath, e.Message);
-                await Task.Delay(300);
-                await AddAsync(path, isPathFull, count-1);
+                await Task.Delay(300).ConfigureAwait(false);
+                await AddAsync(path, isPathFull, count-1).ConfigureAwait(false);
             }
         }
 
@@ -164,12 +173,13 @@ namespace Janus
         /// <summary>
         /// Removes a file from the EndPath
         /// </summary>
-        /// <param name="path">The path of the file that you want to add</param>
+        /// <param name="path">The path of the file that you want to remove</param>
         /// <param name="isPathFull">If the path is a full path or relative to the WatchPath</param>
         /// <param name="count">Amount of times to retry on failure</param>
         public async Task DeleteAsync(string path, bool isPathFull = true, int count = 5)
         {
             if (count <= 0) return;
+
             var partPath = isPathFull ? path.Substring(Data.WatchDirectory.Length+1) : path;
             try
             {
@@ -178,10 +188,58 @@ namespace Janus
             catch (Exception e)
             {
                 Logging.WriteLine(Resources.Delete_Error, partPath, e.Message);
-                await Task.Delay(300);
-                await DeleteAsync(path, isPathFull, count - 1);
+                await Task.Delay(300).ConfigureAwait(false);
+                await DeleteAsync(path, isPathFull, count - 1).ConfigureAwait(false);
             }
         }
+
+        /// <summary>
+        /// Renames a file in the EndPath
+        /// </summary>
+        /// <param name="oldPath">The path of the file that is to be renamed</param>
+        /// <param name="newPath">The path to rename it to</param>
+        /// <param name="isPathFull">If the path is a full path or relative to the WatchPath</param>
+        /// <param name="count">Amount of times to retry on failure</param>
+        public async Task RenameAsync(string oldPath, string newPath, bool isPathFull = true, int count = 5)
+        {
+            if (count <= 0) return;
+
+            var partPathA = isPathFull ? oldPath.Substring(Data.WatchDirectory.Length + 1) : oldPath;
+            var partPathB = isPathFull ? newPath.Substring(Data.WatchDirectory.Length + 1) : newPath;
+            try
+            {
+                var oldFullPath = Path.Combine(Data.SyncDirectory, partPathA);
+                var newFullPath = Path.Combine(Data.SyncDirectory, partPathB);
+                if (File.Exists(oldFullPath))
+                {
+                    var name = Directory.GetParent(partPathB).FullName;
+                    if (!Directory.Exists(name))
+                    {
+                        Directory.CreateDirectory(name);
+                    }
+                    File.Move(oldFullPath, newFullPath);
+                }
+                else if (Directory.Exists(oldFullPath))
+                {
+                    Directory.Move(oldFullPath, newFullPath);
+                }
+                else if (File.Exists(newPath) || Directory.Exists(newPath))
+                {
+                    await AddAsync(partPathB, false, count - 1);
+                }
+                else
+                {
+                    throw new FileNotFoundException("Unable to rename path as it is neither a valid file or directory.", oldFullPath);
+                }
+            }
+            catch (Exception e)
+            {
+                Logging.WriteLine("An exception occured while renaming file: {0} to {1}", partPathA, partPathB, e.Message);
+                await Task.Delay(300).ConfigureAwait(false);
+                await RenameAsync(partPathA, partPathB, false, count - 1).ConfigureAwait(false);
+            }
+        }
+
 
         /// <summary>
         /// Equality Check wrapper.

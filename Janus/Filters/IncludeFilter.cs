@@ -10,7 +10,7 @@ namespace Janus.Filters
 
         private readonly IPatternMatcher<string> _matcher = new SimpleStringMatcher();
 
-        private IList<string> _filters;
+        private readonly IList<string> _filters;
 
         public IList<string> Filters => _filters;
 
