@@ -14,6 +14,7 @@ namespace UnitTests
     {
         public WatcherTest() : base("Watcher") { }
 
+#if DEBUG
         [TestMethod]
         public void StandardWatcherTest()
         {
@@ -40,25 +41,26 @@ namespace UnitTests
             {
                 writer.WriteLine("Hello World");
             }
-            Thread.Sleep(1000);
+            Thread.Sleep(400);
 
             Assert.IsTrue(File.Exists(fileOut), "Watcher did not copy over created file.");
 
             // Rename File
             File.Move(fileIn, fileInRenamed);
-            Thread.Sleep(1000);
+            Thread.Sleep(400);
 
             Assert.IsFalse(File.Exists(fileOut), "Watcher did not rename file - found old file name");
             Assert.IsTrue(File.Exists(fileOutRenamed), "Watcher did not delete file - did not find new file name");
 
             // Delete File
             File.Delete(fileInRenamed);
-            Thread.Sleep(1000);
+            Thread.Sleep(400);
 
             Assert.IsFalse(File.Exists(fileOutRenamed), "Watcher did not delete file.");
 
             watcher.DisableEvents();
         }
+#endif
 
         [TestMethod]
         public void ManualCopyTest()
