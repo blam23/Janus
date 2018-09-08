@@ -29,7 +29,7 @@ namespace UnitTests
                 deleteFiles,
                 filters,
                 recursive,
-                true
+                observe: true
             );
 
             _data.Watchers.Add(watcher);

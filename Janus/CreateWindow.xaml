@@ -25,5 +25,6 @@
         <CheckBox x:Name="CbSaveSettings" Content="Save as default settings" Margin="10,0,97,31" Height="15" VerticalAlignment="Bottom"/>
         <Label x:Name="LabelName" Content="Name:" HorizontalAlignment="Left" Margin="59,10,0,0" VerticalAlignment="Top"/>
         <TextBox x:Name="TxtName" Height="20" Margin="108,14,10,0" TextWrapping="Wrap" Text="Watcher" VerticalAlignment="Top" TextChanged="OptionChangeEvent"/>
+        <CheckBox x:Name="CbAddDelay" Content="Wait for changes in bulk" Margin="108,221,97,0" VerticalAlignment="Top" Checked="OptionChangeEvent" Unchecked="OptionChangeEvent"/>
     </Grid>
 </Window>

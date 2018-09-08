@@ -62,7 +62,7 @@ namespace Janus
         /// Current StorageFormat version.
         /// Used for maintaining possible backwards compatibilty.
         /// </summary>
-        public static readonly long Version = 0x4;
+        public static readonly long Version = 0x5;
 
         /// <summary>
         /// First bytes in the store file.

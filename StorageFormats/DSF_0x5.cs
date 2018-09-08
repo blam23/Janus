@@ -6,16 +6,16 @@ using Janus.Filters;
 
 namespace StorageFormats
 {
-    /* CHANGELOG FROM 0x3:
+    /* CHANGELOG FROM 0x4:
      * 
-     *  Added Watcher.Name
+     *  Added Watcher.Data.Delay
      *  
      *  Added by: Elliot
      */
 
-    [StorageFormat(0x4)]
+    [StorageFormat(0x5)]
     // ReSharper disable once InconsistentNaming
-    public class DSF_0x4 : IDataStorageFormat
+    public class DSF_0x5 : IDataStorageFormat
     {
         private const char Start  = '[';
         private const char End    = ']';
@@ -76,6 +76,7 @@ namespace StorageFormats
                 var addFiles = reader.ReadBoolean();
                 var deleteFiles = reader.ReadBoolean();
                 var observe = reader.ReadBoolean();
+                var delay = reader.ReadUInt64();
                 var endChar = reader.ReadChar();
 
                 if (endChar != End)
@@ -89,7 +90,7 @@ namespace StorageFormats
                     //  for Watchers who have invalid directories, etc.
                     //  so they can be recovered.
                     data.Watchers.Add(new Watcher(name, watchPath, endPath, addFiles, deleteFiles, filters, recursive,
-                        observe));
+                        delay: delay, observe: observe));
                 }
                 catch (Exception e)
                 {
@@ -237,6 +238,7 @@ namespace StorageFormats
                 writer.Write(watcher.Data.AutoAddFiles);
                 writer.Write(watcher.Data.AutoDeleteFiles);
                 writer.Write(watcher.Observe);
+                writer.Write(watcher.Data.Delay);
                 writer.Write(End);
             }
 

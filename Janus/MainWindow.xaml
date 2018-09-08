@@ -33,6 +33,7 @@
                     <CheckBox Margin="2" Content="Automatically copy files" IsChecked="{Binding Path=Data.AutoAddFiles, Mode=TwoWay}" />
                     <CheckBox Margin="2" Content="Automatically delete files" IsChecked="{Binding Path=Data.AutoDeleteFiles, Mode=TwoWay}" />
                     <CheckBox Margin="2" Content="Recursive" IsChecked="{Binding Path=Data.Recursive, Mode=TwoWay}" />
+                    <CheckBox Margin="2" Content="Delay" IsChecked="{Binding Path=Data.Delay, Mode=TwoWay}" />
                     <ListBox  Margin="2" ItemsSource="{Binding Path=MarkedForCopy}" VerticalAlignment="Center" MaxHeight="100" FontSize="12" Foreground="#FF00530B"/>
                     <ListBox  Margin="2" ItemsSource="{Binding Path=MarkedForDeletion}" VerticalAlignment="Center" MaxHeight="100" FontSize="12" Foreground="#FF420000"/>
                     <ListBox  Margin="2" ItemsSource="{Binding Path=Data.Filters}" ItemTemplate="{StaticResource FilterTemplate}" VerticalAlignment="Center" FontSize="12" Foreground="Black"/>

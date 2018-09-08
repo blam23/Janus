@@ -29,7 +29,8 @@
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <!--<TargetPlatformVersion>8.1</TargetPlatformVersion>-->
+    <TargetPlatformVersion>8.0</TargetPlatformVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -55,7 +56,7 @@
   </PropertyGroup>
   <PropertyGroup>
     <ApplicationIcon>Media\Janus.ico</ApplicationIcon>
-    <TargetPlatformVersion>8.1</TargetPlatformVersion>
+    <TargetPlatformVersion>8.0</TargetPlatformVersion>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Hardcodet.Wpf.TaskbarNotification, Version=1.0.5.0, Culture=neutral, processorArchitecture=MSIL">
@@ -78,9 +79,8 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="Windows" />
-    <!--<Reference Include="Windows.Data" />
-    <Reference Include="Windows.UI" />-->
+    <Reference Include="Windows.Data" />
+    <Reference Include="Windows.UI" />
     <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
@@ -95,6 +95,7 @@
     </Compile>
     <Compile Include="DataProvider.cs" />
     <Compile Include="DataStore.cs" />
+    <Compile Include="DelayController.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="Filters\ExcludeFileFilter.cs" />
     <Compile Include="Filters\IncludeFilter.cs" />

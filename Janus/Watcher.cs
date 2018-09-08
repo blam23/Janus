@@ -1,4 +1,5 @@
-﻿using System.Collections.ObjectModel;
+﻿using System;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
 using Janus.Filters;
@@ -33,7 +34,7 @@ namespace Janus
         /// Will be empty when it's automatic sync.
         /// </summary>
         private readonly ObservableSet<(string, string)> _rename = new ObservableSet<(string, string)>();
-        public ObservableSet<(string, string)> MarkedForRename=> _rename;
+        public ObservableSet<(string, string)> MarkedForRename => _rename;
 
         /// <summary>
         /// This can only be set when instantiating.
@@ -47,9 +48,14 @@ namespace Janus
         /// </summary>
         private readonly FileSystemWatcher _watcher;
 
+        /// <summary>
+        /// Delay Controller, if null -> No delay is used
+        /// </summary>
+        public DelayController Delay;
+
         public string Name { get; set; }
 
-        public Watcher(string name, string watchPath, string endPath, bool addFiles, bool deleteFiles, ObservableCollection<IFilter> filters, bool recursive, bool observe = false)
+        public Watcher(string name, string watchPath, string endPath, bool addFiles, bool deleteFiles, ObservableCollection<IFilter> filters, bool recursive, ulong delay = 0, bool observe = false)
         {
             Name = name;
             Data = new SyncData
@@ -59,7 +65,8 @@ namespace Janus
                 Filters = filters,
                 Recursive = recursive,
                 WatchDirectory = watchPath,
-                SyncDirectory = endPath
+                SyncDirectory = endPath,
+                Delay = delay
             };
 
             Synchroniser = new MetaDataSynchroniser(Data);
@@ -75,12 +82,21 @@ namespace Janus
                 Path = watchPath,
             };
 
-
             _watcher.Created += WriteWatcherChanged;   // Required for copied files
             _watcher.Changed += WriteWatcherChanged;
             _watcher.Deleted += WriteWatcherDeleted;
             _watcher.Renamed += WriteWatcherRenamed;
+
+            SetupDelay(delay);
+
             EnableEvents();
+        }
+
+        public void SetupDelay(ulong delay)
+        {
+            Delay = delay > 0 ?
+                new DelayController(TimeSpan.FromMilliseconds(delay), () => Synchronise()) :
+                null;
         }
 
         public void AddFilter(IFilter filter)
@@ -192,12 +208,14 @@ namespace Janus
                 return;
             }
 
+            Delay?.ResetTimer();
+
             if (_copy.Contains(file))
             {
                 Logging.WriteLine(Resources.Auto_Removing_Target, file);
                 _copy.Remove(file);
             }
-            if (Data.AutoDeleteFiles)
+            if (Data.AutoDeleteFiles && Delay == null)
             {
                 Logging.WriteLine(Resources.Auto_Deleting_Target, file);
                 Synchroniser.DeleteAsync(file);
@@ -232,13 +250,14 @@ namespace Janus
                 return;
             }
 
-            Logging.WriteLine(file);
+            Delay?.ResetTimer();
+
             if (_delete.Contains(file))
             {
                 Logging.WriteLine(Resources.Auto_Remove_Delete_Target, file);
                 _delete.Remove(file);
             }
-            if (Data.AutoAddFiles)
+            if (Data.AutoAddFiles && Delay == null)
             {
                 Logging.WriteLine(Resources.Auto_Copying_Target, file);
                 Synchroniser.AddAsync(file);
@@ -259,8 +278,7 @@ namespace Janus
         /// <param name="e">Event Parameters (contains file path)</param>
         private void WriteWatcherRenamed(object sender, FileSystemEventArgs e)
         {
-            var renameArgs = e as RenamedEventArgs;
-            if(renameArgs != null)
+            if(e is RenamedEventArgs renameArgs)
             {
                 MarkFileRenamed(renameArgs.OldFullPath, renameArgs.FullPath);
             }
@@ -280,6 +298,8 @@ namespace Janus
                 return;
             }
 
+            Delay?.ResetTimer();
+
             Logging.WriteLine(Resources.Renaming_File_From_To, oldPath, newPath);
 
             if (_delete.Contains(oldPath))
@@ -294,7 +314,7 @@ namespace Janus
                 _copy.Remove(oldPath);
             }
 
-            if (Data.AutoAddFiles)
+            if (Data.AutoAddFiles && Delay == null)
             {
                 Synchroniser.RenameAsync(oldPath, newPath);
             }
@@ -314,7 +334,7 @@ namespace Janus
         {
             Logging.WriteLine(Resources.Watcher_Stop_Target, Data.WatchDirectory);
             DisableEvents();
-            _watcher.Dispose();
+            Delay?.Stop();
             _watcher.Dispose();
         }
 
@@ -336,8 +356,7 @@ namespace Janus
         /// <returns>If object is a Watcher that has equal properties</returns>
         public override bool Equals(object obj)
         {
-            var wobj = obj as Watcher;
-            return wobj != null && Equals(wobj);
+            return obj is Watcher wobj && Equals(wobj);
         }
 
         /// <summary>

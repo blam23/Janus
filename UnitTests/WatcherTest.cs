@@ -154,7 +154,7 @@ namespace UnitTests
                    false,
                    filters,
                    true,
-                   true
+                   observe: true
                );
 
             watcher.MarkFileCopy("test.txt");

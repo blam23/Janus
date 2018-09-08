@@ -4,18 +4,18 @@ using System.IO;
 using Janus;
 using Janus.Filters;
 
-namespace StorageFormats.OldFormats
+namespace StorageFormats
 {
-    /* CHANGELOG FROM 0x2:
+    /* CHANGELOG FROM 0x3:
      * 
-     *  Added support for IFilter storage.
+     *  Added Watcher.Name
      *  
      *  Added by: Elliot
      */
 
-    [StorageFormat(0x3)]
+    [StorageFormat(0x4)]
     // ReSharper disable once InconsistentNaming
-    public class DSF_0x3 : IDataStorageFormat
+    public class DSF_0x4 : IDataStorageFormat
     {
         private const char Start  = '[';
         private const char End    = ']';
@@ -45,6 +45,7 @@ namespace StorageFormats.OldFormats
 
             while (watchMode)
             {
+                var name = reader.ReadString();
                 var watchPath = reader.ReadString();
                 var endPath = reader.ReadString();
                 var filterCount = reader.ReadInt32();
@@ -82,7 +83,18 @@ namespace StorageFormats.OldFormats
                     throw new Exception($"Invalid format. End expected found: '{endChar}' instead");
                 }
 
-                data.Watchers.Add(new Watcher(watchPath, watchPath, endPath, addFiles, deleteFiles, filters, recursive, observe: observe));
+                try
+                {
+                    // TODO: Add some kind of "broken" Watcher list
+                    //  for Watchers who have invalid directories, etc.
+                    //  so they can be recovered.
+                    data.Watchers.Add(new Watcher(name, watchPath, endPath, addFiles, deleteFiles, filters, recursive,
+                        observe: observe));
+                }
+                catch (Exception e)
+                {
+                    Logging.WriteLine($"Failed to add watcher: {e.Message}");
+                }
 
                 var next = reader.ReadChar();
 
@@ -172,6 +184,7 @@ namespace StorageFormats.OldFormats
             foreach (var watcher in watchers)
             {
                 writer.Write(Start);
+                writer.Write(watcher.Name);
                 writer.Write(watcher.Data.WatchDirectory);
                 writer.Write(watcher.Data.SyncDirectory);
                 if (watcher.Data.Filters == null)

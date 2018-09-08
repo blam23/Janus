@@ -21,7 +21,6 @@ namespace Janus
         public MetaDataSynchroniser(SyncData data)
         {
             Data = data;
-
         }
 
 #if MD5_CHECK
@@ -248,8 +247,7 @@ namespace Janus
         /// <returns>True or false if object is a Synchroniser object with matching properties</returns>
         public override bool Equals(object obj)
         {
-            var sobj = obj as MetaDataSynchroniser;
-            return sobj != null && Equals(sobj);
+            return obj is MetaDataSynchroniser sobj && Equals(sobj);
         }
 
         /// <summary>

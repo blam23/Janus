@@ -19,8 +19,7 @@ namespace Janus
 
         public T Get<T>(string key)
         {
-            object data;
-            if (Data.TryGetValue(key, out data))
+            if (Data.TryGetValue(key, out var data))
             {
                 return (T) data;
             }
@@ -29,8 +28,7 @@ namespace Janus
 
         public T GetOr<T>(string key, T defaultValue)
         {
-            object data;
-            if (Data.TryGetValue(key, out data))
+            if (Data.TryGetValue(key, out var data))
             {
                 return (T)data;
             }
@@ -39,8 +37,8 @@ namespace Janus
 
         public object this[string key]
         {
-            get { return Dict[key]; }
-            set { Dict[key] = value; }
+            get => Dict[key];
+            set => Dict[key] = value;
         }
     }
 }

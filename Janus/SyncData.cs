@@ -7,16 +7,19 @@ namespace Janus
     {
         protected bool Equals(SyncData other)
         {
-            return AutoAddFiles == other.AutoAddFiles && 
-                AutoDeleteFiles == other.AutoDeleteFiles && Recursive == other.Recursive && 
-                string.Equals(WatchDirectory, other.WatchDirectory) && 
-                string.Equals(SyncDirectory, other.SyncDirectory);
+            return AutoAddFiles == other.AutoAddFiles &&
+                   AutoDeleteFiles == other.AutoDeleteFiles &&
+                   Recursive == other.Recursive &&
+                   Delay == other.Delay &&
+                   string.Equals(WatchDirectory, other.WatchDirectory) &&
+                   string.Equals(SyncDirectory, other.SyncDirectory);
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
+            if (obj is null) return false;
+            if (this == obj) return true;
+
             return obj.GetType() == GetType() && Equals((SyncData) obj);
         }
 
@@ -30,6 +33,7 @@ namespace Janus
                 hashCode = (hashCode * 397) ^ Recursive.GetHashCode();
                 hashCode = (hashCode * 397) ^ (WatchDirectory?.GetHashCode() ?? 0);
                 hashCode = (hashCode * 397) ^ (SyncDirectory?.GetHashCode() ?? 0);
+                hashCode = (hashCode * 397) ^ (Delay.GetHashCode());
                 return hashCode;
             }
         }
@@ -43,5 +47,6 @@ namespace Janus
         public bool Recursive { get; set; }
         public string WatchDirectory { get; set; }
         public string SyncDirectory { get; set; }
+        public ulong Delay { get; set; }
     }
 }

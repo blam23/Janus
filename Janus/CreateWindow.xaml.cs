@@ -13,6 +13,7 @@ namespace Janus
     /// </summary>
     public partial class CreateWindow
     {
+        private const ulong Delay = 5000;
         public CreateWindow()
         {
             InitializeComponent();
@@ -27,9 +28,9 @@ namespace Janus
         {
             var errorMsg = new StringBuilder();
             if(!Directory.Exists(TxtDirectory.Text))
-                errorMsg.AppendLine($"Unable to find/access Watch directory.");
+                errorMsg.AppendLine("Unable to find/access Watch directory.");
             if(!Directory.Exists(TxtOutDirectory.Text))
-                errorMsg.AppendLine($"Unable to find/access Out directory.");
+                errorMsg.AppendLine("Unable to find/access Out directory.");
 
             if (errorMsg.Length == 0)
             {
@@ -43,6 +44,10 @@ namespace Janus
                     filters.Add(new IncludeFilter(TxtFilterInclude.Text.SplitEscapable(';')));
                 }
 
+                ulong delay = 0;
+                if (CbAddDelay.IsChecked.HasValue && CbAddDelay.IsChecked.Value)
+                    delay = Delay;
+
                 var watcher = new Watcher(
                     TxtName.Text,
                     TxtDirectory.Text,
@@ -50,7 +55,8 @@ namespace Janus
                     CbAdd.IsChecked ?? false,
                     CbDelete.IsChecked ?? false,
                     filters,
-                    CbRecurse.IsChecked ?? false);
+                    CbRecurse.IsChecked ?? false,
+                    delay);
 
                 if (CbSaveSettings.IsChecked ?? false)
                 {
@@ -87,6 +93,7 @@ namespace Janus
             MainWindow.Data["lastIncFilter"] = TxtFilterInclude.Text;
             MainWindow.Data["lastExcFilter"] = TxtFilterExclude.Text;
             MainWindow.Data["lastRecurse"] = CbRecurse.IsChecked ?? false;
+            MainWindow.Data["addDelay"] = CbAddDelay.IsChecked ?? false;
             MainWindow.Data["lastName"] = TxtName.Text;
         }
 
@@ -99,9 +106,9 @@ namespace Janus
             TxtFilterInclude.Text = MainWindow.Data.GetOr("lastIncFilter", TxtFilterInclude.Text);
             TxtFilterExclude.Text = MainWindow.Data.GetOr("lastExcFilter", TxtFilterExclude.Text);
             CbRecurse.IsChecked = MainWindow.Data.GetOr("lastRecurse", CbRecurse.IsChecked);
+            CbAddDelay.IsChecked = MainWindow.Data.GetOr("addDelay", CbAddDelay.IsChecked);
             TxtName.Text = MainWindow.Data.GetOr("lastName", TxtName.Text);
         }
-
 
         private void btnBrowseDirectory_Click(object sender, RoutedEventArgs e)
         {
@@ -114,6 +121,7 @@ namespace Janus
             {
                 var result = dialog.ShowDialog();
                 if (result != System.Windows.Forms.DialogResult.OK) return;
+
                 tb.Text = dialog.SelectedPath;
                 Unconfirm();
             }
