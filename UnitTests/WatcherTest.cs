@@ -40,20 +40,20 @@ namespace UnitTests
             {
                 writer.WriteLine("Hello World");
             }
-            Thread.Sleep(400);
+            Thread.Sleep(1000);
 
             Assert.IsTrue(File.Exists(fileOut), "Watcher did not copy over created file.");
 
             // Rename File
             File.Move(fileIn, fileInRenamed);
-            Thread.Sleep(400);
+            Thread.Sleep(1000);
 
             Assert.IsFalse(File.Exists(fileOut), "Watcher did not rename file - found old file name");
             Assert.IsTrue(File.Exists(fileOutRenamed), "Watcher did not delete file - did not find new file name");
 
             // Delete File
             File.Delete(fileInRenamed);
-            Thread.Sleep(400);
+            Thread.Sleep(1000);
 
             Assert.IsFalse(File.Exists(fileOutRenamed), "Watcher did not delete file.");
 
