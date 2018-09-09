@@ -75,35 +75,34 @@ namespace Janus
         private void btnRemove_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
-            var watcher = btn?.DataContext as Watcher;
 
-            if (watcher == null) return;
-            watcher.Stop();
-            Watchers.Remove(watcher);
+            if (btn?.DataContext is Watcher watcher)
+            {
+                watcher.Stop();
+                Watchers.Remove(watcher);
+            }
+
             //NotificationSystem.Default.Push(NotifcationType.Info, "Removed Watcher", "Removed watcher successfully.");
         }
 
         private async void btnSync_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
-            var watcher = btn?.DataContext as Watcher;
-            if (watcher == null) return;
-
-            await watcher.SynchroniseAsync().ConfigureAwait(false);
+            if (btn?.DataContext is Watcher watcher)
+                await watcher.SynchroniseAsync().ConfigureAwait(false);
         }
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
             var btn = sender as Button;
-            var watcher = btn?.DataContext as Watcher;
-            if (watcher == null) return;
-
-            UpdateStore();
+            if (btn?.DataContext is Watcher watcher)
+                UpdateStore();
         }
 
         private void CbStartup_OnClick(object sender, RoutedEventArgs e)
         {
             if (!CbStartup.IsChecked.HasValue) return;
+
             if (CbStartup.IsChecked.Value)
             {
                 AddToStartup();
@@ -127,7 +126,6 @@ namespace Janus
             using (var writer = new StreamWriter(Shortcut))
             {
                 var app = Assembly.GetExecutingAssembly().Location;
-                if (app == null) return; // TODO: error handling / message
                 writer.WriteLine("[InternetShortcut]");
                 writer.WriteLine("URL=file:///" + app);
                 writer.WriteLine("IconIndex=0");
@@ -145,6 +143,7 @@ namespace Janus
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)
         {
             if (Exit) return;
+
             e.Cancel = true;
             Hide();
         }

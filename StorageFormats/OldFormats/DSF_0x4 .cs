@@ -85,9 +85,6 @@ namespace StorageFormats
 
                 try
                 {
-                    // TODO: Add some kind of "broken" Watcher list
-                    //  for Watchers who have invalid directories, etc.
-                    //  so they can be recovered.
                     data.Watchers.Add(new Watcher(name, watchPath, endPath, addFiles, deleteFiles, filters, recursive,
                         observe: observe));
                 }
@@ -246,7 +243,6 @@ namespace StorageFormats
             {
                 writer.Write(Start);
                 writer.Write(kvp.Key);
-                // TODO: Change to the nice new C#7 Pattern Match Switch statement when supported.
                 if (kvp.Value is string)
                 {
                     writer.Write('s');

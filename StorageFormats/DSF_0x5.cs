@@ -86,9 +86,6 @@ namespace StorageFormats
 
                 try
                 {
-                    // TODO: Add some kind of "broken" Watcher list
-                    //  for Watchers who have invalid directories, etc.
-                    //  so they can be recovered.
                     data.Watchers.Add(new Watcher(name, watchPath, endPath, addFiles, deleteFiles, filters, recursive,
                         delay: delay, observe: observe));
                 }
@@ -248,26 +245,24 @@ namespace StorageFormats
             {
                 writer.Write(Start);
                 writer.Write(kvp.Key);
-                // TODO: Change to the nice new C#7 Pattern Match Switch statement when supported.
-                if (kvp.Value is string)
+                switch (kvp.Value)
                 {
-                    writer.Write('s');
-                    writer.Write((string)kvp.Value);
-                }
-                else if (kvp.Value is int)
-                {
-                    writer.Write('i');
-                    writer.Write((int)kvp.Value);
-                }
-                else if (kvp.Value is double)
-                {
-                    writer.Write('d');
-                    writer.Write((double)kvp.Value);
-                }
-                else if (kvp.Value is bool)
-                {
-                    writer.Write('b');
-                    writer.Write((bool)kvp.Value);
+                    case string value:
+                        writer.Write('s');
+                        writer.Write(value);
+                        break;
+                    case int value:
+                        writer.Write('i');
+                        writer.Write(value);
+                        break;
+                    case double value:
+                        writer.Write('d');
+                        writer.Write(value);
+                        break;
+                    case bool value:
+                        writer.Write('b');
+                        writer.Write(value);
+                        break;
                 }
                 writer.Write(End);
             }

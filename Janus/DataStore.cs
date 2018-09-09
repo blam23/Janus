@@ -84,10 +84,11 @@ namespace Janus
             {
                 foreach (var attr in t.GetCustomAttributes(true))
                 {
-                    var formatAttr = attr as StorageFormatAttribute;
-                    if (formatAttr == null) continue;
-                    var c = (IDataStorageFormat)Activator.CreateInstance(t);
-                    DataLoaders.Add(formatAttr.VersionNumber, c);
+                    if (attr is StorageFormatAttribute formatAttr)
+                    {
+                        var c = (IDataStorageFormat) Activator.CreateInstance(t);
+                        DataLoaders.Add(formatAttr.VersionNumber, c);
+                    }
                 }
             }
         }
@@ -108,8 +109,7 @@ namespace Janus
                 var writer = new BinaryWriter(fs);
                 writer.Write(_headerBytes);
                 writer.Write(Version);
-                IDataStorageFormat format;
-                if (DataLoaders.TryGetValue(Version, out format))
+                if (DataLoaders.TryGetValue(Version, out var format))
                 {
                     format.Save(writer, data);
                 }
@@ -150,9 +150,7 @@ namespace Janus
                 }
                 var version = reader.ReadInt64();
                 Logging.WriteLine($"DataStore Version: {version}");
-                // TODO: Inline this when supported by VSTS (out var format)
-                IDataStorageFormat format;
-                if (DataLoaders.TryGetValue(version, out format))
+                if (DataLoaders.TryGetValue(version, out var format))
                 {
                     try
                     {
@@ -175,15 +173,29 @@ namespace Janus
         /// <summary>
         /// Called when an invalid data store is tried to be loaded.
         /// Prints an error and deletes the invalid store.
-        /// TODO: Rename instead of delete for recovery?
         /// </summary>
         /// <param name="fs">Open File Stream</param>
         /// <param name="message">Error reason</param>
-        private void InvalidDataStore(string message, FileStream fs)
+        private void InvalidDataStore(string message, Stream fs)
         {
             Logging.WriteLine(Resources.Invalid_DataStore, message);
             fs?.Close();
-            File.Delete(_storeName);
+            var retries = 5;
+            while (retries > 0)
+            {
+                try
+                {
+                    File.Copy(_storeName, _storeName + $"--invalid-{DateTime.Now}.old");
+                    File.Delete(_storeName);
+                    break;
+                }
+                catch (Exception e)
+                {
+                    Logging.WriteLine($"Failed to rename invalid data store, Retries - {retries}. Message - {e.Message}");
+                }
+
+                retries--;
+            }
         }
     }
 }

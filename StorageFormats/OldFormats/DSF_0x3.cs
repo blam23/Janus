@@ -233,7 +233,6 @@ namespace StorageFormats.OldFormats
             {
                 writer.Write(Start);
                 writer.Write(kvp.Key);
-                // TODO: Change to the nice new C#7 Pattern Match Switch statement when supported.
                 if (kvp.Value is string)
                 {
                     writer.Write('s');
