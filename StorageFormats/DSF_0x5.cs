@@ -263,6 +263,9 @@ namespace StorageFormats
                         writer.Write('b');
                         writer.Write(value);
                         break;
+                    default:
+                        Logging.WriteLine($"Found unserialisable value type of: {kvp.Value.GetType()}");
+                        break;
                 }
                 writer.Write(End);
             }
