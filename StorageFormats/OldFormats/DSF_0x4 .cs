@@ -4,7 +4,7 @@ using System.IO;
 using Janus;
 using Janus.Filters;
 
-namespace StorageFormats
+namespace StorageFormats.OldFormats
 {
     /* CHANGELOG FROM 0x3:
      * 

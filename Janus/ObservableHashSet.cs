@@ -44,7 +44,7 @@ namespace Janus
         {
             if (_syncContext != null)
             {
-                _syncContext.Send(x => _add(item), null);
+                _syncContext.Send(x => _add(item), this);
             }
             else
             {
@@ -70,7 +70,7 @@ namespace Janus
         {
             if (_syncContext != null)
             {
-                _syncContext.Send(x => _remove(item), null);
+                _syncContext.Send(x => _remove(item), this);
             }
             else
             {
@@ -93,7 +93,7 @@ namespace Janus
         {
             if (_syncContext != null)
             {
-                _syncContext.Send(x => _clear(), null);
+                _syncContext.Send(x => _clear(), this);
             }
             else
             {
