@@ -1,11 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Janus.Matchers;
 
 namespace Janus.Filters
 {
-    public class ExcludeFileFilter : IFilter
+    public class ExcludeFileFilter : IFilter, IEquatable<ExcludeFileFilter>
     {
         public FilterBehaviour Behaviour => FilterBehaviour.Ignore;
 
@@ -37,16 +38,18 @@ namespace Janus.Filters
             return ret;
         }
 
-        private bool Equals(ExcludeFileFilter other)
+        private bool Equals(IFilter other)
         {
             if (other.Behaviour != Behaviour || other.Filters.Count != Filters.Count) return false;
+
             return !Filters.Where((filter, i) => filter != other.Filters[i]).Any();
         }
 
         public override bool Equals(object obj)
         {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
+            if (obj is null) return false;
+            if (this == obj) return true;
+
             return obj.GetType() == GetType() && Equals((ExcludeFileFilter) obj);
         }
 
@@ -56,6 +59,11 @@ namespace Janus.Filters
             {
                 return ((_matcher?.GetHashCode() ?? 0)*397) ^ (Filters?.GetHashCode() ?? 0);
             }
+        }
+
+        bool IEquatable<ExcludeFileFilter>.Equals(ExcludeFileFilter other)
+        {
+            return Equals(this, other);
         }
     }
 }
