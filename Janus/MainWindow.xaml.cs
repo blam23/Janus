@@ -16,8 +16,8 @@ namespace Janus
     {
         public static readonly DataStore MainStore = new DataStore();
         public static bool Exiting { get; private set; }
-        private static DataProvider _data;
-        private static ObservableCollection<Watcher> _watchers;
+        public static DataProvider Data;
+        public static ObservableCollection<Watcher> Watchers;
         private static readonly string Startup = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
         private static readonly string Shortcut = Path.Combine(Startup, "Janus.url");
 
@@ -43,10 +43,10 @@ namespace Janus
             var d = MainStore.Load();
             Logging.WriteLine("Finished Loading Data");
 
-            _data = d.DataProvider;
-            _watchers = d.Watchers;
+            Data = d.DataProvider;
+            Watchers = d.Watchers;
 
-            if (_watchers.Count == 0)
+            if (Watchers.Count == 0)
             {
                 Show();
             }
@@ -54,8 +54,8 @@ namespace Janus
             {
                 NotificationSystem.Default.Push(NotifcationType.Info, "Janus", "Started in minimised mode. Double click 'Ja' icon to interact.");
             }
-            ListBox.ItemsSource = _watchers;
-            _watchers.CollectionChanged += Watchers_CollectionChanged;
+            ListBox.ItemsSource = Watchers;
+            Watchers.CollectionChanged += Watchers_CollectionChanged;
 
             CbStartup.IsChecked = File.Exists(Shortcut);
         }
@@ -68,7 +68,7 @@ namespace Janus
         public static void UpdateStore()
         {
             Logging.WriteLine("Saving Data");
-            MainStore.Store(new JanusData(_watchers, _data));
+            MainStore.Store(new JanusData(Watchers, Data));
             Logging.WriteLine("Finished Saving Data");
         }
 
@@ -79,7 +79,7 @@ namespace Janus
             if (btn?.DataContext is Watcher watcher)
             {
                 watcher.Stop();
-                _watchers.Remove(watcher);
+                Watchers.Remove(watcher);
             }
 
             //NotificationSystem.Default.Push(NotifcationType.Info, "Removed Watcher", "Removed watcher successfully.");
