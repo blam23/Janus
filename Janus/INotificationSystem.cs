@@ -2,7 +2,7 @@
 {
     public static class NotificationSystem
     {
-        public static INotificationSystem Default = new WindowsToast();
+        public static INotificationSystem Default { get; } = new WindowsToast();
     }
 
     public interface INotificationSystem

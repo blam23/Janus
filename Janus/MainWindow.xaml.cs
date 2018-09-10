@@ -15,9 +15,9 @@ namespace Janus
     public partial class MainWindow
     {
         public static readonly DataStore MainStore = new DataStore();
-        public static bool Exit;
-        public static DataProvider Data;
-        public static ObservableCollection<Watcher> Watchers;
+        public static bool Exiting { get; private set; }
+        private static DataProvider _data;
+        private static ObservableCollection<Watcher> _watchers;
         private static readonly string Startup = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
         private static readonly string Shortcut = Path.Combine(Startup, "Janus.url");
 
@@ -43,10 +43,10 @@ namespace Janus
             var d = MainStore.Load();
             Logging.WriteLine("Finished Loading Data");
 
-            Data = d.DataProvider;
-            Watchers = d.Watchers;
+            _data = d.DataProvider;
+            _watchers = d.Watchers;
 
-            if (Watchers.Count == 0)
+            if (_watchers.Count == 0)
             {
                 Show();
             }
@@ -54,8 +54,8 @@ namespace Janus
             {
                 NotificationSystem.Default.Push(NotifcationType.Info, "Janus", "Started in minimised mode. Double click 'Ja' icon to interact.");
             }
-            ListBox.ItemsSource = Watchers;
-            Watchers.CollectionChanged += Watchers_CollectionChanged;
+            ListBox.ItemsSource = _watchers;
+            _watchers.CollectionChanged += Watchers_CollectionChanged;
 
             CbStartup.IsChecked = File.Exists(Shortcut);
         }
@@ -68,7 +68,7 @@ namespace Janus
         public static void UpdateStore()
         {
             Logging.WriteLine("Saving Data");
-            MainStore.Store(new JanusData(Watchers, Data));
+            MainStore.Store(new JanusData(_watchers, _data));
             Logging.WriteLine("Finished Saving Data");
         }
 
@@ -79,7 +79,7 @@ namespace Janus
             if (btn?.DataContext is Watcher watcher)
             {
                 watcher.Stop();
-                Watchers.Remove(watcher);
+                _watchers.Remove(watcher);
             }
 
             //NotificationSystem.Default.Push(NotifcationType.Info, "Removed Watcher", "Removed watcher successfully.");
@@ -142,7 +142,7 @@ namespace Janus
 
         private void MainWindow_OnClosing(object sender, CancelEventArgs e)
         {
-            if (Exit) return;
+            if (Exiting) return;
 
             e.Cancel = true;
             Hide();
@@ -155,7 +155,7 @@ namespace Janus
 
         private void Exit_OnClick(object sender, RoutedEventArgs e)
         {
-            Exit = true;
+            Exiting = true;
             Close();
         }
 

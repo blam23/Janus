@@ -51,7 +51,7 @@ namespace Janus
         /// <summary>
         /// Delay Controller, if null -> No delay is used
         /// </summary>
-        public DelayController Delay;
+        private DelayController _delay;
 
         public string Name { get; set; }
 
@@ -94,7 +94,7 @@ namespace Janus
 
         public void SetupDelay(ulong delay)
         {
-            Delay = delay > 0 ?
+            _delay = delay > 0 ?
                 new DelayController(TimeSpan.FromMilliseconds(delay), () => Synchronise()) :
                 null;
         }
@@ -208,14 +208,14 @@ namespace Janus
                 return;
             }
 
-            Delay?.ResetTimer();
+            _delay?.ResetTimer();
 
             if (_copy.Contains(file))
             {
                 Logging.WriteLine(Resources.Auto_Removing_Target, file);
                 _copy.Remove(file);
             }
-            if (Data.AutoDeleteFiles && Delay == null)
+            if (Data.AutoDeleteFiles && _delay == null)
             {
                 Logging.WriteLine(Resources.Auto_Deleting_Target, file);
                 Synchroniser.DeleteAsync(file);
@@ -250,14 +250,14 @@ namespace Janus
                 return;
             }
 
-            Delay?.ResetTimer();
+            _delay?.ResetTimer();
 
             if (_delete.Contains(file))
             {
                 Logging.WriteLine(Resources.Auto_Remove_Delete_Target, file);
                 _delete.Remove(file);
             }
-            if (Data.AutoAddFiles && Delay == null)
+            if (Data.AutoAddFiles && _delay == null)
             {
                 Logging.WriteLine(Resources.Auto_Copying_Target, file);
                 Synchroniser.AddAsync(file);
@@ -298,7 +298,7 @@ namespace Janus
                 return;
             }
 
-            Delay?.ResetTimer();
+            _delay?.ResetTimer();
 
             Logging.WriteLine(Resources.Renaming_File_From_To, oldPath, newPath);
 
@@ -314,7 +314,7 @@ namespace Janus
                 _copy.Remove(oldPath);
             }
 
-            if (Data.AutoAddFiles && Delay == null)
+            if (Data.AutoAddFiles && _delay == null)
             {
                 Synchroniser.RenameAsync(oldPath, newPath);
             }
@@ -334,7 +334,7 @@ namespace Janus
         {
             Logging.WriteLine(Resources.Watcher_Stop_Target, Data.WatchDirectory);
             DisableEvents();
-            Delay?.Stop();
+            _delay?.Stop();
             _watcher.Dispose();
         }
 

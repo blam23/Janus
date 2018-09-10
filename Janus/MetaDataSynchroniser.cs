@@ -39,7 +39,7 @@ namespace Janus
 
         public async Task TryFullSynchroniseAsync()
         {
-            await Task.Run(new Action(TryFullSynchronise)).ConfigureAwait(false);
+            await Task.Run(new Action(async () => await TryFullSynchronise())).ConfigureAwait(false);
         }
 
 
@@ -47,7 +47,7 @@ namespace Janus
         /// Attempts to make the EndPath directory a 1:1 copy of the
         /// Watcher's WatchPath.
         /// </summary>
-        private async void TryFullSynchronise()
+        private async Task TryFullSynchronise()
         {
             if (!Data.AutoAddFiles && !Data.AutoDeleteFiles) return;
 

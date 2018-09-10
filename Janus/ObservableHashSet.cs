@@ -29,21 +29,18 @@ namespace Janus
             OnCollectionChanged(new NotifyCollectionChangedEventArgs(action, item));
         }
 
-        private bool _add(T item)
+        private void _add(T item)
         {
             var index = IndexOf(item);
-            if (index >= 0)
-                return false;
+            if (index >= 0) return;
 
             base.Add(item);
 
             NotifyCollectionChanged(NotifyCollectionChangedAction.Add, item, index);
             NotifyCountChanged();
-
-            return true;
         }
 
-        new public void Add(T item)
+        public new void Add(T item)
         {
             if (_syncContext != null)
             {
@@ -55,24 +52,21 @@ namespace Janus
             }
         }
 
-        private bool _remove(T item)
+        private void _remove(T item)
         {
             var index = IndexOf(item);
-            if (index < 0)
-                return false;
+            if (index < 0) return;
 
-            bool changed = base.Remove(item);
+            var changed = base.Remove(item);
 
             if (changed)
             {
                 NotifyCollectionChanged(NotifyCollectionChangedAction.Remove, item, index);
                 NotifyCountChanged();
             }
-
-            return true;
         }
 
-        new public void Remove(T item)
+        public new void Remove(T item)
         {
             if (_syncContext != null)
             {
@@ -95,7 +89,7 @@ namespace Janus
             NotifyCountChanged();
         }
 
-        new public void Clear()
+        public new void Clear()
         {
             if (_syncContext != null)
             {

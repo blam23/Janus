@@ -1,6 +1,6 @@
 ﻿namespace Janus.Matchers
 {
-    public interface IPatternMatcher<T>
+    public interface IPatternMatcher<in T>
     {
         /// <summary>
         /// Does this <paramref name="obj"/> match this <paramref name="pattern"/>?
