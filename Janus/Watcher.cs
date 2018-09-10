@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Threading.Tasks;
+using System.Windows;
 using Janus.Filters;
 using Janus.Properties;
 
@@ -53,6 +54,11 @@ namespace Janus
         /// </summary>
         private DelayController _delay;
 
+        /// <summary>
+        /// Delay Display Window
+        /// </summary>
+        private DelayDisplay _display;
+
         public string Name { get; set; }
 
         public Watcher(string name, string watchPath, string endPath, bool addFiles, bool deleteFiles, ObservableCollection<IFilter> filters, bool recursive, ulong delay = 0, bool observe = false)
@@ -94,9 +100,15 @@ namespace Janus
 
         public void SetupDelay(ulong delay)
         {
-            _delay = delay > 0 ?
-                new DelayController(TimeSpan.FromMilliseconds(delay), () => Synchronise()) :
-                null;
+            if (delay > 0)
+            {
+                _delay = new DelayController(TimeSpan.FromMilliseconds(delay), () => Synchronise());
+
+                _display = DelayDisplay.CreateNewDelayDisplay();
+                _display.SetupDelay(_delay);
+            }
+            else
+                _delay = null;
         }
 
         public void AddFilter(IFilter filter)
@@ -208,7 +220,7 @@ namespace Janus
                 return;
             }
 
-            _delay?.ResetTimer();
+            ResetDelay();
 
             if (_copy.Contains(file))
             {
@@ -226,6 +238,20 @@ namespace Janus
                 Logging.WriteLine(Resources.Auto_Mark_Delete_Target, file);
                 _delete.Add(file);
             }
+        }
+
+        /// <summary>
+        /// Resets the Delay timer and shows the Delay notification window.
+        /// </summary>
+        private void ResetDelay()
+        {
+            if (_display != null)
+            {
+                Application.Current.Dispatcher.Invoke(_display.Show);
+                Application.Current.Dispatcher.Invoke(() => _display.SetFileCount(MarkedForCopy.Count + MarkedForDeletion.Count + MarkedForRename.Count));
+            }
+
+            _delay?.ResetTimer();
         }
 
         /// <summary>
@@ -250,7 +276,7 @@ namespace Janus
                 return;
             }
 
-            _delay?.ResetTimer();
+            ResetDelay();
 
             if (_delete.Contains(file))
             {
@@ -298,7 +324,7 @@ namespace Janus
                 return;
             }
 
-            _delay?.ResetTimer();
+            ResetDelay();
 
             Logging.WriteLine(Resources.Renaming_File_From_To, oldPath, newPath);
 
@@ -335,6 +361,7 @@ namespace Janus
             Logging.WriteLine(Resources.Watcher_Stop_Target, Data.WatchDirectory);
             DisableEvents();
             _delay?.Stop();
+            _display.Hide();
             _watcher.Dispose();
         }
 
