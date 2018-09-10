@@ -12,7 +12,7 @@ namespace Janus
     public partial class DelayDisplay : Window
     {
         private static readonly List<DelayDisplay> List = new List<DelayDisplay>();
-        private DispatcherTimer _refreshTimer;
+        private readonly DispatcherTimer _refreshTimer;
         private DispatcherTimer _fadeTimer;
         private DateTime _started;
         private DateTime _endTime;
@@ -60,8 +60,7 @@ namespace Janus
                 _fadeTimer.Tick += (_, __) =>
                 {
                     Opacity -= 0.01;
-                    if (!(Opacity <= 0.01)) return;
-
+                    if (Opacity > 0.01) return;
                     _fadeTimer.Stop();
                     Hide();
                 };
