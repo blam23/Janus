@@ -11,11 +11,14 @@ namespace Janus
     /// </summary>
     public partial class DelayDisplay : Window
     {
+        /// <summary>
+        /// Notification height offset
+        /// </summary>
+        private const int Offset = 0; // 0 as shadow adds offset anyway
         private static readonly List<DelayDisplay> List = new List<DelayDisplay>();
         private readonly DispatcherTimer _refreshTimer;
         private DispatcherTimer _fadeTimer;
         private DateTime _started;
-        private DateTime _endTime;
         private TimeSpan _delayDuration;
         private DelayController _controller;
 
@@ -48,19 +51,22 @@ namespace Janus
             controller.DelayActionStarting += () =>
             {
                 pbProgress.Foreground = new SolidColorBrush(Color.FromRgb(255,255,100));
+                Border.BorderBrush = new SolidColorBrush(Color.FromRgb(255, 255, 100));
             };
             controller.DelayActionCompleted += () =>
             {
                 _refreshTimer.Stop();
+
                 pbProgress.Value = 100;
                 pbProgress.Foreground = new SolidColorBrush(Color.FromRgb(100, 255, 100));
-                //var delay = new DelayController(TimeSpan.FromSeconds(1), Hide);
-                //delay.ResetTimer();
+                Border.BorderBrush = new SolidColorBrush(Color.FromRgb(100, 255, 100));
+
                 _fadeTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(10)};
                 _fadeTimer.Tick += (_, __) =>
                 {
                     Opacity -= 0.01;
                     if (Opacity > 0.01) return;
+
                     _fadeTimer.Stop();
                     Hide();
                 };
@@ -71,7 +77,6 @@ namespace Janus
         private void OnDelayReset()
         {
             _started = DateTime.Now;
-            _endTime = DateTime.Now + _delayDuration;
             if (!_refreshTimer.IsEnabled) _refreshTimer.Start();
         }
 
@@ -91,13 +96,14 @@ namespace Janus
                 _fadeTimer?.Stop();
                 Opacity = 1;
                 pbProgress.Foreground = new SolidColorBrush(Color.FromRgb(0, 232, 255));
+                Border.BorderBrush = new SolidColorBrush(Color.FromRgb(0, 232, 255));
 
                 if (List.Contains(this)) return;
 
                 List.Add(this);
                 var desktopWorkingArea = SystemParameters.WorkArea;
-                Left = desktopWorkingArea.Right - Width - 10;
-                Top = desktopWorkingArea.Bottom - (Height * List.Count) - 10;
+                Left = desktopWorkingArea.Right - Width;
+                Top = desktopWorkingArea.Bottom - ((Height + Offset) * List.Count);
                 base.Show();
             }
         }
@@ -109,7 +115,7 @@ namespace Janus
 
         public void SetFileCount(int i)
         {
-            lblFileCount.Content = i.ToString();
+            lblFileCount.Content = $"({i})";
         }
 
         private void btnSyncNow_Click(object sender, RoutedEventArgs e)
