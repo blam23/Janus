@@ -10,9 +10,9 @@
         <Grid.Effect>
             <DropShadowEffect Opacity="0.5" ShadowDepth="10" BlurRadius="25"/>
         </Grid.Effect>
-        <Border Name="Border" BorderBrush="Black" BorderThickness="1" Opacity="0.2"/>
+        <Border Name="Border" BorderBrush="Black" BorderThickness="1" Opacity="0.5"/>
 
-        <ProgressBar Opacity="0.2" x:Name="pbProgress" Height="8" VerticalAlignment="Bottom" Background="#FF464646" BorderBrush="{x:Null}" Foreground="#FF00E8FF" Margin="6,0,5,5"/>
+        <ProgressBar Opacity="0.5" x:Name="pbProgress" Height="8" VerticalAlignment="Bottom" Background="#FF464646" BorderBrush="{x:Null}" Foreground="#FF00E8FF" Margin="6,0,5,5"/>
         <Label Content="Waiting to process files.." VerticalAlignment="Top" Background="{x:Null}" Foreground="White" Margin="0,0,36,0" Height="36" FontSize="16" HorizontalAlignment="Right" Width="199"/>
         <Label x:Name="lblFileCount" Content="(22)" FontSize="16" FontFamily="Consolas" Foreground="White" Margin="0,28,52,0" HorizontalAlignment="Right" Width="183" Height="31" VerticalAlignment="Top"/>
         <Button x:Name="btnSyncNow" Content="Go!" Margin="0,5,5,18" HorizontalAlignment="Right" Width="42" Foreground="#FFADE9FF" Click="btnSyncNow_Click" Cursor="Hand" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" FontSize="16">

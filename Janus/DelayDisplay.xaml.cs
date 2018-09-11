@@ -33,7 +33,7 @@ namespace Janus
         private void UpdateProgress()
         {
             var progress = (DateTime.Now - _started).TotalMilliseconds / _delayDuration.TotalMilliseconds;
-            pbProgress.Value = progress * 100;
+            pbProgress.Value = 100 - progress * 100;
         }
 
         public event Action<DelayDisplay> Complete;
@@ -50,15 +50,13 @@ namespace Janus
             controller.DelayReset += OnDelayReset;
             controller.DelayActionStarting += () =>
             {
-                pbProgress.Foreground = new SolidColorBrush(Color.FromRgb(255,255,100));
                 Border.BorderBrush = new SolidColorBrush(Color.FromRgb(255, 255, 100));
             };
             controller.DelayActionCompleted += () =>
             {
                 _refreshTimer.Stop();
 
-                pbProgress.Value = 100;
-                pbProgress.Foreground = new SolidColorBrush(Color.FromRgb(100, 255, 100));
+                pbProgress.Value = 0;
                 Border.BorderBrush = new SolidColorBrush(Color.FromRgb(100, 255, 100));
 
                 _fadeTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(10)};
