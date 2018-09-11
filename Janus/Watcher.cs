@@ -361,8 +361,8 @@ namespace Janus
             Logging.WriteLine(Resources.Watcher_Stop_Target, Data.WatchDirectory);
             DisableEvents();
             _delay?.Stop();
-            _display.Hide();
-            _watcher.Dispose();
+            _display?.Hide();
+            _watcher?.Dispose();
         }
 
         /// <summary>

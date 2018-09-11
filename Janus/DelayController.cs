@@ -35,15 +35,21 @@ namespace Janus
         public DelayController(TimeSpan delay, Action action)
         {
             _timer = new DispatcherTimer();
+            Delay = delay;
+            DelayedAction = action;
+
             _timer.Tick += (_, __) =>
             {
-                Logging.WriteLine("Enacting delayed action.");
-                OnDelayActionStarting();
-                action();
-                OnDelayActionCompleted();
+                EnactDelayedAction();
             };
+        }
 
-            Delay = delay;
+        private void EnactDelayedAction()
+        {
+            Logging.WriteLine("Enacting delayed action.");
+            OnDelayActionStarting();
+            DelayedAction();
+            OnDelayActionCompleted();
         }
 
         public void ResetTimer()
@@ -72,6 +78,12 @@ namespace Janus
         protected virtual void OnDelayReset()
         {
             DelayReset?.Invoke();
+        }
+
+        internal void EnactNow()
+        {
+            Stop();
+            EnactDelayedAction();
         }
     }
 }

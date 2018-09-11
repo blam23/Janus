@@ -150,6 +150,8 @@ namespace Janus
 
         private void MenuItem_OnClick(object sender, RoutedEventArgs e)
         {
+            if (Exiting) return;
+
             Show();
         }
 

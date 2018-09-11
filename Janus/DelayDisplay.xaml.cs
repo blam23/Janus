@@ -17,6 +17,7 @@ namespace Janus
         private DateTime _started;
         private DateTime _endTime;
         private TimeSpan _delayDuration;
+        private DelayController _controller;
 
         public DelayDisplay()
         {
@@ -29,10 +30,6 @@ namespace Janus
         private void UpdateProgress()
         {
             var progress = (DateTime.Now - _started).TotalMilliseconds / _delayDuration.TotalMilliseconds;
-
-            if (progress >= 1)
-                _refreshTimer.Stop();
-
             pbProgress.Value = progress * 100;
         }
 
@@ -45,6 +42,7 @@ namespace Janus
 
         public void SetupDelay(DelayController controller)
         {
+            _controller = controller;
             _delayDuration = controller.Delay;
             controller.DelayReset += OnDelayReset;
             controller.DelayActionStarting += () =>
@@ -53,6 +51,8 @@ namespace Janus
             };
             controller.DelayActionCompleted += () =>
             {
+                _refreshTimer.Stop();
+                pbProgress.Value = 100;
                 pbProgress.Foreground = new SolidColorBrush(Color.FromRgb(100, 255, 100));
                 //var delay = new DelayController(TimeSpan.FromSeconds(1), Hide);
                 //delay.ResetTimer();
@@ -110,6 +110,11 @@ namespace Janus
         public void SetFileCount(int i)
         {
             lblFileCount.Content = i.ToString();
+        }
+
+        private void btnSyncNow_Click(object sender, RoutedEventArgs e)
+        {
+            _controller.EnactNow();
         }
     }
 }
