@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 using System.Windows.Threading;
 
 namespace Janus
@@ -48,8 +49,12 @@ namespace Janus
         {
             Logging.WriteLine("Enacting delayed action.");
             OnDelayActionStarting();
-            DelayedAction();
-            OnDelayActionCompleted();
+
+            new Thread(() =>
+            {
+                DelayedAction();
+                OnDelayActionCompleted();
+            }).Start();
         }
 
         public void ResetTimer()

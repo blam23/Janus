@@ -50,25 +50,31 @@ namespace Janus
             controller.DelayReset += OnDelayReset;
             controller.DelayActionStarting += () =>
             {
-                Border.BorderBrush = new SolidColorBrush(Color.FromRgb(255, 255, 100));
+                Application.Current.Dispatcher.Invoke(() =>
+                {
+                    Border.BorderBrush = new SolidColorBrush(Color.FromRgb(255, 255, 100));
+                });
             };
             controller.DelayActionCompleted += () =>
             {
-                _refreshTimer.Stop();
-
-                pbProgress.Value = 0;
-                Border.BorderBrush = new SolidColorBrush(Color.FromRgb(100, 255, 100));
-
-                _fadeTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(10)};
-                _fadeTimer.Tick += (_, __) =>
+                Application.Current.Dispatcher.Invoke(() =>
                 {
-                    Opacity -= 0.05;
-                    if (Opacity > 0.05) return;
+                    _refreshTimer.Stop();
 
-                    _fadeTimer.Stop();
-                    Hide();
-                };
-                _fadeTimer.Start();
+                    pbProgress.Value = 0;
+                    Border.BorderBrush = new SolidColorBrush(Color.FromRgb(100, 255, 100));
+                
+                    _fadeTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(10)};
+                    _fadeTimer.Tick += (_, __) =>
+                    {
+                        Opacity -= 0.05;
+                        if (Opacity > 0.05) return;
+
+                        _fadeTimer.Stop();
+                        Hide();
+                    };
+                    _fadeTimer.Start();
+                });
             };
         }
 
