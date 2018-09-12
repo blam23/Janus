@@ -159,6 +159,7 @@ namespace Janus
         {
             Exiting = true;
             Close();
+            Application.Current.Shutdown();
         }
 
 

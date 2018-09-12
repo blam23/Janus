@@ -14,7 +14,7 @@ namespace Janus
         /// <summary>
         /// Notification height offset
         /// </summary>
-        private const int Offset = 0; // 0 as shadow adds offset anyway
+        private const int Offset = -25; // 0 as shadow adds offset anyway
         private static readonly List<DelayDisplay> List = new List<DelayDisplay>();
         private readonly DispatcherTimer _refreshTimer;
         private DispatcherTimer _fadeTimer;
@@ -62,8 +62,8 @@ namespace Janus
                 _fadeTimer = new DispatcherTimer {Interval = TimeSpan.FromMilliseconds(10)};
                 _fadeTimer.Tick += (_, __) =>
                 {
-                    Opacity -= 0.01;
-                    if (Opacity > 0.01) return;
+                    Opacity -= 0.05;
+                    if (Opacity > 0.05) return;
 
                     _fadeTimer.Stop();
                     Hide();

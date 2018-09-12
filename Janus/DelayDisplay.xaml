@@ -5,16 +5,17 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Janus"
         AllowsTransparency="True"
-        mc:Ignorable="d" Height="118.669" Width="357.48" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="None"  Background="Transparent" Topmost="True">
+        mc:Ignorable="d" Height="88.107" Width="357.48" ResizeMode="NoResize" ShowInTaskbar="False" WindowStyle="None"  Background="Transparent" Topmost="True">
     <Grid Background="#FF272727" Margin="24,14,30,28">
         <Grid.Effect>
             <DropShadowEffect Opacity="0.5" ShadowDepth="10" BlurRadius="25"/>
         </Grid.Effect>
-        <Border Name="Border" BorderBrush="Black" BorderThickness="1" Opacity="0.5"/>
+        <Image Source="Media/Janus.ico" Margin="-9,2,0,-16" HorizontalAlignment="Left" Width="60" Height="60" VerticalAlignment="Top" Opacity="0.05"/>
+        <Border x:Name="Border" BorderBrush="Black" BorderThickness="1" Opacity="1"/>
 
-        <ProgressBar Opacity="0.5" x:Name="pbProgress" Height="8" VerticalAlignment="Bottom" Background="#FF464646" BorderBrush="{x:Null}" Foreground="#FF00E8FF" Margin="6,0,5,5"/>
-        <Label Content="Waiting to process files.." VerticalAlignment="Top" Background="{x:Null}" Foreground="White" Margin="0,0,36,0" Height="36" FontSize="16" HorizontalAlignment="Right" Width="199"/>
-        <Label x:Name="lblFileCount" Content="(22)" FontSize="16" FontFamily="Consolas" Foreground="White" Margin="0,28,52,0" HorizontalAlignment="Right" Width="183" Height="31" VerticalAlignment="Top"/>
+        <ProgressBar Opacity="1" x:Name="pbProgress" Height="8" VerticalAlignment="Bottom" Background="#FF464646" BorderBrush="{x:Null}" Foreground="#FF00E8FF" Margin="6,0,5,5"/>
+        <Label Content="Waiting to process files.." VerticalAlignment="Top" Background="{x:Null}" Foreground="White" Margin="0,0,116,0" Height="36" FontSize="16" HorizontalAlignment="Right" Width="181"/>
+        <Label x:Name="lblFileCount" Content="(22)" FontSize="16" FontFamily="Consolas" Foreground="White" Margin="0,0,52,0" HorizontalAlignment="Right" Width="64" Height="31" VerticalAlignment="Top"/>
         <Button x:Name="btnSyncNow" Content="Go!" Margin="0,5,5,18" HorizontalAlignment="Right" Width="42" Foreground="#FFADE9FF" Click="btnSyncNow_Click" Cursor="Hand" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch" FontSize="16">
             <Button.Style>
                 <Style TargetType="{x:Type Button}">
@@ -36,6 +37,5 @@
                 </Style>
             </Button.Style>
         </Button>
-        <Image Source="Media/Janus.ico" Margin="3,4,0,0" HorizontalAlignment="Left" Width="60" Height="60" VerticalAlignment="Top" Opacity="0.1"/>
     </Grid>
 </Window>
