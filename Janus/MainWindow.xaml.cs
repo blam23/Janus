@@ -21,9 +21,16 @@ namespace Janus
         private static readonly string Startup = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
         private static readonly string Shortcut = Path.Combine(Startup, "Janus.url");
 
+        private Win32HotKey _syncGlobalHotKey;
+
         public MainWindow()
         {
             InitializeComponent();
+
+            Closed += (_, __) =>
+            {
+                _syncGlobalHotKey?.Dispose();
+            };
         }
 
         private void btnWatcher_Click(object sender, RoutedEventArgs e)
@@ -46,6 +53,19 @@ namespace Janus
             Data = d.DataProvider;
             Watchers = d.Watchers;
 
+            Logging.WriteLine("Setting up WndProcBus");
+            WndProcBus.Init(this);
+            Win32HotKey.RegisterForEvents();
+            Logging.WriteLine("Set up WndProcBus");
+
+            Logging.WriteLine("Registering Sync HotKey");
+            Dispatcher.Invoke(() =>
+            {
+                _syncGlobalHotKey = new Win32HotKey(Win32HotKey.Modifiers.Ctrl | Win32HotKey.Modifiers.WinKey, (uint) System.Windows.Forms.Keys.G);
+                _syncGlobalHotKey.Register(SyncAllWatchersNow);
+            });
+            Logging.WriteLine("Registered Sync HotKey");
+
             if (Watchers.Count == 0)
             {
                 Show();
@@ -58,6 +78,14 @@ namespace Janus
             Watchers.CollectionChanged += Watchers_CollectionChanged;
 
             CbStartup.IsChecked = File.Exists(Shortcut);
+        }
+
+        private static void SyncAllWatchersNow()
+        {
+            foreach (var watcher in Watchers)
+            {
+                watcher?.Delay?.EnactNow();
+            }
         }
 
         private static void Watchers_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)

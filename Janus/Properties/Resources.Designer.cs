@@ -261,5 +261,14 @@ namespace Janus.Properties {
                 return ResourceManager.GetString("Watcher_Stop_Target", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Message type already registered. Currently only one handler per message is supported..
+        /// </summary>
+        internal static string WndProcBus_Error_AlreadyRegisted {
+            get {
+                return ResourceManager.GetString("WndProcBus_Error_AlreadyRegisted", resourceCulture);
+            }
+        }
     }
 }

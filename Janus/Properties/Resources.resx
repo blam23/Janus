@@ -184,4 +184,7 @@
   <data name="Mark_File_Rename" xml:space="preserve">
     <value>Marking file to be renamed: {0}</value>
   </data>
+  <data name="WndProcBus_Error_AlreadyRegisted" xml:space="preserve">
+    <value>Message type already registered. Currently only one handler per message is supported.</value>
+  </data>
 </root>

@@ -114,6 +114,7 @@
     <Compile Include="Filters\IFilter.cs" />
     <Compile Include="JanusData.cs" />
     <Compile Include="Matchers\SimpleStringMatcher.cs" />
+    <Compile Include="Win32HotKey.cs" />
     <Compile Include="NotifcationType.cs" />
     <Compile Include="ObservableHashSet.cs" />
     <Compile Include="SyncData.cs" />
@@ -121,6 +122,7 @@
     <Compile Include="StorageFormatAttribute.cs" />
     <Compile Include="MetaDataSynchroniser.cs" />
     <Compile Include="Watcher.cs" />
+    <Compile Include="WndProcBus.cs" />
     <Page Include="CreateWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>

@@ -52,7 +52,7 @@ namespace Janus
         /// <summary>
         /// Delay Controller, if null -> No delay is used
         /// </summary>
-        private DelayController _delay;
+        internal DelayController Delay;
 
         /// <summary>
         /// Delay Display Window
@@ -102,13 +102,13 @@ namespace Janus
         {
             if (delay > 0)
             {
-                _delay = new DelayController(TimeSpan.FromMilliseconds(delay), () => Synchronise());
+                Delay = new DelayController(TimeSpan.FromMilliseconds(delay), () => Synchronise());
 
                 _display = DelayDisplay.CreateNewDelayDisplay();
-                _display.SetupDelay(_delay);
+                _display.SetupDelay(Delay);
             }
             else
-                _delay = null;
+                Delay = null;
         }
 
         public void AddFilter(IFilter filter)
@@ -227,7 +227,7 @@ namespace Janus
                 Logging.WriteLine(Resources.Auto_Removing_Target, file);
                 _copy.Remove(file);
             }
-            if (Data.AutoDeleteFiles && _delay == null)
+            if (Data.AutoDeleteFiles && Delay == null)
             {
                 Logging.WriteLine(Resources.Auto_Deleting_Target, file);
                 Synchroniser.DeleteAsync(file);
@@ -251,7 +251,7 @@ namespace Janus
                 Application.Current.Dispatcher.Invoke(() => _display.SetFileCount(MarkedForCopy.Count + MarkedForDeletion.Count + MarkedForRename.Count));
             }
 
-            _delay?.ResetTimer();
+            Delay?.ResetTimer();
         }
 
         /// <summary>
@@ -283,7 +283,7 @@ namespace Janus
                 Logging.WriteLine(Resources.Auto_Remove_Delete_Target, file);
                 _delete.Remove(file);
             }
-            if (Data.AutoAddFiles && _delay == null)
+            if (Data.AutoAddFiles && Delay == null)
             {
                 Logging.WriteLine(Resources.Auto_Copying_Target, file);
                 Synchroniser.AddAsync(file);
@@ -340,7 +340,7 @@ namespace Janus
                 _copy.Remove(oldPath);
             }
 
-            if (Data.AutoAddFiles && _delay == null)
+            if (Data.AutoAddFiles && Delay == null)
             {
                 Synchroniser.RenameAsync(oldPath, newPath);
             }
@@ -360,7 +360,7 @@ namespace Janus
         {
             Logging.WriteLine(Resources.Watcher_Stop_Target, Data.WatchDirectory);
             DisableEvents();
-            _delay?.Stop();
+            Delay?.Stop();
             _display?.Hide();
             _watcher?.Dispose();
         }
