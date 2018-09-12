@@ -10,7 +10,7 @@
         <Grid.Effect>
             <DropShadowEffect Opacity="0.5" ShadowDepth="10" BlurRadius="25"/>
         </Grid.Effect>
-        <Image Source="Media/Janus.ico" Margin="-9,2,0,-16" HorizontalAlignment="Left" Width="60" Height="60" VerticalAlignment="Top" Opacity="0.05"/>
+        <Image Source="Media/Janus.ico" Margin="247,-2,-4,-12" HorizontalAlignment="Left" Width="60" Height="60" VerticalAlignment="Top" Opacity="0.05"/>
         <Border x:Name="Border" BorderBrush="Black" BorderThickness="1" Opacity="1"/>
 
         <ProgressBar Opacity="1" x:Name="pbProgress" Height="8" VerticalAlignment="Bottom" Background="#FF464646" BorderBrush="{x:Null}" Foreground="#FF00E8FF" Margin="6,0,5,5"/>

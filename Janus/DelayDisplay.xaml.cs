@@ -99,8 +99,8 @@ namespace Janus
             {
                 _fadeTimer?.Stop();
                 Opacity = 1;
-                pbProgress.Foreground = new SolidColorBrush(Color.FromRgb(0, 232, 255));
-                Border.BorderBrush = new SolidColorBrush(Color.FromRgb(0, 232, 255));
+                pbProgress.Foreground = new SolidColorBrush(Color.FromRgb(173, 233, 255));
+                Border.BorderBrush = new SolidColorBrush(Color.FromRgb(173, 233, 255));
 
                 if (List.Contains(this)) return;
 
