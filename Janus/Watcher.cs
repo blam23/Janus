@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using Janus.Filters;
@@ -59,7 +60,16 @@ namespace Janus
         /// </summary>
         private DelayDisplay _display;
 
+        /// <summary>
+        /// Display name of the Watcher (shown in GUI).
+        /// </summary>
         public string Name { get; set; }
+
+        /// <summary>
+        /// Required to be taken when adding or processing any operation on a file.
+        /// Without this the collections can be modified during a Synchronise, causing an exception.
+        /// </summary>
+        private readonly Mutex _fileOperationMutex = new Mutex();
 
         public Watcher(string name, string watchPath, string endPath, bool addFiles, bool deleteFiles, ObservableCollection<IFilter> filters, bool recursive, ulong delay = 0, bool observe = false)
         {
@@ -140,44 +150,52 @@ namespace Janus
         /// </summary>
         public void Synchronise(bool notify = true)
         {
-            var copyCount = _copy.Count;
-            var renameCount = _rename.Count;
-            var deleteCount = _delete.Count;
-
-            if (copyCount + deleteCount + renameCount == 0)
+            _fileOperationMutex.WaitOne();
+            try
             {
-                if(notify)
-                    NotificationSystem.Default.Push(NotifcationType.Info, "Sync Completed.", "No files were changed.");
+                var copyCount = _copy.Count;
+                var renameCount = _rename.Count;
+                var deleteCount = _delete.Count;
 
-                return;
+                if (copyCount + deleteCount + renameCount == 0)
+                {
+                    if(notify)
+                        NotificationSystem.Default.Push(NotifcationType.Info, "Sync Completed.", "No files were changed.");
+
+                    return;
+                }
+
+                foreach (var file in _copy)
+                {
+                    Logging.WriteLine(Resources.Manual_Copying_Target, file);
+                    Synchroniser.AddAsync(file);
+                }
+
+                foreach (var file in _delete)
+                {
+                    Logging.WriteLine(Resources.Manual_Deleting_Target, file);
+                    Synchroniser.DeleteAsync(file);
+                }
+
+                foreach (var file in _rename)
+                {
+                    Logging.WriteLine("[Manual] Renaming: {0} to {1}", file.Item1, file.Item2);
+                    Synchroniser.RenameAsync(file.Item1, file.Item2);
+                }
+
+                _copy.Clear();
+                _delete.Clear();
+                _rename.Clear();
+
+                if (!notify) return;
+
+                NotificationSystem.Default.Push(NotifcationType.Info, "Sync Completed.",
+                    $"Finished copying {copyCount} files, renaming {renameCount} files, and deleting {deleteCount} files.");
             }
-
-            foreach (var file in _copy)
+            finally
             {
-                Logging.WriteLine(Resources.Manual_Copying_Target, file);
-                Synchroniser.AddAsync(file);
+                _fileOperationMutex.ReleaseMutex();
             }
-
-            foreach (var file in _delete)
-            {
-                Logging.WriteLine(Resources.Manual_Deleting_Target, file);
-                Synchroniser.DeleteAsync(file);
-            }
-
-            foreach (var file in _rename)
-            {
-                Logging.WriteLine("[Manual] Renaming: {0} to {1}", file.Item1, file.Item2);
-                Synchroniser.RenameAsync(file.Item1, file.Item2);
-            }
-
-            _copy.Clear();
-            _delete.Clear();
-            _rename.Clear();
-
-            if (!notify) return;
-
-            NotificationSystem.Default.Push(NotifcationType.Info, "Sync Completed.",
-                $"Finished copying {copyCount} files, renaming {renameCount} files, and deleting {deleteCount} files.");
         }
 
         public async Task SynchroniseAsync()
@@ -222,21 +240,31 @@ namespace Janus
 
             ResetDelay();
 
-            if (_copy.Contains(file))
+            _fileOperationMutex.WaitOne();
+            try
             {
-                Logging.WriteLine(Resources.Auto_Removing_Target, file);
-                _copy.Remove(file);
+
+                if (_copy.Contains(file))
+                {
+                    Logging.WriteLine(Resources.Auto_Removing_Target, file);
+                    _copy.Remove(file);
+                }
+
+                if (Data.AutoDeleteFiles && Delay == null)
+                {
+                    Logging.WriteLine(Resources.Auto_Deleting_Target, file);
+                    Synchroniser.DeleteAsync(file);
+                    Logging.WriteLine(Resources.Auto_Deleted_Target, file);
+                }
+                else
+                {
+                    Logging.WriteLine(Resources.Auto_Mark_Delete_Target, file);
+                    _delete.Add(file);
+                }
             }
-            if (Data.AutoDeleteFiles && Delay == null)
+            finally
             {
-                Logging.WriteLine(Resources.Auto_Deleting_Target, file);
-                Synchroniser.DeleteAsync(file);
-                Logging.WriteLine(Resources.Auto_Deleted_Target, file);
-            }
-            else
-            {
-                Logging.WriteLine(Resources.Auto_Mark_Delete_Target, file);
-                _delete.Add(file);
+                _fileOperationMutex.ReleaseMutex();
             }
         }
 
@@ -278,21 +306,30 @@ namespace Janus
 
             ResetDelay();
 
-            if (_delete.Contains(file))
+            _fileOperationMutex.WaitOne();
+            try
             {
-                Logging.WriteLine(Resources.Auto_Remove_Delete_Target, file);
-                _delete.Remove(file);
+                if (_delete.Contains(file))
+                {
+                    Logging.WriteLine(Resources.Auto_Remove_Delete_Target, file);
+                    _delete.Remove(file);
+                }
+
+                if (Data.AutoAddFiles && Delay == null)
+                {
+                    Logging.WriteLine(Resources.Auto_Copying_Target, file);
+                    Synchroniser.AddAsync(file);
+                    Logging.WriteLine(Resources.Auto_Copied_Target, file);
+                }
+                else
+                {
+                    Logging.WriteLine(Resources.Auto_Mark_Copy_Target, file);
+                    _copy.Add(file);
+                }
             }
-            if (Data.AutoAddFiles && Delay == null)
+            finally
             {
-                Logging.WriteLine(Resources.Auto_Copying_Target, file);
-                Synchroniser.AddAsync(file);
-                Logging.WriteLine(Resources.Auto_Copied_Target, file);
-            }
-            else
-            {
-                Logging.WriteLine(Resources.Auto_Mark_Copy_Target, file);
-                _copy.Add(file);
+                _fileOperationMutex.ReleaseMutex();
             }
         }
 
@@ -328,26 +365,35 @@ namespace Janus
 
             Logging.WriteLine(Resources.Renaming_File_From_To, oldPath, newPath);
 
-            if (_delete.Contains(oldPath))
+            _fileOperationMutex.WaitOne();
+            try
             {
-                Logging.WriteLine(Resources.Auto_Remove_Delete_Target, oldPath);
-                _delete.Remove(oldPath);
-            }
 
-            if (_copy.Contains(oldPath))
-            {
-                Logging.WriteLine(Resources.Auto_Removing_Target, oldPath);
-                _copy.Remove(oldPath);
-            }
+                if (_delete.Contains(oldPath))
+                {
+                    Logging.WriteLine(Resources.Auto_Remove_Delete_Target, oldPath);
+                    _delete.Remove(oldPath);
+                }
 
-            if (Data.AutoAddFiles && Delay == null)
-            {
-                Synchroniser.RenameAsync(oldPath, newPath);
+                if (_copy.Contains(oldPath))
+                {
+                    Logging.WriteLine(Resources.Auto_Removing_Target, oldPath);
+                    _copy.Remove(oldPath);
+                }
+
+                if (Data.AutoAddFiles && Delay == null)
+                {
+                    Synchroniser.RenameAsync(oldPath, newPath);
+                }
+                else
+                {
+                    Logging.WriteLine(Resources.Mark_File_Rename, oldPath);
+                    _rename.Add((oldPath, newPath));
+                }
             }
-            else
+            finally
             {
-                Logging.WriteLine(Resources.Mark_File_Rename, oldPath);
-                _rename.Add((oldPath, newPath));
+                _fileOperationMutex.ReleaseMutex();
             }
         }
 
