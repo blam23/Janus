@@ -8,12 +8,12 @@ namespace JanusSharedLib
     /// </summary>
     public class Win32HotKey
     {
-        public readonly uint KeyId;
-        public readonly Win32HotKeyController.Modifiers Modifiers;
-        public readonly Action Func;
+        public uint KeyId { get; }
+        public Win32HotKeyController.Modifiers Modifiers { get; }
+        public Action Func { get; }
 
-        public int Atom;
-        public bool Registered;
+        public int Atom { get; set; }
+        public bool Registered { get; set; }
 
         public Win32HotKey(Win32HotKeyController.Modifiers modifiers, uint keyId, Action func)
         {

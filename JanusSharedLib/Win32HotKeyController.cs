@@ -41,7 +41,7 @@ namespace JanusSharedLib
         private const int WmHotkey = 0x312;
 
         private readonly Dictionary<int, Win32HotKey> _registeredKeys = new Dictionary<int, Win32HotKey>();
-        private int _registrationId = 0;
+        private int _registrationId;
 
         private WndProcBus _bus;
 

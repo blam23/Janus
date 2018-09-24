@@ -17,20 +17,19 @@ namespace JanusSharedLib
         public bool Started { get; private set; }
 
         private readonly Dictionary<int, WindProcFunc> _handlerMap = new Dictionary<int, WindProcFunc>();
-        private HwndSource _source;
 
         public void Init(Window window)
         {
             WindowHandle = new WindowInteropHelper(window).Handle;
-            _source = HwndSource.FromHwnd(WindowHandle);
+            var source = HwndSource.FromHwnd(WindowHandle);
 
-            if (_source == null)
+            if (source == null)
             {
                 Logging.WriteLine("Unable to start WndProcBus.");
                 return;
             }
 
-            _source.AddHook(WndProc);
+            source.AddHook(WndProc);
             Started = true;
         }
 
