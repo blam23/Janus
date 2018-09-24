@@ -101,28 +101,25 @@
     <Compile Include="DelayDisplay.xaml.cs">
       <DependentUpon>DelayDisplay.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Extensions.cs" />
     <Compile Include="Filters\ExcludeFileFilter.cs" />
     <Compile Include="Filters\IncludeFilter.cs" />
     <Compile Include="Filters\ExcludeFilter.cs" />
-    <Compile Include="INotificationSystem.cs" />
     <Compile Include="IDirectorySynchroniser.cs" />
-    <Compile Include="Logging.cs" />
-    <Compile Include="MainWindow.xaml.cs" />
+    <Compile Include="INotificationSystem.cs" />
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Matchers\IMatcher.cs" />
     <Compile Include="IDataStorageFormat.cs" />
     <Compile Include="Filters\IFilter.cs" />
     <Compile Include="JanusData.cs" />
     <Compile Include="Matchers\SimpleStringMatcher.cs" />
-    <Compile Include="Win32HotKey.cs" />
     <Compile Include="NotifcationType.cs" />
-    <Compile Include="ObservableHashSet.cs" />
     <Compile Include="SyncData.cs" />
-    <Compile Include="WindowsToast.cs" />
     <Compile Include="StorageFormatAttribute.cs" />
     <Compile Include="MetaDataSynchroniser.cs" />
     <Compile Include="Watcher.cs" />
-    <Compile Include="WndProcBus.cs" />
+    <Compile Include="WindowsToast.cs" />
     <Page Include="CreateWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -194,6 +191,12 @@
       <ProductName>.NET Framework 3.5 SP1</ProductName>
       <Install>false</Install>
     </BootstrapperPackage>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\JanusSharedLib\JanusSharedLib.csproj">
+      <Project>{2015fd35-c7b2-405e-bee6-6652cc6f5c1c}</Project>
+      <Name>JanusSharedLib</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

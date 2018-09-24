@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\Unit
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StorageFormats", "StorageFormats\StorageFormats.csproj", "{F375D773-7141-4C59-9ED7-A7371E3B1B47}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JanusSharedLib", "JanusSharedLib\JanusSharedLib.csproj", "{2015FD35-C7B2-405E-BEE6-6652CC6F5C1C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,8 +29,15 @@ Global
 		{F375D773-7141-4C59-9ED7-A7371E3B1B47}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F375D773-7141-4C59-9ED7-A7371E3B1B47}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F375D773-7141-4C59-9ED7-A7371E3B1B47}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2015FD35-C7B2-405E-BEE6-6652CC6F5C1C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2015FD35-C7B2-405E-BEE6-6652CC6F5C1C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2015FD35-C7B2-405E-BEE6-6652CC6F5C1C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2015FD35-C7B2-405E-BEE6-6652CC6F5C1C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {91A413E6-B93B-40E8-8997-26EB2B37AF80}
 	EndGlobalSection
 EndGlobal

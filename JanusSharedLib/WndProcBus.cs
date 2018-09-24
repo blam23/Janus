@@ -2,10 +2,9 @@
 using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Interop;
-using Janus.Properties;
 using WindProcFunc = System.Func<System.IntPtr, System.IntPtr, bool>;
 
-namespace Janus
+namespace JanusSharedLib
 {
     /// <summary>
     /// WPF does not allow Windows to override WndProc as WinForms does.
@@ -39,7 +38,7 @@ namespace Janus
         {
             if (HandlerMap.ContainsKey(message))
             {
-                throw new ArgumentException(Resources.WndProcBus_Error_AlreadyRegisted, nameof(message));
+                throw new ArgumentException("WndProcBus already registered.", nameof(message));
             }
 
             HandlerMap[message] = handler;

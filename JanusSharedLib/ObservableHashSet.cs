@@ -3,7 +3,7 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Threading;
 
-namespace Janus
+namespace JanusSharedLib
 {
     public class ObservableSet<T> : ObservableCollection<T>
     {

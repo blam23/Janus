@@ -6,6 +6,7 @@ using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Windows.Controls;
+using JanusSharedLib;
 
 namespace Janus
 {
@@ -109,8 +110,6 @@ namespace Janus
                 watcher.Stop();
                 Watchers.Remove(watcher);
             }
-
-            //NotificationSystem.Default.Push(NotifcationType.Info, "Removed Watcher", "Removed watcher successfully.");
         }
 
         private async void btnSync_Click(object sender, RoutedEventArgs e)

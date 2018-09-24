@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Threading;
 
-namespace Janus
+namespace JanusSharedLib
 {
-    internal class Win32HotKey : IDisposable
+    public class Win32HotKey : IDisposable
     {
         private static int _registrationId = 0;
 

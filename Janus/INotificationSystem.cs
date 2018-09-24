@@ -1,4 +1,5 @@
-﻿namespace Janus
+﻿
+namespace Janus
 {
     public static class NotificationSystem
     {

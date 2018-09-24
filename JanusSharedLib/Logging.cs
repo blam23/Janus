@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.Threading;
 
-namespace Janus
+namespace JanusSharedLib
 {
     public static class Logging
     {

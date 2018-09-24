@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using Janus.Properties;
+using JanusSharedLib;
 
 #if MD5_CHECK
 using System.Security.Cryptography;

@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using Janus.Filters;
 using Janus.Properties;
+using JanusSharedLib;
 
 namespace Janus
 {

@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Janus.Properties;
+using JanusSharedLib;
 
 namespace Janus
 {

@@ -70,6 +70,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\JanusSharedLib\JanusSharedLib.csproj">
+      <Project>{2015fd35-c7b2-405e-bee6-6652cc6f5c1c}</Project>
+      <Name>JanusSharedLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Janus\Janus.csproj">
       <Project>{492b7459-6839-401d-bab6-55b23a01690d}</Project>
       <Name>Janus</Name>

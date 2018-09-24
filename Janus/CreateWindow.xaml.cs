@@ -4,6 +4,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Forms;
 using Janus.Filters;
+using JanusSharedLib;
 using TextBox = System.Windows.Controls.TextBox;
 
 namespace Janus

@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Janus;
 using Janus.Filters;
+using JanusSharedLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using UnitTests.Helpers;
 

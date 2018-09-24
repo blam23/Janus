@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Janus;
+using JanusSharedLib;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace UnitTests

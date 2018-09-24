@@ -51,6 +51,10 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\JanusSharedLib\JanusSharedLib.csproj">
+      <Project>{2015FD35-C7B2-405E-BEE6-6652CC6F5C1C}</Project>
+      <Name>JanusSharedLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Janus\Janus.csproj">
       <Project>{492B7459-6839-401D-BAB6-55B23A01690D}</Project>
       <Name>Janus</Name>

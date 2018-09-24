@@ -1,6 +1,7 @@
 ﻿using System;
 using Windows.Data.Xml.Dom;
 using Windows.UI.Notifications;
+using JanusSharedLib;
 
 namespace Janus
 {
@@ -26,7 +27,7 @@ namespace Janus
             var toastXml = new XmlDocument();
             toastXml.LoadXml($@"<toast><visual><binding template='ToastGeneric'><text>{title}</text><text>{message}</text></binding></visual></toast>");
 
-            var toast = new ToastNotification(toastXml) {ExpirationTime = DateTimeOffset.Now.AddHours(1)};
+            var toast = new ToastNotification(toastXml) { ExpirationTime = DateTimeOffset.Now.AddHours(1) };
             _notifier.Show(toast);
         }
     }

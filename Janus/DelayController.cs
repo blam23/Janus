@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using System.Windows.Threading;
+using JanusSharedLib;
 
 namespace Janus
 {

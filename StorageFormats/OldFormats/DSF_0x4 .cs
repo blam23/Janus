@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using Janus;
 using Janus.Filters;
+using JanusSharedLib;
 
 namespace StorageFormats.OldFormats
 {
