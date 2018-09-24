@@ -22,7 +22,8 @@ namespace Janus
         private static readonly string Startup = Environment.GetFolderPath(Environment.SpecialFolder.Startup);
         private static readonly string Shortcut = Path.Combine(Startup, "Janus.url");
 
-        private Win32HotKey _syncGlobalHotKey;
+        private WndProcBus _bus;
+        private Win32HotKeyController _hotKeyBus;
 
         public MainWindow()
         {
@@ -30,7 +31,7 @@ namespace Janus
 
             Closed += (_, __) =>
             {
-                _syncGlobalHotKey?.Dispose();
+                _hotKeyBus?.Dispose();
             };
         }
 
@@ -54,18 +55,23 @@ namespace Janus
             Data = d.DataProvider;
             Watchers = d.Watchers;
 
-            Logging.WriteLine("Setting up WndProcBus");
-            WndProcBus.Init(this);
-            Win32HotKey.RegisterForEvents();
+            Logging.WriteLine($"Setting up WndProcBus for {(GetType().Name)}");
+            _bus = new WndProcBus();
+            _bus.Init(this);
             Logging.WriteLine("Set up WndProcBus");
 
-            Logging.WriteLine("Registering Sync HotKey");
-            Dispatcher.Invoke(() =>
-            {
-                _syncGlobalHotKey = new Win32HotKey(Win32HotKey.Modifiers.Ctrl | Win32HotKey.Modifiers.WinKey, (uint) System.Windows.Forms.Keys.G);
-                _syncGlobalHotKey.Register(SyncAllWatchersNow);
-            });
-            Logging.WriteLine("Registered Sync HotKey");
+            Logging.WriteLine("Setting up Win32HotKeyController");
+            _hotKeyBus = new Win32HotKeyController();
+            _hotKeyBus.RegisterForEvents(_bus);
+            Logging.WriteLine("Set Up Win32HotKeyController");
+
+            Logging.WriteLine("Registering Sync HotKey (Hardcoded Ctrl+Win+G)");
+            var registered =_hotKeyBus.Register(new Win32HotKey(
+                Win32HotKeyController.Modifiers.Ctrl | Win32HotKeyController.Modifiers.WinKey,
+                (uint) System.Windows.Forms.Keys.G,
+                SyncAllWatchersNow
+            ));
+            Logging.WriteLine($"Registered Sync HotKey, success=[{registered}]");
 
             if (Watchers.Count == 0)
             {

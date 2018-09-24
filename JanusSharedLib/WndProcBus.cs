@@ -8,21 +8,21 @@ namespace JanusSharedLib
 {
     /// <summary>
     /// WPF does not allow Windows to override WndProc as WinForms does.
-    /// This class could be made non-static and initialised with the Window.
-    /// For now leaving static as there's no need for looking for Windows messages
-    ///  outside of the global hot key code.
+    /// This class therefore requires a WPF Window handle, which is used
+    /// to get the internal WndProc handler.
     /// </summary>
-    public static class WndProcBus
+    public class WndProcBus
     {
-        public static IntPtr MainWindowHandle { get; private set; }
-        private static HwndSource _source;
-        public static bool Started { get; private set; }
-        private static readonly Dictionary<int, WindProcFunc> HandlerMap = new Dictionary<int, WindProcFunc>();
+        public IntPtr WindowHandle { get; private set; }
+        public bool Started { get; private set; }
 
-        public static void Init(Window window)
+        private readonly Dictionary<int, WindProcFunc> _handlerMap = new Dictionary<int, WindProcFunc>();
+        private HwndSource _source;
+
+        public void Init(Window window)
         {
-            MainWindowHandle = new WindowInteropHelper(window).Handle;
-            _source = HwndSource.FromHwnd(MainWindowHandle);
+            WindowHandle = new WindowInteropHelper(window).Handle;
+            _source = HwndSource.FromHwnd(WindowHandle);
 
             if (_source == null)
             {
@@ -34,21 +34,26 @@ namespace JanusSharedLib
             Started = true;
         }
 
-        public static void Register(int message, WindProcFunc handler)
+        public void Register(int message, WindProcFunc handler)
         {
-            if (HandlerMap.ContainsKey(message))
+            if (_handlerMap.ContainsKey(message))
             {
                 throw new ArgumentException("WndProcBus already registered.", nameof(message));
             }
 
-            HandlerMap[message] = handler;
+            _handlerMap[message] = handler;
         }
 
-        private static IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
+        public void Unregister(int message)
+        {
+            _handlerMap.Remove(message);
+        }
+
+        private IntPtr WndProc(IntPtr hwnd, int msg, IntPtr wParam, IntPtr lParam, ref bool handled)
         {
             var ret = IntPtr.Zero;
 
-            if (HandlerMap.TryGetValue(msg, out var func))
+            if (_handlerMap.TryGetValue(msg, out var func))
             {
                 handled = func(wParam, lParam);
             }

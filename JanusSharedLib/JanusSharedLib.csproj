@@ -52,6 +52,7 @@
     <Compile Include="ObservableHashSet.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Win32HotKey.cs" />
+    <Compile Include="Win32HotKeyController.cs" />
     <Compile Include="WndProcBus.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
